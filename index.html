@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>~/user — resume</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0a0b0d;
+    --bg2: #0f1117;
+    --bg3: #141720;
+    --border: #1e2230;
+    --dim: #3a4055;
+    --muted: #5a6380;
+    --text: #c8cfe8;
+    --bright: #e8eeff;
+    --cyan: #4dd9f0;
+    --green: #3dffa0;
+    --orange: #ff9f4a;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+    box-shadow: 0 0 12px var(--cyan);
+  }
+  .cursor-ring {
+    width: 28px; height: 28px;
+    border: 1px solid rgba(77,217,240,0.4);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(10,11,13,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.2s;
+    position: relative;
+    cursor: none;
+  }
+  .nav-links a::before {
+    content: '> ';
+    color: var(--green);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { color: var(--bright); }
+  .nav-links a:hover::before { opacity: 1; }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  /* SECTIONS */
+  section {
+    min-height: 100vh;
+    padding: 120px 60px 80px;
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::before { content: attr(data-n); color: var(--cyan); }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 200px;
+  }
+
+  /* HERO */
+  #hero {
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .hero-terminal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .term-dot.r { background: #ff5f57; }
+  .term-dot.y { background: #febc2e; }
+  .term-dot.g { background: #28c840; }
+  .term-title {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .term-body { padding: 24px; font-size: 13px; line-height: 1.9; }
+
+  .t-prompt { color: var(--green); }
+  .t-cmd { color: var(--bright); }
+  .t-out { color: var(--text); }
+  .t-key { color: var(--cyan); }
+  .t-val { color: var(--orange); }
+  .t-str { color: var(--green); }
+  .t-comment { color: var(--muted); font-style: italic; }
+  .t-dim { color: var(--dim); }
+  .t-cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--cyan);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+  }
+
+  .hero-content h1 {
+    font-family: var(--font-display);
+    font-size: clamp(42px, 6vw, 80px);
+    font-weight: 800;
+    line-height: 1;
+    color: var(--bright);
+    margin-bottom: 16px;
+  }
+  .hero-content h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-tagline {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 480px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+  .tag {
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 11px;
+    color: var(--cyan);
+    background: rgba(77,217,240,0.04);
+    letter-spacing: 0.05em;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+  }
+  .btn {
+    padding: 10px 24px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    border: none;
+    border-radius: 3px;
+    cursor: none;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: #7be8fa; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  /* ABOUT */
+  #about { background: var(--bg2); }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .about-text p strong { color: var(--cyan); font-weight: 400; }
+
+  .skills-grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .skill-group-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .skill-bars { display: grid; gap: 10px; }
+
+  .skill-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 30px;
+    align-items: center;
+    gap: 12px;
+  }
+  .skill-name { font-size: 11px; color: var(--text); }
+  .skill-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .skill-fill {
+    height: 100%;
+    border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 1s cubic-bezier(0.4,0,0.2,1);
+  }
+  .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+  .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+  .skill-fill.orange { background: linear-gradient(90deg, var(--orange), var(--pink)); }
+  .skill-pct { font-size: 10px; color: var(--muted); text-align: right; }
+
+  /* ARTICLES */
+  #articles { position: relative; }
+
+  .articles-list { display: grid; gap: 1px; }
+
+  .article-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+    cursor: none;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .article-item::before {
+    content: '';
+    position: absolute;
+    left: -60px; right: -60px; top: 0; bottom: 0;
+    background: rgba(77,217,240,0.02);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .article-item:hover::before { opacity: 1; }
+
+  .article-date {
+    font-size: 11px;
+    color: var(--muted);
+    padding-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .article-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 8px;
+    transition: color 0.2s;
+  }
+  .article-item:hover .article-title { color: var(--cyan); }
+
+  .article-excerpt {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .article-tags { display: flex; gap: 6px; }
+  .atag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+  }
+  .atag-c { background: rgba(77,217,240,0.1); color: var(--cyan); }
+  .atag-g { background: rgba(61,255,160,0.1); color: var(--green); }
+  .atag-o { background: rgba(255,159,74,0.1); color: var(--orange); }
+  .atag-p { background: rgba(167,139,250,0.1); color: var(--purple); }
+
+  .article-arrow {
+    font-size: 18px;
+    color: var(--border);
+    padding-top: 4px;
+    transition: all 0.2s;
+  }
+  .article-item:hover .article-arrow { color: var(--cyan); transform: translateX(4px); }
+
+  /* PROJECTS */
+  #projects { background: var(--bg2); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .project-card {
+    background: var(--bg2);
+    padding: 32px;
+    position: relative;
+    cursor: none;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .project-card:hover { background: var(--bg3); }
+
+  .project-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent, var(--cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .project-card:hover::after { transform: scaleX(1); }
+
+  .project-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .project-name {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 8px;
+  }
+
+  .project-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .project-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .tech-pill {
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--dim);
+    letter-spacing: 0.06em;
+  }
+
+  .project-links { display: flex; gap: 16px; }
+  .plink {
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: none;
+  }
+  .plink:hover { color: var(--cyan); }
+
+  /* CONNECTIONS */
+  #connections { position: relative; min-height: 100vh; overflow: hidden; }
+
+  .connections-canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .connections-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .nodes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .node-card {
+    position: relative;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    text-align: center;
+    cursor: none;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: block;
+  }
+  .node-card:hover {
+    border-color: var(--node-color, var(--cyan));
+    box-shadow: 0 0 30px rgba(77,217,240,0.1);
+    transform: translateY(-4px);
+  }
+
+  .node-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+  .node-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 6px;
+  }
+  .node-handle {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  .node-badge {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  /* CONNECTION LINES SVG */
+  .connection-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ANIMATIONS */
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-terminal { display: none; }
+    .about-grid { grid-template-columns: 1fr; }
+    nav { padding: 16px 24px; }
+    section { padding: 100px 24px 60px; }
+    .nodes-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .article-item { grid-template-columns: 1fr; gap: 8px; }
+    .article-date { padding-top: 0; }
+    .article-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo" id="navLogo"></a>
+  <ul class="nav-links">
+    <li><a href="index.html">home</a></li>
+    <li><a href="about.html">about</a></li>
+    <li><a href="articles.html">articles</a></li>
+    <li><a href="projects.html">projects</a></li>
+    <li><a href="connect.html">connect</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    <span id="navStatus"></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content fade-up">
+    <h1 id="heroName"></h1>
+    <p class="hero-tagline" id="heroTagline"></p>
+    <div class="hero-tags" id="heroTags"></div>
+    <div class="hero-cta">
+      <a href="#connections" class="btn btn-primary">get in touch</a>
+      <a href="#projects" class="btn btn-ghost">view projects</a>
+    </div>
+  </div>
+
+  <div class="hero-terminal fade-up" style="transition-delay:0.2s">
+    <div class="term-bar">
+      <div class="term-dot r"></div>
+      <div class="term-dot y"></div>
+      <div class="term-dot g"></div>
+      <div class="term-title" id="termTitle"></div>
+    </div>
+    <div class="term-body" id="termBody"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label" data-n="01">about me</div>
+  <div class="about-grid">
+    <div class="about-text fade-up" id="aboutText"></div>
+    <div class="skills-grid fade-up" style="transition-delay:0.15s" id="skillsGrid"></div>
+  </div>
+</section>
+
+<!-- ARTICLES -->
+<section id="articles">
+  <div class="section-label" data-n="02">articles</div>
+  <div class="articles-list" id="articlesList"></div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label" data-n="03">projects</div>
+  <div class="projects-grid fade-up" id="projectsGrid"></div>
+</section>
+
+<!-- CONNECTIONS -->
+<section id="connections">
+  <div class="section-label" data-n="04">connections</div>
+  <div class="connections-content">
+    <svg class="connection-svg" id="connSvg"></svg>
+
+    <div style="text-align:center; margin-bottom:48px" class="fade-up" id="centerNode">
+      <div style="
+        display:inline-block;
+        background:var(--bg2);
+        border:1px solid var(--cyan);
+        border-radius:4px;
+        padding:20px 36px;
+        box-shadow:0 0 40px rgba(77,217,240,0.15);
+      ">
+        <div style="font-size:13px;color:var(--cyan);letter-spacing:0.1em;margin-bottom:4px;">YOU ARE HERE</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--bright)" id="centerName"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px" id="centerEmail"></div>
+      </div>
+    </div>
+
+    <div class="nodes-grid fade-up" style="transition-delay:0.2s" id="nodesGrid"></div>
+
+    <div style="text-align:center;margin-top:60px;font-size:12px;color:var(--muted)" class="fade-up" style="transition-delay:0.3s" id="connectCta">
+      <span style="color:var(--green)"></span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer"></footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIG - Edit this object with your personal data
+// ═══════════════════════════════════════════════════════════════════════════════
+const CONFIG = {
+  // Basic Info
+  name: {
+    first: "Your",
+    last: "Name"
+  },
+  handle: "user",           // Used in nav logo and terminal
+  title: "Software Engineer",
+  location: "City, Country",
+  email: "you@example.com",
+  yoe: 5,                   // Years of experience
+  status: "available for work",
+  statusMessage: "open to opportunities",
+
+  // Tagline shown under name
+  tagline: "Full-stack engineer building things at the intersection of performance and developer experience.",
+
+  // Hero tags (skills shown as pills)
+  heroTags: ["TypeScript", "React", "Node.js", "Systems Design"],
+
+  // Stack shown in terminal JSON
+  stack: ["TypeScript", "React", "Node.js", "PostgreSQL"],
+
+  // About section paragraphs (use <strong> for cyan highlights)
+  aboutParagraphs: [
+    "I'm a <strong>full-stack engineer</strong> passionate about building scalable systems and developer tools.",
+    "I specialize in <strong>modern web technologies</strong> and enjoy solving complex problems with elegant solutions.",
+    "Outside of work I contribute to <strong>open source</strong> and write about software development.",
+    "I believe the best code is the code you don't have to write."
+  ],
+
+  // Skills grouped by category
+  skills: {
+    languages: {
+      label: "// languages",
+      color: "cyan",
+      items: [
+        { name: "TypeScript", pct: 90 },
+        { name: "JavaScript", pct: 95 },
+        { name: "Python", pct: 70 }
+      ]
+    },
+    frontend: {
+      label: "// frontend",
+      color: "green",
+      items: [
+        { name: "React / Next", pct: 90 },
+        { name: "CSS / Tailwind", pct: 85 }
+      ]
+    },
+    infrastructure: {
+      label: "// infrastructure",
+      color: "orange",
+      items: [
+        { name: "Node.js", pct: 88 },
+        { name: "PostgreSQL", pct: 75 },
+        { name: "Docker", pct: 70 }
+      ]
+    }
+  },
+
+  // Articles (most recent first)
+  articles: [
+    {
+      date: "Jan 2025",
+      title: "Building Scalable APIs with TypeScript",
+      excerpt: "A practical guide to designing and implementing type-safe APIs that scale.",
+      tags: [
+        { text: "TypeScript", color: "c" },
+        { text: "API Design", color: "g" }
+      ],
+      url: "#"
+    },
+    {
+      date: "Nov 2024",
+      title: "Modern State Management in React",
+      excerpt: "Comparing different state management approaches and when to use each.",
+      tags: [
+        { text: "React", color: "c" },
+        { text: "Frontend", color: "p" }
+      ],
+      url: "#"
+    }
+  ],
+
+  // Projects
+  projects: [
+    {
+      icon: "//",
+      name: "Project One",
+      desc: "A description of your first project. What it does and why it matters.",
+      tech: ["TypeScript", "React", "Node.js"],
+      accent: "cyan",
+      links: [
+        { text: "GitHub", url: "#" },
+        { text: "Demo", url: "#" }
+      ]
+    },
+    {
+      icon: "{}",
+      name: "Project Two",
+      desc: "Another project description. Highlight the key features and technologies used.",
+      tech: ["Python", "FastAPI", "PostgreSQL"],
+      accent: "green",
+      links: [
+        { text: "GitHub", url: "#" }
+      ]
+    }
+  ],
+
+  // Social connections
+  connections: [
+    {
+      name: "GitHub",
+      handle: "@username",
+      url: "https://github.com",
+      icon: "git",
+      color: "--bright",
+      badge: "ACTIVE",
+      badgeBg: "rgba(200,207,232,0.08)",
+      badgeColor: "var(--bright)"
+    },
+    {
+      name: "LinkedIn",
+      handle: "/in/username",
+      url: "https://linkedin.com",
+      icon: "in",
+      color: "#0a66c2",
+      badge: "NETWORK",
+      badgeBg: "rgba(10,102,194,0.15)",
+      badgeColor: "#4da3ff"
+    },
+    {
+      name: "Twitter / X",
+      handle: "@username",
+      url: "https://twitter.com",
+      icon: "x",
+      color: "--cyan",
+      badge: "SOCIAL",
+      badgeBg: "rgba(77,217,240,0.1)",
+      badgeColor: "var(--cyan)"
+    },
+    {
+      name: "Blog",
+      handle: "blog.example.com",
+      url: "#",
+      icon: "blog",
+      color: "--orange",
+      badge: "BLOG",
+      badgeBg: "rgba(255,159,74,0.1)",
+      badgeColor: "var(--orange)"
+    },
+    {
+      name: "Email",
+      handle: "you@example.com",
+      url: "mailto:you@example.com",
+      icon: "mail",
+      color: "--green",
+      badge: "DIRECT",
+      badgeBg: "rgba(61,255,160,0.1)",
+      badgeColor: "var(--green)"
+    },
+    {
+      name: "Portfolio",
+      handle: "example.com",
+      url: "#",
+      icon: "web",
+      color: "--purple",
+      badge: "WEBSITE",
+      badgeBg: "rgba(167,139,250,0.1)",
+      badgeColor: "var(--purple)"
+    }
+  ],
+
+  // Footer
+  footerCta: "open to freelance, full-time, and interesting conversations",
+  copyrightYear: new Date().getFullYear(),
+  lastUpdated: "Feb 2025"
+};
+
+// Icon mapping for connections
+const ICONS = {
+  git: "",
+  in: "",
+  x: "",
+  blog: "",
+  mail: "",
+  web: ""
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RENDER FUNCTIONS - Populate HTML from CONFIG
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function render() {
+  // Update page title
+  document.title = `~/${CONFIG.handle} — resume`;
+
+  // Nav
+  document.getElementById('navLogo').innerHTML = `<span>~/</span>${CONFIG.handle}.dev`;
+  document.getElementById('navStatus').textContent = CONFIG.status;
+
+  // Hero
+  document.getElementById('heroName').innerHTML = `${CONFIG.name.first}<br><em>${CONFIG.name.last}.</em>`;
+  document.getElementById('heroTagline').textContent = CONFIG.tagline;
+
+  const heroTags = document.getElementById('heroTags');
+  heroTags.innerHTML = CONFIG.heroTags.map(t => `<span class="tag">${t}</span>`).join('');
+
+  // Terminal
+  document.getElementById('termTitle').textContent = `${CONFIG.handle}@dev — ~/resume — zsh`;
+  document.getElementById('termBody').innerHTML = `
+    <div><span class="t-prompt">❯</span> <span class="t-cmd">cat profile.json</span></div>
+    <div class="t-comment">// loading...</div>
+    <br>
+    <div><span class="t-dim">{</span></div>
+    <div>&nbsp;&nbsp;<span class="t-key">"name"</span>: <span class="t-str">"${CONFIG.name.first} ${CONFIG.name.last}"</span>,</div>
+    <div>&nbsp;&nbsp;<span class="t-key">"role"</span>: <span class="t-str">"${CONFIG.title}"</span>,</div>
+    <div>&nbsp;&nbsp;<span class="t-key">"yoe"</span>: <span class="t-val">${CONFIG.yoe}</span>,</div>
+    <div>&nbsp;&nbsp;<span class="t-key">"location"</span>: <span class="t-str">"${CONFIG.location}"</span>,</div>
+    <div>&nbsp;&nbsp;<span class="t-key">"stack"</span>: [</div>
+    ${CONFIG.stack.map((s, i) => `<div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"${s}"</span>${i < CONFIG.stack.length - 1 ? ',' : ''}</div>`).join('')}
+    <div>&nbsp;&nbsp;],</div>
+    <div>&nbsp;&nbsp;<span class="t-key">"status"</span>: <span class="t-str" style="color:var(--green)">"${CONFIG.statusMessage}"</span></div>
+    <div><span class="t-dim">}</span></div>
+    <br>
+    <div><span class="t-prompt">❯</span> <span class="t-cursor"></span></div>
+  `;
+
+  // About
+  document.getElementById('aboutText').innerHTML = CONFIG.aboutParagraphs.map(p => `<p>${p}</p>`).join('');
+
+  // Skills
+  const skillsGrid = document.getElementById('skillsGrid');
+  let skillsHtml = '';
+  for (const [key, group] of Object.entries(CONFIG.skills)) {
+    skillsHtml += `
+      <div>
+        <div class="skill-group-label">${group.label}</div>
+        <div class="skill-bars">
+          ${group.items.map(s => `
+            <div class="skill-row">
+              <span class="skill-name">${s.name}</span>
+              <div class="skill-track">
+                <div class="skill-fill ${group.color}" style="width:${s.pct}%"></div>
+              </div>
+              <span class="skill-pct">${s.pct}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  skillsGrid.innerHTML = skillsHtml;
+
+  // Articles
+  const articlesList = document.getElementById('articlesList');
+  articlesList.innerHTML = CONFIG.articles.map((a, i) => `
+    <div class="article-item fade-up" style="transition-delay:${i * 0.05}s">
+      <div class="article-date">${a.date}</div>
+      <div>
+        <div class="article-title">${a.title}</div>
+        <div class="article-excerpt">${a.excerpt}</div>
+        <div class="article-tags">
+          ${a.tags.map(t => `<span class="atag atag-${t.color}">${t.text}</span>`).join('')}
+        </div>
+      </div>
+      <div class="article-arrow">→</div>
+    </div>
+  `).join('');
+
+  // Projects
+  const projectsGrid = document.getElementById('projectsGrid');
+  projectsGrid.innerHTML = CONFIG.projects.map(p => `
+    <div class="project-card" style="--accent:var(--${p.accent})">
+      <span class="project-icon">${p.icon}</span>
+      <div class="project-name">${p.name}</div>
+      <div class="project-desc">${p.desc}</div>
+      <div class="project-tech">
+        ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
+      </div>
+      <div class="project-links">
+        ${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // Connections center node
+  document.getElementById('centerName').textContent = `${CONFIG.name.first} ${CONFIG.name.last}`;
+  document.getElementById('centerEmail').textContent = CONFIG.email;
+
+  // Connection nodes
+  const nodesGrid = document.getElementById('nodesGrid');
+  nodesGrid.innerHTML = CONFIG.connections.map(c => {
+    const colorVal = c.color.startsWith('--') ? `var(${c.color})` : c.color;
+    return `
+      <a href="${c.url}" target="_blank" class="node-card" style="--node-color:${colorVal}">
+        <span class="node-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
+        <span class="node-icon">${ICONS[c.icon] || '~'}</span>
+        <div class="node-name">${c.name}</div>
+        <div class="node-handle">${c.handle}</div>
+      </a>
+    `;
+  }).join('');
+
+  // Connect CTA
+  document.getElementById('connectCta').innerHTML = `<span style="color:var(--green)">❯</span> ${CONFIG.footerCta}`;
+
+  // Footer
+  document.getElementById('footer').innerHTML = `
+    <div style="color:var(--dim);font-size:11px">
+      <span style="color:var(--cyan)">❯</span> built with HTML, CSS &amp; vanilla JS — no frameworks
+    </div>
+    <div style="font-size:11px;color:var(--dim)">
+      © ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last} — <span style="color:var(--muted)">MIT License</span>
+    </div>
+    <div style="font-size:11px">
+      <span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CURSOR
+// ═══════════════════════════════════════════════════════════════════════════════
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+function setupCursorHovers() {
+  document.querySelectorAll('a, button, .node-card, .article-item, .project-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '44px';
+      ring.style.height = '44px';
+      ring.style.borderColor = 'rgba(77,217,240,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '28px';
+      ring.style.height = '28px';
+      ring.style.borderColor = 'rgba(77,217,240,0.4)';
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SCROLL REVEAL
+// ═══════════════════════════════════════════════════════════════════════════════
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      e.target.querySelectorAll('.skill-fill').forEach(bar => {
+        setTimeout(() => { bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`; }, 200);
+      });
+    }
+  });
+}, { threshold: 0.1 });
+
+function setupObservers() {
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  const aboutObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.skill-fill').forEach((bar, i) => {
+          setTimeout(() => {
+            bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`;
+          }, i * 80 + 200);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const aboutSection = document.getElementById('about');
+  if (aboutSection) aboutObs.observe(aboutSection);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONNECTION SVG LINES
+// ═══════════════════════════════════════════════════════════════════════════════
+function drawConnections() {
+  const svg = document.getElementById('connSvg');
+  const section = document.getElementById('connections');
+  const center = document.getElementById('centerNode');
+  const grid = document.getElementById('nodesGrid');
+
+  if (!svg || !center || !grid) return;
+
+  svg.innerHTML = '';
+  const secRect = section.getBoundingClientRect();
+  const cenRect = center.getBoundingClientRect();
+
+  const cx = cenRect.left + cenRect.width/2 - secRect.left;
+  const cy = cenRect.top + cenRect.height - secRect.top + section.scrollTop;
+
+  const cards = grid.querySelectorAll('.node-card');
+  const colors = ['#c8cfe8','#4da3ff','#4dd9f0','#ff9f4a','#3dffa0','#a78bfa'];
+
+  cards.forEach((card, i) => {
+    const r = card.getBoundingClientRect();
+    const tx = r.left + r.width/2 - secRect.left;
+    const ty = r.top + r.height/2 - secRect.top + section.scrollTop;
+
+    const color = colors[i % colors.length];
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const mx2 = (cx + tx)/2;
+    const my2 = cy + (ty-cy)*0.4;
+    const d = `M ${cx} ${cy} Q ${mx2} ${my2} ${tx} ${ty}`;
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '1');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-dasharray', '4 6');
+    path.setAttribute('opacity', '0.3');
+
+    const len = path.getTotalLength ? path.getTotalLength() : 200;
+    path.style.strokeDashoffset = len;
+    path.style.strokeDasharray = `4 6`;
+
+    svg.appendChild(path);
+
+    setTimeout(() => {
+      path.style.transition = `stroke-dashoffset 1.2s ease ${i*0.12}s`;
+      path.style.strokeDashoffset = '0';
+      path.style.opacity = '0.4';
+    }, 500);
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('r', '3');
+    circle.setAttribute('fill', color);
+    circle.style.filter = `drop-shadow(0 0 4px ${color})`;
+
+    let progress = Math.random();
+    function animDot() {
+      progress = (progress + 0.003) % 1;
+      const len2 = path.getTotalLength ? path.getTotalLength() : 200;
+      const pt = path.getPointAtLength(progress * len2);
+      circle.setAttribute('cx', pt.x);
+      circle.setAttribute('cy', pt.y);
+      circle.setAttribute('opacity', Math.sin(progress * Math.PI) * 0.9);
+      requestAnimationFrame(animDot);
+    }
+    svg.appendChild(circle);
+    setTimeout(() => animDot(), 1200 + i * 150);
+  });
+}
+
+const connObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) setTimeout(drawConnections, 100); });
+}, { threshold: 0.2 });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PARALLAX & NAV HIGHLIGHT
+// ═══════════════════════════════════════════════════════════════════════════════
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  const hero = document.getElementById('hero');
+  if (hero) hero.style.transform = `translateY(${y * 0.04}px)`;
+});
+
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(sec => {
+    if (window.scrollY >= sec.offsetTop - 200) current = sec.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#'+current ? 'var(--cyan)' : '';
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  render();
+  setupCursorHovers();
+  setupObservers();
+
+  // Hero fade in immediately
+  document.querySelectorAll('#hero .fade-up').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), i * 200 + 100);
+  });
+
+  // Connection lines
+  const connSec = document.getElementById('connections');
+  if (connSec) connObs.observe(connSec);
+
+  setTimeout(drawConnections, 300);
+});
+
+window.addEventListener('resize', drawConnections);
+</script>
+</body>
+</html>

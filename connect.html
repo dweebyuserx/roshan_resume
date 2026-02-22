@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>~/user — connect</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0a0b0d;
+    --bg2: #0f1117;
+    --bg3: #141720;
+    --border: #1e2230;
+    --dim: #3a4055;
+    --muted: #5a6380;
+    --text: #c8cfe8;
+    --bright: #e8eeff;
+    --cyan: #4dd9f0;
+    --green: #3dffa0;
+    --orange: #ff9f4a;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px var(--cyan);
+  }
+  .cursor-ring {
+    width: 28px; height: 28px;
+    border: 1px solid rgba(77,217,240,0.4);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(10,11,13,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.2s;
+    cursor: none;
+  }
+  .nav-links a::before {
+    content: '> ';
+    color: var(--green);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { color: var(--bright); }
+  .nav-links a:hover::before { opacity: 1; }
+  .nav-links a.active { color: var(--cyan); }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  main {
+    padding: 120px 60px 80px;
+    max-width: 1000px;
+    margin: 0 auto;
+    min-height: calc(100vh - 100px);
+  }
+
+  .page-header {
+    margin-bottom: 60px;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    color: var(--bright);
+    margin-bottom: 16px;
+  }
+  .page-header h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-header .breadcrumb {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+  .page-header .breadcrumb a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  .page-header .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .center-card {
+    background: var(--bg2);
+    border: 1px solid var(--cyan);
+    border-radius: 6px;
+    padding: 32px 48px;
+    text-align: center;
+    margin: 48px auto;
+    max-width: 400px;
+    box-shadow: 0 0 60px rgba(77,217,240,0.1);
+  }
+
+  .center-label {
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+
+  .center-name {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--bright);
+    margin-bottom: 8px;
+  }
+
+  .center-email {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .center-email a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+  .center-email a:hover {
+    text-decoration: underline;
+  }
+
+  .connection-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .connections-wrapper {
+    position: relative;
+  }
+
+  .nodes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+
+  .node-card {
+    position: relative;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    text-align: center;
+    cursor: none;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: block;
+  }
+  .node-card:hover {
+    border-color: var(--node-color, var(--cyan));
+    box-shadow: 0 0 30px rgba(77,217,240,0.1);
+    transform: translateY(-4px);
+  }
+
+  .node-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .node-name {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 6px;
+  }
+
+  .node-handle {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .node-badge {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  .node-desc {
+    font-size: 11px;
+    color: var(--dim);
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  .cta-section {
+    text-align: center;
+    margin-top: 80px;
+    padding: 48px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--bright);
+    margin-bottom: 16px;
+  }
+
+  .cta-text {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .btn {
+    padding: 12px 28px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    border: none;
+    border-radius: 3px;
+    cursor: none;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: #7be8fa; transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  .availability-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    main { padding: 100px 24px 60px; }
+    .nodes-grid { grid-template-columns: 1fr 1fr; }
+    .cta-buttons { flex-direction: column; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+
+  @media (max-width: 600px) {
+    .nodes-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>~/</span><span id="navHandle"></span>.dev</a>
+  <ul class="nav-links">
+    <li><a href="index.html">home</a></li>
+    <li><a href="about.html">about</a></li>
+    <li><a href="articles.html">articles</a></li>
+    <li><a href="projects.html">projects</a></li>
+    <li><a href="connect.html" class="active">connect</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    <span id="navStatus"></span>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header fade-up">
+    <div class="breadcrumb"><a href="index.html">~</a> / connect</div>
+    <h1>Let's <em>Connect.</em></h1>
+    <p class="subtitle">I'm always open to interesting conversations and new opportunities.</p>
+  </div>
+
+  <div class="connections-wrapper">
+    <svg class="connection-svg" id="connSvg"></svg>
+
+    <div class="center-card fade-up" style="transition-delay:0.1s" id="centerCard">
+      <div class="center-label">YOU ARE HERE</div>
+      <div class="center-name" id="centerName"></div>
+      <div class="center-email" id="centerEmail"></div>
+    </div>
+
+    <div class="nodes-grid fade-up" style="transition-delay:0.2s" id="nodesGrid"></div>
+  </div>
+
+  <div class="cta-section fade-up" style="transition-delay:0.3s">
+    <div class="cta-title">Work Together?</div>
+    <div class="cta-text" id="ctaText"></div>
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-primary" id="emailBtn">Send an Email</a>
+      <a href="#" class="btn btn-ghost" id="linkedinBtn">Connect on LinkedIn</a>
+    </div>
+    <div class="availability">
+      <span class="availability-dot"></span>
+      <span id="availabilityText"></span>
+    </div>
+  </div>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+const CONFIG = {
+  name: { first: "Your", last: "Name" },
+  handle: "user",
+  email: "you@example.com",
+  status: "available for work",
+
+  ctaText: "I'm currently open to freelance projects, full-time positions, and interesting collaborations.",
+  availabilityText: "Currently accepting new opportunities",
+
+  connections: [
+    {
+      name: "GitHub",
+      handle: "@username",
+      url: "https://github.com",
+      icon: "⌥",
+      color: "--bright",
+      badge: "ACTIVE",
+      badgeBg: "rgba(200,207,232,0.08)",
+      badgeColor: "var(--bright)",
+      desc: "Open source projects and contributions"
+    },
+    {
+      name: "LinkedIn",
+      handle: "/in/username",
+      url: "https://linkedin.com",
+      icon: "◈",
+      color: "#0a66c2",
+      badge: "NETWORK",
+      badgeBg: "rgba(10,102,194,0.15)",
+      badgeColor: "#4da3ff",
+      desc: "Professional network and experience"
+    },
+    {
+      name: "Twitter / X",
+      handle: "@username",
+      url: "https://twitter.com",
+      icon: "✦",
+      color: "--cyan",
+      badge: "SOCIAL",
+      badgeBg: "rgba(77,217,240,0.1)",
+      badgeColor: "var(--cyan)",
+      desc: "Thoughts and discussions"
+    },
+    {
+      name: "Email",
+      handle: "you@example.com",
+      url: "mailto:you@example.com",
+      icon: "◉",
+      color: "--green",
+      badge: "DIRECT",
+      badgeBg: "rgba(61,255,160,0.1)",
+      badgeColor: "var(--green)",
+      desc: "Best way to reach me directly"
+    },
+    {
+      name: "Blog",
+      handle: "blog.example.com",
+      url: "#",
+      icon: "▸",
+      color: "--orange",
+      badge: "WRITING",
+      badgeBg: "rgba(255,159,74,0.1)",
+      badgeColor: "var(--orange)",
+      desc: "Technical articles and tutorials"
+    },
+    {
+      name: "Resume",
+      handle: "Download PDF",
+      url: "#",
+      icon: "◆",
+      color: "--purple",
+      badge: "DOCUMENT",
+      badgeBg: "rgba(167,139,250,0.1)",
+      badgeColor: "var(--purple)",
+      desc: "Full resume and work history"
+    }
+  ],
+
+  linkedinUrl: "https://linkedin.com",
+  copyrightYear: new Date().getFullYear(),
+  lastUpdated: "Feb 2025"
+};
+
+function render() {
+  document.title = `~/${CONFIG.handle} — connect`;
+  document.getElementById('navHandle').textContent = CONFIG.handle;
+  document.getElementById('navStatus').textContent = CONFIG.status;
+
+  document.getElementById('centerName').textContent = `${CONFIG.name.first} ${CONFIG.name.last}`;
+  document.getElementById('centerEmail').innerHTML = `<a href="mailto:${CONFIG.email}">${CONFIG.email}</a>`;
+
+  document.getElementById('nodesGrid').innerHTML = CONFIG.connections.map(c => {
+    const colorVal = c.color.startsWith('--') ? `var(${c.color})` : c.color;
+    return `
+      <a href="${c.url}" target="_blank" class="node-card" style="--node-color:${colorVal}">
+        <span class="node-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
+        <span class="node-icon">${c.icon}</span>
+        <div class="node-name">${c.name}</div>
+        <div class="node-handle">${c.handle}</div>
+        <div class="node-desc">${c.desc}</div>
+      </a>
+    `;
+  }).join('');
+
+  document.getElementById('ctaText').textContent = CONFIG.ctaText;
+  document.getElementById('emailBtn').href = `mailto:${CONFIG.email}`;
+  document.getElementById('linkedinBtn').href = CONFIG.linkedinUrl;
+  document.getElementById('availabilityText').textContent = CONFIG.availabilityText;
+
+  document.getElementById('footer').innerHTML = `
+    <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
+    <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
+    <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
+  `;
+}
+
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+function setupHovers() {
+  document.querySelectorAll('a, button, .node-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '44px';
+      ring.style.height = '44px';
+      ring.style.borderColor = 'rgba(77,217,240,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '28px';
+      ring.style.height = '28px';
+      ring.style.borderColor = 'rgba(77,217,240,0.4)';
+    });
+  });
+}
+
+// SVG Connection lines
+function drawConnections() {
+  const svg = document.getElementById('connSvg');
+  const center = document.getElementById('centerCard');
+  const grid = document.getElementById('nodesGrid');
+
+  if (!svg || !center || !grid) return;
+
+  const wrapper = document.querySelector('.connections-wrapper');
+  const wrapperRect = wrapper.getBoundingClientRect();
+
+  svg.innerHTML = '';
+  svg.style.position = 'absolute';
+  svg.style.top = '0';
+  svg.style.left = '0';
+  svg.style.width = '100%';
+  svg.style.height = wrapper.offsetHeight + 'px';
+
+  const cenRect = center.getBoundingClientRect();
+  const cx = cenRect.left + cenRect.width/2 - wrapperRect.left;
+  const cy = cenRect.bottom - wrapperRect.top;
+
+  const cards = grid.querySelectorAll('.node-card');
+  const colors = ['#c8cfe8','#4da3ff','#4dd9f0','#3dffa0','#ff9f4a','#a78bfa'];
+
+  cards.forEach((card, i) => {
+    const r = card.getBoundingClientRect();
+    const tx = r.left + r.width/2 - wrapperRect.left;
+    const ty = r.top - wrapperRect.top;
+
+    const color = colors[i % colors.length];
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    const mx2 = (cx + tx)/2;
+    const my2 = cy + (ty-cy)*0.4;
+    const d = `M ${cx} ${cy} Q ${mx2} ${my2} ${tx} ${ty}`;
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', color);
+    path.setAttribute('stroke-width', '1');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-dasharray', '4 6');
+    path.setAttribute('opacity', '0.35');
+
+    svg.appendChild(path);
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('r', '3');
+    circle.setAttribute('fill', color);
+    circle.style.filter = `drop-shadow(0 0 4px ${color})`;
+
+    let progress = Math.random();
+    function animDot() {
+      progress = (progress + 0.003) % 1;
+      const len = path.getTotalLength ? path.getTotalLength() : 200;
+      const pt = path.getPointAtLength(progress * len);
+      circle.setAttribute('cx', pt.x);
+      circle.setAttribute('cy', pt.y);
+      circle.setAttribute('opacity', Math.sin(progress * Math.PI) * 0.9);
+      requestAnimationFrame(animDot);
+    }
+    svg.appendChild(circle);
+    setTimeout(() => animDot(), 500 + i * 100);
+  });
+}
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      if (e.target.classList.contains('connections-wrapper') || e.target.closest('.connections-wrapper')) {
+        setTimeout(drawConnections, 100);
+      }
+    }
+  });
+}, { threshold: 0.1 });
+
+window.addEventListener('load', () => {
+  render();
+  setupHovers();
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  setTimeout(drawConnections, 500);
+});
+
+window.addEventListener('resize', drawConnections);
+</script>
+</body>
+</html>

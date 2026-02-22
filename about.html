@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>~/user — about</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
+
+  :root {
+    --bg: #0a0b0d;
+    --bg2: #0f1117;
+    --bg3: #141720;
+    --border: #1e2230;
+    --dim: #3a4055;
+    --muted: #5a6380;
+    --text: #c8cfe8;
+    --bright: #e8eeff;
+    --cyan: #4dd9f0;
+    --green: #3dffa0;
+    --orange: #ff9f4a;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 12px var(--cyan);
+  }
+  .cursor-ring {
+    width: 28px; height: 28px;
+    border: 1px solid rgba(77,217,240,0.4);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(10,11,13,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.2s;
+    cursor: none;
+  }
+  .nav-links a::before {
+    content: '> ';
+    color: var(--green);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { color: var(--bright); }
+  .nav-links a:hover::before { opacity: 1; }
+  .nav-links a.active { color: var(--cyan); }
+
+  .nav-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  main {
+    padding: 120px 60px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    margin-bottom: 60px;
+  }
+
+  .page-header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    color: var(--bright);
+    margin-bottom: 16px;
+  }
+  .page-header h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-header .breadcrumb {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+  .page-header .breadcrumb a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::before { content: attr(data-n); color: var(--cyan); }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 200px;
+  }
+
+  .about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+  }
+
+  .bio-section p {
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  .bio-section p strong { color: var(--cyan); font-weight: 400; }
+
+  .experience-section {
+    margin-top: 60px;
+  }
+
+  .experience-item {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .experience-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .exp-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--bright);
+  }
+
+  .exp-company {
+    font-size: 13px;
+    color: var(--cyan);
+    margin-top: 4px;
+  }
+
+  .exp-date {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .exp-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .skills-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 32px;
+  }
+
+  .skill-group {
+    margin-bottom: 32px;
+  }
+  .skill-group:last-child { margin-bottom: 0; }
+
+  .skill-group-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .skill-bars { display: grid; gap: 12px; }
+
+  .skill-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 30px;
+    align-items: center;
+    gap: 16px;
+  }
+  .skill-name { font-size: 11px; color: var(--text); }
+  .skill-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .skill-fill {
+    height: 100%;
+    border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 1s cubic-bezier(0.4,0,0.2,1);
+  }
+  .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+  .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+  .skill-fill.orange { background: linear-gradient(90deg, var(--orange), var(--pink)); }
+  .skill-pct { font-size: 10px; color: var(--muted); text-align: right; }
+
+  .education-section {
+    margin-top: 48px;
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .edu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .edu-degree {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--bright);
+  }
+
+  .edu-school {
+    font-size: 12px;
+    color: var(--cyan);
+    margin-top: 4px;
+  }
+
+  .edu-year {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    main { padding: 100px 24px 60px; }
+    .about-content { grid-template-columns: 1fr; gap: 48px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span>~/</span><span id="navHandle"></span>.dev</a>
+  <ul class="nav-links">
+    <li><a href="index.html">home</a></li>
+    <li><a href="about.html" class="active">about</a></li>
+    <li><a href="articles.html">articles</a></li>
+    <li><a href="projects.html">projects</a></li>
+    <li><a href="connect.html">connect</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    <span id="navStatus"></span>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header fade-up">
+    <div class="breadcrumb"><a href="index.html">~</a> / about</div>
+    <h1>About <em>Me.</em></h1>
+  </div>
+
+  <div class="about-content">
+    <div class="bio-section fade-up" style="transition-delay:0.1s">
+      <div class="section-label" data-n="01">background</div>
+      <div id="bioContent"></div>
+
+      <div class="experience-section">
+        <div class="section-label" data-n="02">experience</div>
+        <div id="experienceList"></div>
+      </div>
+    </div>
+
+    <div class="skills-column fade-up" style="transition-delay:0.2s">
+      <div class="section-label" data-n="03">skills</div>
+      <div class="skills-section" id="skillsSection"></div>
+
+      <div class="education-section">
+        <div class="section-label" data-n="04" style="margin-bottom:16px">education</div>
+        <div id="educationContent"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+const CONFIG = {
+  name: { first: "Your", last: "Name" },
+  handle: "user",
+  status: "available for work",
+
+  aboutParagraphs: [
+    "I'm a <strong>full-stack engineer</strong> passionate about building scalable systems and developer tools.",
+    "I specialize in <strong>modern web technologies</strong> and enjoy solving complex problems with elegant solutions.",
+    "Outside of work I contribute to <strong>open source</strong> and write about software development.",
+    "I believe the best code is the code you don't have to write."
+  ],
+
+  experience: [
+    {
+      title: "Senior Software Engineer",
+      company: "Company Name",
+      date: "2022 — Present",
+      description: "Leading development of core platform features and mentoring junior engineers."
+    },
+    {
+      title: "Software Engineer",
+      company: "Previous Company",
+      date: "2020 — 2022",
+      description: "Built and maintained customer-facing applications using React and Node.js."
+    },
+    {
+      title: "Junior Developer",
+      company: "First Company",
+      date: "2018 — 2020",
+      description: "Started career building internal tools and learning best practices."
+    }
+  ],
+
+  skills: {
+    languages: {
+      label: "// languages",
+      color: "cyan",
+      items: [
+        { name: "TypeScript", pct: 90 },
+        { name: "JavaScript", pct: 95 },
+        { name: "Python", pct: 70 }
+      ]
+    },
+    frontend: {
+      label: "// frontend",
+      color: "green",
+      items: [
+        { name: "React / Next", pct: 90 },
+        { name: "CSS / Tailwind", pct: 85 }
+      ]
+    },
+    infrastructure: {
+      label: "// infrastructure",
+      color: "orange",
+      items: [
+        { name: "Node.js", pct: 88 },
+        { name: "PostgreSQL", pct: 75 },
+        { name: "Docker", pct: 70 }
+      ]
+    }
+  },
+
+  education: {
+    degree: "B.S. Computer Science",
+    school: "University Name",
+    year: "2018"
+  },
+
+  copyrightYear: new Date().getFullYear(),
+  lastUpdated: "Feb 2025"
+};
+
+function render() {
+  document.title = `~/${CONFIG.handle} — about`;
+  document.getElementById('navHandle').textContent = CONFIG.handle;
+  document.getElementById('navStatus').textContent = CONFIG.status;
+
+  document.getElementById('bioContent').innerHTML = CONFIG.aboutParagraphs.map(p => `<p>${p}</p>`).join('');
+
+  document.getElementById('experienceList').innerHTML = CONFIG.experience.map(e => `
+    <div class="experience-item">
+      <div class="exp-header">
+        <div>
+          <div class="exp-title">${e.title}</div>
+          <div class="exp-company">${e.company}</div>
+        </div>
+        <div class="exp-date">${e.date}</div>
+      </div>
+      <div class="exp-desc">${e.description}</div>
+    </div>
+  `).join('');
+
+  let skillsHtml = '';
+  for (const [key, group] of Object.entries(CONFIG.skills)) {
+    skillsHtml += `
+      <div class="skill-group">
+        <div class="skill-group-label">${group.label}</div>
+        <div class="skill-bars">
+          ${group.items.map(s => `
+            <div class="skill-row">
+              <span class="skill-name">${s.name}</span>
+              <div class="skill-track">
+                <div class="skill-fill ${group.color}" style="width:${s.pct}%"></div>
+              </div>
+              <span class="skill-pct">${s.pct}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  document.getElementById('skillsSection').innerHTML = skillsHtml;
+
+  document.getElementById('educationContent').innerHTML = `
+    <div class="edu-item">
+      <div>
+        <div class="edu-degree">${CONFIG.education.degree}</div>
+        <div class="edu-school">${CONFIG.education.school}</div>
+      </div>
+      <div class="edu-year">${CONFIG.education.year}</div>
+    </div>
+  `;
+
+  document.getElementById('footer').innerHTML = `
+    <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
+    <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
+    <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
+  `;
+}
+
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.width = '44px';
+    ring.style.height = '44px';
+    ring.style.borderColor = 'rgba(77,217,240,0.7)';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.width = '28px';
+    ring.style.height = '28px';
+    ring.style.borderColor = 'rgba(77,217,240,0.4)';
+  });
+});
+
+// Fade in
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      e.target.querySelectorAll('.skill-fill').forEach((bar, i) => {
+        setTimeout(() => {
+          bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`;
+        }, i * 80 + 200);
+      });
+    }
+  });
+}, { threshold: 0.1 });
+
+window.addEventListener('load', () => {
+  render();
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+});
+</script>
+</body>
+</html>
