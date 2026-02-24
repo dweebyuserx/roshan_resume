@@ -375,6 +375,44 @@
     gap: 16px;
   }
 
+  .builds-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: rgba(77,217,240,0.07);
+    border: 1px solid rgba(77,217,240,0.2);
+    color: var(--cyan);
+    margin-bottom: 10px;
+  }
+  .builds-badge span { color: var(--bright); font-weight: 600; }
+  .variants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 8px 0 12px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 4px;
+    border-left: 2px solid var(--border);
+  }
+  .variant-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 10px;
+  }
+  .variant-label {
+    color: var(--dim);
+    min-width: 14px;
+    text-align: right;
+  }
+  .variant-text { color: var(--muted); line-height: 1.5; }
+  .variant-tech { color: var(--dim); font-size: 9px; }
+
   footer {
     border-top: 1px solid var(--border);
     padding: 32px 60px;
@@ -456,17 +494,17 @@ const CONFIG = {
   status: "available for work",
 
   stats: {
-    projects: 15,
-    contributions: "100+",
-    stars: "AI Hackathon Winner"
+    projects: "15+",
+    deployments: "40+",
+    award: "AI Hackathon Winner"
   },
 
   featuredProject: {
     icon: "🤖",
-    name: "Agentic AI Platform",
-    tagline: "Multi-agent orchestration for enterprise AI solutions",
-    desc: "Production-grade agentic system built for State Government organizations at Deloitte. Features specialized prompt routers, chain-of-thought reasoning, tool integrations, and embedded knowledge indexing. Winner of AI Hackathon for PR Agentic solutions.",
-    tech: ["LangChain", "FastAPI", "Pinecone", "GCP Vertex AI", "Docker"],
+    name: "Agentic PR Platform",
+    tagline: "AI Hackathon Winner · Deloitte USI, 2025",
+    desc: "Production multi-agent orchestration platform built for State Government PR workflows. Specialized prompt routers, chain-of-thought reasoning, tool integrations via MCP, and Firebase-backed state management. Powered by Gemma/Claude on GCP with ADK orchestration.",
+    tech: ["ADK", "Gemma / Claude", "FastAPI", "GCP", "Firebase", "MCP"],
     links: [
       { text: "Contact for Demo", url: "mailto:abraham.roshan.a@gmail.com" }
     ]
@@ -476,62 +514,79 @@ const CONFIG = {
     {
       icon: "🏥",
       name: "Medical AI Infrastructure",
-      desc: "Document OCR engine with NER parser for complex medical documents. FHIR translation and LLM-powered knowledge base for healthcare systems.",
-      tech: ["Document AI", "FHIR", "NER", "GCP"],
+      desc: "Document OCR engine with NER parser for medical documents. FHIR translation layer, LLM-powered knowledge base. EPIC and Cerner distributor integration. ABHA-compliant end-to-end OCR→NER→FHIR pipeline.",
+      tech: ["Document AI", "FHIR", "NER", "GCP", "ML Pipeline"],
       accent: "green",
-      links: [
-        { text: "Case Study", url: "#" }
-      ]
+      links: []
     },
     {
       icon: "⚡",
       name: "Custom LLM Foundry",
-      desc: "End-to-end LLM training pipeline with custom data collection, instruction tuning for LlaMA2/Mistral/CodeLlama, and registry management.",
-      tech: ["vLLM", "W&B", "Docker", "RunPod"],
+      desc: "End-to-end fine-tuning pipeline with injection-based dataset generation, instruction tuning, HuggingFace transformers for eval/benchmarking, and model registry. Optimized for low-VRAM deployment via unsloth.",
+      tech: ["Gemma / Qwen2.5", "vLLM / unsloth", "W&B / HF", "Docker / RunPod"],
       accent: "cyan",
-      links: [
-        { text: "GitHub", url: "#" }
-      ]
+      links: []
     },
     {
       icon: "🔗",
-      name: "Advanced RAG System",
-      desc: "Hybrid search with re-ranking, knowledge graph integration, and embedded routing for personalized coding and research chains.",
-      tech: ["LangChain", "FAISS", "Pinecone", "Weaviate"],
+      name: "RAG Systems",
+      desc: "Built across multiple scales and use cases — from enterprise multi-agent retrieval to lightweight hybrid search pipelines.",
+      tech: ["Weaviate", "Milvus", "Pinecone", "Redis", "ADK", "RAGAS"],
       accent: "purple",
-      links: [
-        { text: "Demo", url: "#" }
-      ]
-    },
-    {
-      icon: "🎨",
-      name: "Stable Diffusion Pipeline",
-      desc: "Fine-tuned SD-XL 2.0 with ControlNet v1.1 for custom artistic styles. QR code generation and text-to-image pipelines.",
-      tech: ["SD-XL", "ControlNet", "CUDA", "HuggingFace"],
-      accent: "pink",
-      links: [
-        { text: "HuggingFace", url: "#" }
-      ]
+      builds: 4,
+      variants: [
+        { label: "v1", text: "Hybrid search + re-ranking with Pinecone", tech: "LangChain · Pinecone · FastAPI" },
+        { label: "v2", text: "Multi-agent router with embedded knowledge indexing + prompt caching", tech: "ADK · Milvus · Redis" },
+        { label: "v3", text: "Specialised chunking strategy + eval testing with RAGAS", tech: "LlamaIndex · RAGAS · Weaviate" },
+        { label: "v4", text: "Agentic RAG with tool use for Govt document retrieval", tech: "ADK · Vertex AI · GCP" }
+      ],
+      links: []
     },
     {
       icon: "🔄",
       name: "MLOps Engine",
-      desc: "Dynamic model deployment with Terraform, Docker Helm. Serverless and edge deployment options with GPU/TPU segmentation.",
-      tech: ["MLflow", "Terraform", "GKE", "SageMaker"],
+      desc: "Dynamic model trainer and evaluator using BigQuery. Scheduled model compare-and-retrain pipeline for classification and regression models with automatic registry promotion.",
+      tech: ["BigQuery", "Model Registry", "TFX", "GCP Scheduler"],
       accent: "orange",
-      links: [
-        { text: "Docs", url: "#" }
-      ]
+      links: []
+    },
+    {
+      icon: "🐄",
+      name: "Disease Detection in Cattle",
+      desc: "Schedule-driven cattle monitoring via CCTV. Frames churned through TFX serving endpoints, classifying against a seasonal disease model. On positive detection, ear tag OCR'd and alert dispatched to rancher.",
+      tech: ["TFX", "Serverless", "Zapier", "OCR", "Model Registry"],
+      accent: "yellow",
+      links: []
+    },
+    {
+      icon: "🌿",
+      name: "IoT Garden",
+      desc: "Plant-trained YOLO model regulating life support systems on a Raspberry Pi. Real-time sensor data streamed over WiFi to a mobile app. Edge inference at sub-200ms.",
+      tech: ["Raspberry Pi", "Python", "YOLOv5", "CV"],
+      accent: "green",
+      links: []
+    },
+    {
+      icon: "🎨",
+      name: "Stable Diffusion Pipeline",
+      desc: "Custom fine-tuning pipeline with DreamBooth + LoRA adapters. ControlNet for conditioning, automated dataset curation, and text-to-image/QR generation.",
+      tech: ["Diffusers", "ControlNet", "LoRA", "DreamBooth", "HuggingFace"],
+      accent: "pink",
+      links: []
     },
     {
       icon: "💬",
-      name: "Enterprise ChatBot System",
-      desc: "Complex LLM and model stack wrapped in Rasa. Seq2Seq/LSTM connections with specialized medical prompt routers and FHIR query manager.",
-      tech: ["LangChain", "Rasa", "Sanic", "LSTM"],
+      name: "ChatBot Systems",
+      desc: "Multiple chatbot applications designed and shipped across the stack — from intent-based RASA flows to full LLM-backed RAG bots.",
+      tech: ["LangChain", "RASA", "Dialogflow", "Redis", "FastAPI", "Ollama"],
       accent: "yellow",
-      links: [
-        { text: "Architecture", url: "#" }
-      ]
+      builds: 3,
+      variants: [
+        { label: "v1", text: "RASA intent + entity NLU with custom actions and webhook integrations", tech: "RASA · Sanic · PostgreSQL" },
+        { label: "v2", text: "Dialogflow CX for enterprise multichannel deployment", tech: "Dialogflow · GCP · Firebase" },
+        { label: "v3", text: "LLM-backed RAG chatbot with contextual memory and Ollama local serving", tech: "LangChain · Ollama · Redis · FastAPI" }
+      ],
+      links: []
     }
   ],
 
@@ -550,12 +605,12 @@ function render() {
       <div class="stat-label">Projects</div>
     </div>
     <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.contributions}</div>
-      <div class="stat-label">Contributions</div>
+      <div class="stat-value">${CONFIG.stats.deployments}</div>
+      <div class="stat-label">Deployments</div>
     </div>
     <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.stars}</div>
-      <div class="stat-label">GitHub Stars</div>
+      <div class="stat-value">${CONFIG.stats.award}</div>
+      <div class="stat-label">Recognition</div>
     </div>
   `;
 
@@ -579,19 +634,30 @@ function render() {
     </div>
   `;
 
-  document.getElementById('projectsGrid').innerHTML = CONFIG.projects.map(p => `
-    <div class="project-card" style="--accent:var(--${p.accent})">
-      <span class="project-icon">${p.icon}</span>
-      <div class="project-name">${p.name}</div>
-      <div class="project-desc">${p.desc}</div>
-      <div class="project-tech">
-        ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
-      </div>
-      <div class="project-links">
-        ${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}
-      </div>
-    </div>
-  `).join('');
+  document.getElementById('projectsGrid').innerHTML = CONFIG.projects.map(p => {
+    const buildsBadge = p.builds ? `<div class="builds-badge">× <span>${p.builds}</span> builds &nbsp;·&nbsp; multiple calibrations</div>` : '';
+    const variantsList = p.variants ? `
+      <div class="variants-list">
+        ${p.variants.map(v => `
+          <div class="variant-row">
+            <span class="variant-label">${v.label}</span>
+            <span class="variant-text">${v.text} <span class="variant-tech">· ${v.tech}</span></span>
+          </div>`).join('')}
+      </div>` : '';
+    const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
+    return `
+      <div class="project-card" style="--accent:var(--${p.accent})">
+        <span class="project-icon">${p.icon}</span>
+        <div class="project-name">${p.name}</div>
+        ${buildsBadge}
+        <div class="project-desc">${p.desc}</div>
+        ${variantsList}
+        <div class="project-tech">
+          ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
+        </div>
+        ${links}
+      </div>`;
+  }).join('');
 
   document.getElementById('footer').innerHTML = `
     <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
