@@ -354,6 +354,135 @@
     .about-content { grid-template-columns: 1fr; gap: 48px; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
+
+  /* ─── TIMELINE ──────────────────────────────────────────── */
+  .timeline-section { margin-top: 80px; width: 100%; }
+  .tl-ruler {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    margin-bottom: 8px;
+    padding: 0 2px;
+  }
+  .tl-ruler-year {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+  .tl-ruler-year::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 0;
+    width: 1px; height: 5px;
+    background: var(--border);
+  }
+  .tl-tracks { position: relative; padding: 8px 0; }
+  .tl-track { position: relative; height: 48px; margin-bottom: 6px; }
+  .tl-bar {
+    position: absolute;
+    top: 6px; height: 32px;
+    border-radius: 16px;
+    display: flex; align-items: center;
+    padding: 0 14px;
+    overflow: hidden;
+    cursor: default;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.8s cubic-bezier(0.4,0,0.2,1);
+    white-space: nowrap;
+  }
+  .tl-bar.animate { transform: scaleX(1); }
+  .tl-bar-label { font-size: 11px; font-weight: 600; color: var(--bright); letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; }
+  .tl-bar-role { font-size: 10px; color: rgba(200,207,232,0.55); margin-left: 8px; overflow: hidden; text-overflow: ellipsis; }
+  .tl-pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--bright); margin-left: 8px; flex-shrink: 0;
+    animation: tlpulse 1.5s infinite;
+  }
+  @keyframes tlpulse {
+    0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 5px rgba(255,255,255,0); }
+  }
+  .tl-tooltip {
+    display: none;
+    position: absolute;
+    top: 46px; left: 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 11px; color: var(--text);
+    z-index: 10; min-width: 260px; max-width: 380px;
+    line-height: 1.7;
+    pointer-events: none;
+  }
+  .tl-track:hover .tl-tooltip { display: block; }
+
+  /* ─── CERTIFICATIONS ─────────────────────────────────────── */
+  .cert-section { margin-top: 80px; width: 100%; }
+  .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .cert-card {
+    background: var(--bg2);
+    border: 1px solid var(--border); border-left-width: 3px;
+    border-radius: 6px;
+    padding: 18px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .cert-top { display: flex; align-items: flex-start; gap: 12px; }
+  .cert-badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
+    padding: 3px 7px; border-radius: 4px;
+    background: var(--bg3); border: 1px solid var(--border);
+    flex-shrink: 0; margin-top: 2px;
+  }
+  .cert-info { flex: 1; }
+  .cert-name { font-size: 13px; font-weight: 600; color: var(--bright); line-height: 1.4; }
+  .cert-meta { font-size: 11px; color: var(--cyan); margin-top: 3px; }
+  .cert-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cert-tag {
+    font-size: 9px; letter-spacing: 0.08em;
+    padding: 2px 7px; border-radius: 10px;
+    background: var(--bg3); color: var(--muted); border: 1px solid var(--border);
+  }
+  .cert-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cert-courses-toggle {
+    font-size: 10px; color: var(--muted); cursor: pointer;
+    background: none; border: none; font-family: var(--font-mono); padding: 0;
+    transition: color 0.2s;
+  }
+  .cert-courses-toggle:hover { color: var(--cyan); }
+  .cert-courses-list { display: none; flex-direction: column; gap: 3px; padding: 4px 0 0 10px; font-size: 10px; color: var(--muted); list-style: none; }
+  .cert-courses-list.open { display: flex; }
+  .cert-courses-list li::before { content: '↳ '; color: var(--dim); }
+  .cert-verify { font-size: 10px; color: var(--green); text-decoration: none; letter-spacing: 0.05em; white-space: nowrap; }
+  .cert-verify:hover { text-decoration: underline; }
+
+  /* ─── SKILL TREE ─────────────────────────────────────────── */
+  .tree-section { margin-top: 80px; width: 100%; }
+  .tree-container { width: 100%; max-width: 900px; margin: 0 auto; }
+  #skillTreeSvg { width: 100%; height: auto; display: block; }
+  .tree-line { stroke-linecap: round; fill: none; opacity: 0.35; transition: opacity 0.3s, stroke 0.3s; }
+  .tree-line.hl { opacity: 1; }
+  .tree-line.dim { opacity: 0.06; }
+  .leaf-group { transition: opacity 0.3s; }
+  .leaf-group.dim { opacity: 0.1; }
+  .domain-group { cursor: pointer; }
+  .domain-group.dim circle { opacity: 0.12; }
+  .tree-fallback { display: none; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .tree-branch-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
+  .tree-branch-title { font-size: 12px; font-weight: 600; color: var(--bright); margin-bottom: 10px; }
+  .tree-leaf-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tree-leaf-pill { font-size: 9px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
+
+  @media (max-width: 900px) {
+    .cert-grid { grid-template-columns: 1fr; }
+    .tl-bar-role { display: none; }
+    .timeline-section, .cert-section, .tree-section { margin-top: 60px; }
+  }
+  @media (max-width: 600px) {
+    .tree-container { display: none; }
+    .tree-fallback { display: grid; }
+  }
 </style>
 </head>
 <body>
@@ -403,6 +532,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Timeline -->
+  <section class="timeline-section fade-up" style="transition-delay:0.15s">
+    <div class="section-label" data-n="05">parallel work timeline</div>
+    <div class="tl-ruler" id="tlRuler"></div>
+    <div class="tl-tracks" id="tlTracks"></div>
+  </section>
+
+  <!-- Certifications -->
+  <section class="cert-section fade-up" style="transition-delay:0.15s">
+    <div class="section-label" data-n="06">certifications</div>
+    <div class="cert-grid" id="certCards"></div>
+  </section>
+
+  <!-- Skill Tree -->
+  <section class="tree-section fade-up" style="transition-delay:0.15s">
+    <div class="section-label" data-n="07">ai discipline skill tree</div>
+    <div class="tree-container">
+      <svg id="skillTreeSvg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="tree-fallback" id="treeFallback"></div>
+  </section>
 </main>
 
 <footer id="footer"></footer>
@@ -485,6 +636,34 @@ const CONFIG = {
     year: "2017 — 2021 (Honors)"
   },
 
+  timeline: [
+    { company: "Appsynergies",  role: "AI Team Lead",            start: 2019.0,  end: 2024.0,  color: "--green",  desc: "Planning MLOps, architecting API systems for model inference, mentoring AI engineers." },
+    { company: "MyDiGiRecords", role: "Project Lead AI Eng.",    start: 2022.0,  end: 2023.0,  color: "--orange", desc: "100+ GB Doc AI training, EPIC/Cerner integration, ABHA FHIR OCR-NER pipeline." },
+    { company: "Tasset",        role: "AI Consultant",           start: 2022.5,  end: 2023.0,  color: "--purple", desc: "Large-scale data scraping, text dataset generation, blockchain chatbot provisioning." },
+    { company: "Deloitte USI",  role: "AI Solutions Consultant", start: 2024.0,  end: 2025.25, color: "--cyan",   desc: "Govt Agentic AI, AI Hackathon winner (PR Agentic), enterprise LLM solutions.", current: true }
+  ],
+
+  certifications: [
+    { name: "End-to-End ML with TensorFlow on GCP",  issuer: "Google / Coursera",  badge: "GCP",  date: "Aug 2020", color: "--green",  url: "https://coursera.org/verify/7BM64VLTXCGH", tags: ["TensorFlow","GCP","MLOps"] },
+    { name: "Reliable Google Cloud Infrastructure",   issuer: "Google / Coursera",  badge: "GCP",  date: "Jul 2020", color: "--cyan",   url: "https://coursera.org/verify/JXTJTFR4WC2N", tags: ["GCP","Architecture"] },
+    { name: "Python Developer – MTA",                 issuer: "Microsoft",          badge: "MSFT", date: "Apr 2020", color: "--purple", url: null, tags: ["Python","Microsoft"] },
+    { name: "Artificial Intelligence & Deep Learning",issuer: "Online",             badge: "AI",   date: "Jan 2020", color: "--orange", url: null, tags: ["AI","Deep Learning"] },
+    { name: "NLP Specialization",                     issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--cyan",   url: null, tags: ["NLP","Transformers","Attention"], courses: ["Classification & Vector Spaces","Probabilistic Models","Sequence Models","Attention Models"] },
+    { name: "GANs Specialization",                    issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--pink",   url: null, tags: ["GANs","Generative AI"], courses: ["Build Basic GANs","Build Better GANs","Apply GAN Deployments"] },
+    { name: "TensorFlow Advanced Techniques",         issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--green",  url: null, tags: ["TensorFlow","Custom Models","CV"], courses: ["Custom Models & Layers","Distributed Training","Advanced CV","Generative Deep Learning"] },
+    { name: "AI for Medicine Specialization",         issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--orange", url: null, tags: ["Medical AI","Healthcare"], courses: ["Medical Diagnosis","Medical Prognosis","Medical Treatment"] }
+  ],
+
+  skillTree: [
+    { id: "genai",   label: "Generative AI",   color: "--cyan",   icon: "⬡", leaves: ["LangChain","AutoGen","RAG","vLLM","LlaMA","GPT APIs","LangSmith","Agents"] },
+    { id: "tradml",  label: "Traditional ML",  color: "--green",  icon: "◈", leaves: ["PyTorch","TensorFlow","Scikit-learn","ONNX","TFX","XGBoost"] },
+    { id: "cv",      label: "Computer Vision", color: "--orange", icon: "◉", leaves: ["OpenCV","YOLOv5","Stable Diffusion","ControlNet","SAM","Document AI","DeepLab"] },
+    { id: "nlp",     label: "NLP",             color: "--purple", icon: "✦", leaves: ["HuggingFace","Transformers","NER","BERT","Rasa","Sentence-T"] },
+    { id: "mlops",   label: "MLOps",           color: "--yellow", icon: "⬢", leaves: ["MLflow","W&B","Docker","Kubernetes","Airflow","Terraform","Databricks"] },
+    { id: "cloudai", label: "Cloud AI",        color: "--pink",   icon: "◆", leaves: ["Vertex AI","GCP","SageMaker","VisionAI","DialogFlow","RunPod","HF Spaces"] },
+    { id: "medai",   label: "Medical AI",      color: "--red",    icon: "▸", leaves: ["FHIR","Epic/Cerner","ABHA","OCR-NER","FHIRstore","PyHealth"] }
+  ],
+
   copyrightYear: new Date().getFullYear(),
   lastUpdated: "Feb 2025"
 };
@@ -545,6 +724,223 @@ function render() {
     <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
     <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
   `;
+
+  renderTimeline();
+  renderCerts();
+  renderSkillTree();
+}
+
+// ── Timeline ────────────────────────────────────────────────
+function renderTimeline() {
+  const YEAR_START = 2019, YEAR_END = 2026, SPAN = YEAR_END - YEAR_START;
+  const pct = y => ((y - YEAR_START) / SPAN * 100).toFixed(3);
+
+  // Ruler
+  const ruler = document.getElementById('tlRuler');
+  let rulerHtml = '';
+  for (let y = YEAR_START; y <= YEAR_END; y++) {
+    rulerHtml += `<div class="tl-ruler-year">${y}</div>`;
+  }
+  ruler.innerHTML = rulerHtml;
+
+  // Tracks
+  const tracks = document.getElementById('tlTracks');
+  const colorMap = {
+    '--green':  { bg: 'rgba(61,255,160,0.12)',  border: 'rgba(61,255,160,0.7)'  },
+    '--orange': { bg: 'rgba(255,159,74,0.12)',  border: 'rgba(255,159,74,0.7)'  },
+    '--purple': { bg: 'rgba(167,139,250,0.12)', border: 'rgba(167,139,250,0.7)' },
+    '--cyan':   { bg: 'rgba(77,217,240,0.12)',  border: 'rgba(77,217,240,0.7)'  }
+  };
+  tracks.innerHTML = CONFIG.timeline.map((job, i) => {
+    const l = pct(job.start), w = pct(job.end) - pct(job.start);
+    const c = colorMap[job.color] || colorMap['--cyan'];
+    const pulse = job.current ? `<span class="tl-pulse"></span>` : '';
+    return `
+      <div class="tl-track" style="transition-delay:${i*0.15}s">
+        <div class="tl-bar" style="left:${l}%;width:${w}%;background:${c.bg};border-left:3px solid ${c.border}">
+          <span class="tl-bar-label">${job.company}</span>
+          <span class="tl-bar-role">${job.role}</span>
+          ${pulse}
+        </div>
+        <div class="tl-tooltip"><strong style="color:var(${job.color})">${job.company}</strong> · ${job.role}<br>${job.desc}</div>
+      </div>`;
+  }).join('');
+
+  // Animate bars on scroll
+  const tlObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.tl-bar').forEach((bar, i) => {
+          setTimeout(() => bar.classList.add('animate'), i * 150);
+        });
+        tlObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  tlObs.observe(tracks);
+}
+
+// ── Certifications ───────────────────────────────────────────
+function renderCerts() {
+  const grid = document.getElementById('certCards');
+  grid.innerHTML = CONFIG.certifications.map((c, idx) => {
+    const tags = c.tags.map(t => `<span class="cert-tag">${t}</span>`).join('');
+    const courseBlock = c.courses ? `
+      <div>
+        <button class="cert-courses-toggle" onclick="toggleCourses(this)">▸ ${c.courses.length} courses</button>
+        <ul class="cert-courses-list">${c.courses.map(course => `<li>${course}</li>`).join('')}</ul>
+      </div>` : '<div></div>';
+    const verify = c.url ? `<a class="cert-verify" href="${c.url}" target="_blank" rel="noopener">verify ↗</a>` : '';
+    return `
+      <div class="cert-card" style="border-left-color:var(${c.color})">
+        <div class="cert-top">
+          <span class="cert-badge" style="color:var(${c.color})">${c.badge}</span>
+          <div class="cert-info">
+            <div class="cert-name">${c.name}</div>
+            <div class="cert-meta">${c.issuer} · ${c.date}</div>
+          </div>
+        </div>
+        <div class="cert-tags">${tags}</div>
+        <div class="cert-footer">
+          ${courseBlock}
+          ${verify}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleCourses(btn) {
+  const list = btn.nextElementSibling;
+  const open = list.classList.toggle('open');
+  btn.textContent = (open ? '▾ ' : '▸ ') + btn.textContent.slice(2);
+}
+
+// ── Skill Tree ───────────────────────────────────────────────
+function polar(cx, cy, r, angleDeg) {
+  const rad = (angleDeg - 90) * Math.PI / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function renderSkillTree() {
+  const svg = document.getElementById('skillTreeSvg');
+  const CX = 450, CY = 450, R1 = 185, R2 = 340;
+  const domains = CONFIG.skillTree;
+  const N = domains.length;
+  const angleStep = 360 / N;
+
+  // Resolve CSS var colors to actual hex values for SVG
+  const colorValues = {
+    '--cyan':   '#4dd9f0', '--green':  '#3dffa0', '--orange': '#ff9f4a',
+    '--purple': '#a78bfa', '--yellow': '#fbbf24', '--pink':   '#f472b6',
+    '--red':    '#f87171'
+  };
+
+  let linesHtml = '', domainsHtml = '', leavesHtml = '';
+
+  domains.forEach((dom, di) => {
+    const domAngle = di * angleStep;
+    const dp = polar(CX, CY, R1, domAngle);
+    const col = colorValues[dom.color] || '#4dd9f0';
+    const domId = `dom-${dom.id}`;
+
+    // Center → domain line
+    linesHtml += `<line class="tree-line" data-dom="${dom.id}" x1="${CX}" y1="${CY}" x2="${dp.x.toFixed(1)}" y2="${dp.y.toFixed(1)}" stroke="${col}" stroke-width="1.5"/>`;
+
+    // Domain node
+    domainsHtml += `
+      <g class="domain-group" id="${domId}" data-dom="${dom.id}"
+         onmouseenter="hlDomain('${dom.id}')" onmouseleave="hlReset()">
+        <circle cx="${dp.x.toFixed(1)}" cy="${dp.y.toFixed(1)}" r="28"
+          fill="${col}22" stroke="${col}" stroke-width="1.5"
+          style="filter:drop-shadow(0 0 6px ${col}55)"/>
+        <text x="${dp.x.toFixed(1)}" y="${(dp.y - 4).toFixed(1)}" text-anchor="middle"
+          font-size="9" font-family="JetBrains Mono,monospace" fill="${col}" font-weight="600">${dom.icon}</text>
+        <text x="${dp.x.toFixed(1)}" y="${(dp.y + 8).toFixed(1)}" text-anchor="middle"
+          font-size="8.5" font-family="JetBrains Mono,monospace" fill="${col}">${dom.label}</text>
+      </g>`;
+
+    // Leaves
+    const leaves = dom.leaves;
+    const leafCount = leaves.length;
+    const spread = Math.min(40, 80 / leafCount);
+    leaves.forEach((leaf, li) => {
+      const offset = (li - (leafCount - 1) / 2) * spread;
+      const leafAngle = domAngle + offset;
+      const lp = polar(CX, CY, R2, leafAngle);
+
+      const lw = Math.max(56, leaf.length * 6.5);
+      const lh = 20;
+
+      // Domain → leaf line
+      linesHtml += `<line class="tree-line" data-dom="${dom.id}" x1="${dp.x.toFixed(1)}" y1="${dp.y.toFixed(1)}" x2="${lp.x.toFixed(1)}" y2="${lp.y.toFixed(1)}" stroke="${col}" stroke-width="1"/>`;
+
+      leavesHtml += `
+        <g class="leaf-group" data-dom="${dom.id}">
+          <rect x="${(lp.x - lw/2).toFixed(1)}" y="${(lp.y - lh/2).toFixed(1)}"
+            width="${lw}" height="${lh}" rx="10"
+            fill="#0f1117" stroke="${col}" stroke-width="1" opacity="0.85"/>
+          <text x="${lp.x.toFixed(1)}" y="${(lp.y + 4).toFixed(1)}" text-anchor="middle"
+            font-size="8" font-family="JetBrains Mono,monospace" fill="${col}">${leaf}</text>
+        </g>`;
+    });
+  });
+
+  // Center node
+  const centerHtml = `
+    <g>
+      <circle cx="${CX}" cy="${CY}" r="38" fill="#141720" stroke="#4dd9f0" stroke-width="2"
+        style="filter:drop-shadow(0 0 14px #4dd9f040)"/>
+      <text x="${CX}" y="${CY - 6}" text-anchor="middle"
+        font-size="9" font-family="JetBrains Mono,monospace" fill="#4dd9f0" font-weight="700">AI</text>
+      <text x="${CX}" y="${CY + 7}" text-anchor="middle"
+        font-size="8" font-family="JetBrains Mono,monospace" fill="#5a6380">roshan</text>
+    </g>`;
+
+  svg.innerHTML = linesHtml + centerHtml + domainsHtml + leavesHtml;
+
+  // Animate lines on scroll
+  svg.querySelectorAll('.tree-line').forEach(line => {
+    const len = Math.hypot(
+      line.x2.baseVal.value - line.x1.baseVal.value,
+      line.y2.baseVal.value - line.y1.baseVal.value
+    );
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+    line.style.transition = 'stroke-dashoffset 0.8s ease, opacity 0.3s';
+  });
+
+  const treeObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.tree-line').forEach((line, i) => {
+          setTimeout(() => { line.style.strokeDashoffset = '0'; }, i * 30);
+        });
+        treeObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  treeObs.observe(svg);
+
+  // Fallback for mobile
+  const fallback = document.getElementById('treeFallback');
+  fallback.innerHTML = CONFIG.skillTree.map(dom => {
+    const col = colorValues[dom.color] || '#4dd9f0';
+    return `
+      <div class="tree-branch-card" style="border-left:3px solid ${col}">
+        <div class="tree-branch-title" style="color:${col}">${dom.icon} ${dom.label}</div>
+        <div class="tree-leaf-list">${dom.leaves.map(l => `<span class="tree-leaf-pill" style="border-color:${col}44;color:${col}">${l}</span>`).join('')}</div>
+      </div>`;
+  }).join('');
+}
+
+function hlDomain(id) {
+  document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('dim', l.dataset.dom !== id));
+  document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('hl', l.dataset.dom === id));
+  document.querySelectorAll('.leaf-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
+  document.querySelectorAll('.domain-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
+}
+function hlReset() {
+  document.querySelectorAll('.tree-line, .leaf-group, .domain-group').forEach(el => el.classList.remove('dim','hl'));
 }
 
 // Cursor
@@ -597,6 +993,11 @@ const observer = new IntersectionObserver(entries => {
 window.addEventListener('load', () => {
   render();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  // Re-bind cursor hover for dynamically added buttons/links
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => { ring.style.width='44px'; ring.style.height='44px'; ring.style.borderColor='rgba(77,217,240,0.7)'; });
+    el.addEventListener('mouseleave', () => { ring.style.width='28px'; ring.style.height='28px'; ring.style.borderColor='rgba(77,217,240,0.4)'; });
+  });
 });
 </script>
 </body>
