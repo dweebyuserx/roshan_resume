@@ -362,15 +362,15 @@
   <div class="page-header fade-up">
     <div class="breadcrumb"><a href="index.html">~</a> / articles</div>
     <h1>Articles & <em>Writing.</em></h1>
-    <p class="subtitle">Thoughts on software engineering, system design, and the craft of building things.</p>
+    <p class="subtitle">Thoughts on AI engineering, LLMOps, agentic systems, and building intelligent applications.</p>
   </div>
 
   <div class="filter-bar fade-up" style="transition-delay:0.1s">
     <button class="filter-btn active">All</button>
-    <button class="filter-btn">TypeScript</button>
-    <button class="filter-btn">Systems</button>
-    <button class="filter-btn">Frontend</button>
-    <button class="filter-btn">DevOps</button>
+    <button class="filter-btn">LLMOps</button>
+    <button class="filter-btn">Agents</button>
+    <button class="filter-btn">RAG</button>
+    <button class="filter-btn">MLOps</button>
   </div>
 
   <div class="articles-list" id="articlesList"></div>
@@ -380,64 +380,75 @@
 
 <script>
 const CONFIG = {
-  name: { first: "Your", last: "Name" },
-  handle: "user",
+  name: { first: "Roshan", last: "Abraham" },
+  handle: "roshan",
   status: "available for work",
 
   articles: [
     {
       date: "Jan 2025",
-      readTime: "8 min read",
-      title: "Building Scalable APIs with TypeScript",
-      excerpt: "A comprehensive guide to designing and implementing type-safe APIs that scale. We'll explore patterns for error handling, validation, and documentation that will make your APIs a joy to work with.",
-      tags: [
-        { text: "TypeScript", color: "c" },
-        { text: "API Design", color: "g" },
-        { text: "Backend", color: "p" }
-      ],
-      url: "#"
-    },
-    {
-      date: "Nov 2024",
-      readTime: "6 min read",
-      title: "Modern State Management in React",
-      excerpt: "Comparing different state management approaches and when to use each. From useState to Zustand, Redux to Jotai — finding the right tool for your application's needs.",
-      tags: [
-        { text: "React", color: "c" },
-        { text: "Frontend", color: "g" }
-      ],
-      url: "#"
-    },
-    {
-      date: "Sep 2024",
       readTime: "12 min read",
-      title: "Database Indexing Deep Dive",
-      excerpt: "Understanding how database indexes work under the hood and how to design them for optimal query performance. Includes practical examples with PostgreSQL.",
+      title: "Building Production Agentic Systems with LangChain",
+      excerpt: "A deep dive into architecting multi-agent systems with specialized prompt routers, tool integrations, and chain-of-thought reasoning for enterprise use cases.",
       tags: [
-        { text: "PostgreSQL", color: "o" },
-        { text: "Performance", color: "g" }
+        { text: "LangChain", color: "c" },
+        { text: "Agents", color: "g" },
+        { text: "LLMOps", color: "p" }
       ],
       url: "#"
     },
     {
-      date: "Jul 2024",
-      readTime: "5 min read",
-      title: "Docker Best Practices for Development",
-      excerpt: "Tips and tricks for using Docker effectively in your development workflow. From multi-stage builds to volume optimization.",
-      tags: [
-        { text: "Docker", color: "c" },
-        { text: "DevOps", color: "p" }
-      ],
-      url: "#"
-    },
-    {
-      date: "May 2024",
+      date: "Dec 2024",
       readTime: "10 min read",
-      title: "Testing Strategies for Modern Web Apps",
-      excerpt: "A practical approach to testing that balances confidence with development speed. Unit tests, integration tests, and when to use each.",
+      title: "Advanced RAG: Beyond Basic Retrieval",
+      excerpt: "Implementing hybrid search, re-ranking, and knowledge graph integration for production RAG systems. Covers FAISS, Pinecone, and Weaviate optimizations.",
       tags: [
-        { text: "Testing", color: "g" },
-        { text: "Best Practices", color: "p" }
+        { text: "RAG", color: "c" },
+        { text: "Vector DB", color: "p" }
+      ],
+      url: "#"
+    },
+    {
+      date: "Oct 2024",
+      readTime: "15 min read",
+      title: "Fine-tuning LLMs for Domain-Specific Tasks",
+      excerpt: "Complete guide to instruction tuning LlaMA2, Mistral, and CodeLlama models. Covers data preparation, training with W&B, and deployment with vLLM.",
+      tags: [
+        { text: "LLM Training", color: "o" },
+        { text: "MLOps", color: "g" }
+      ],
+      url: "#"
+    },
+    {
+      date: "Aug 2024",
+      readTime: "8 min read",
+      title: "MLOps Pipeline Design with Vertex AI",
+      excerpt: "Building end-to-end ML pipelines on GCP with Vertex AI, Cloud Build, and Artifact Registry. From training to production deployment.",
+      tags: [
+        { text: "GCP", color: "c" },
+        { text: "MLOps", color: "p" }
+      ],
+      url: "#"
+    },
+    {
+      date: "Jun 2024",
+      readTime: "10 min read",
+      title: "Medical AI: Document OCR to FHIR Translation",
+      excerpt: "Designing NER parsers for complex medical documents and translating raw corpus to FHIR resources. Covers EPIC and Cerner integration patterns.",
+      tags: [
+        { text: "Medical AI", color: "g" },
+        { text: "NER", color: "o" }
+      ],
+      url: "#"
+    },
+    {
+      date: "Apr 2024",
+      readTime: "7 min read",
+      title: "Stable Diffusion Fine-tuning with ControlNet",
+      excerpt: "Training custom styles on SD-XL 2.0 with ControlNet v1.1. Includes QR code generation and artistic style transfer techniques.",
+      tags: [
+        { text: "Stable Diffusion", color: "p" },
+        { text: "Visual AI", color: "c" }
       ],
       url: "#"
     }

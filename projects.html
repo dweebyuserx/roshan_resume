@@ -435,7 +435,7 @@
   <div class="page-header fade-up">
     <div class="breadcrumb"><a href="index.html">~</a> / projects</div>
     <h1>Projects & <em>Work.</em></h1>
-    <p class="subtitle">A collection of projects I've built, from open source libraries to production applications.</p>
+    <p class="subtitle">AI systems and tools I've built — from LLM foundries to enterprise agentic platforms.</p>
   </div>
 
   <div class="projects-stats fade-up" style="transition-delay:0.1s" id="statsSection"></div>
@@ -451,91 +451,86 @@
 
 <script>
 const CONFIG = {
-  name: { first: "Your", last: "Name" },
-  handle: "user",
+  name: { first: "Roshan", last: "Abraham" },
+  handle: "roshan",
   status: "available for work",
 
   stats: {
-    projects: 12,
-    contributions: "500+",
-    stars: "2.5k"
+    projects: 15,
+    contributions: "100+",
+    stars: "AI Hackathon Winner"
   },
 
   featuredProject: {
-    icon: "⚡",
-    name: "Featured Project",
-    tagline: "The main project you're most proud of",
-    desc: "A detailed description of your featured project. Explain what problem it solves, the technical challenges you overcame, and the impact it has had. This is your chance to showcase your best work.",
-    tech: ["TypeScript", "React", "Node.js", "PostgreSQL", "Docker"],
+    icon: "🤖",
+    name: "Agentic AI Platform",
+    tagline: "Multi-agent orchestration for enterprise AI solutions",
+    desc: "Production-grade agentic system built for State Government organizations at Deloitte. Features specialized prompt routers, chain-of-thought reasoning, tool integrations, and embedded knowledge indexing. Winner of AI Hackathon for PR Agentic solutions.",
+    tech: ["LangChain", "FastAPI", "Pinecone", "GCP Vertex AI", "Docker"],
     links: [
-      { text: "GitHub", url: "#" },
-      { text: "Live Demo", url: "#" },
-      { text: "Documentation", url: "#" }
+      { text: "Contact for Demo", url: "mailto:abraham.roshan.a@gmail.com" }
     ]
   },
 
   projects: [
     {
-      icon: "🔧",
-      name: "Project One",
-      desc: "A brief description of this project and what it does.",
-      tech: ["TypeScript", "React"],
-      accent: "cyan",
+      icon: "🏥",
+      name: "Medical AI Infrastructure",
+      desc: "Document OCR engine with NER parser for complex medical documents. FHIR translation and LLM-powered knowledge base for healthcare systems.",
+      tech: ["Document AI", "FHIR", "NER", "GCP"],
+      accent: "green",
       links: [
-        { text: "GitHub", url: "#" },
-        { text: "Demo", url: "#" }
+        { text: "Case Study", url: "#" }
       ]
     },
     {
-      icon: "📦",
-      name: "Project Two",
-      desc: "Another project description highlighting key features.",
-      tech: ["Python", "FastAPI", "PostgreSQL"],
-      accent: "green",
+      icon: "⚡",
+      name: "Custom LLM Foundry",
+      desc: "End-to-end LLM training pipeline with custom data collection, instruction tuning for LlaMA2/Mistral/CodeLlama, and registry management.",
+      tech: ["vLLM", "W&B", "Docker", "RunPod"],
+      accent: "cyan",
       links: [
         { text: "GitHub", url: "#" }
       ]
     },
     {
-      icon: "🚀",
-      name: "Project Three",
-      desc: "Description of a third project you've worked on.",
-      tech: ["Go", "Docker", "Kubernetes"],
+      icon: "🔗",
+      name: "Advanced RAG System",
+      desc: "Hybrid search with re-ranking, knowledge graph integration, and embedded routing for personalized coding and research chains.",
+      tech: ["LangChain", "FAISS", "Pinecone", "Weaviate"],
+      accent: "purple",
+      links: [
+        { text: "Demo", url: "#" }
+      ]
+    },
+    {
+      icon: "🎨",
+      name: "Stable Diffusion Pipeline",
+      desc: "Fine-tuned SD-XL 2.0 with ControlNet v1.1 for custom artistic styles. QR code generation and text-to-image pipelines.",
+      tech: ["SD-XL", "ControlNet", "CUDA", "HuggingFace"],
+      accent: "pink",
+      links: [
+        { text: "HuggingFace", url: "#" }
+      ]
+    },
+    {
+      icon: "🔄",
+      name: "MLOps Engine",
+      desc: "Dynamic model deployment with Terraform, Docker Helm. Serverless and edge deployment options with GPU/TPU segmentation.",
+      tech: ["MLflow", "Terraform", "GKE", "SageMaker"],
       accent: "orange",
       links: [
-        { text: "GitHub", url: "#" },
         { text: "Docs", url: "#" }
       ]
     },
     {
-      icon: "🔐",
-      name: "Project Four",
-      desc: "Security-focused project or any other type of work.",
-      tech: ["Rust", "WebAssembly"],
-      accent: "purple",
-      links: [
-        { text: "GitHub", url: "#" }
-      ]
-    },
-    {
-      icon: "📊",
-      name: "Project Five",
-      desc: "Data visualization or analytics project.",
-      tech: ["Python", "D3.js", "Pandas"],
-      accent: "pink",
-      links: [
-        { text: "GitHub", url: "#" },
-        { text: "Demo", url: "#" }
-      ]
-    },
-    {
-      icon: "🌐",
-      name: "Project Six",
-      desc: "Web application or API project.",
-      tech: ["Node.js", "Express", "MongoDB"],
+      icon: "💬",
+      name: "Enterprise ChatBot System",
+      desc: "Complex LLM and model stack wrapped in Rasa. Seq2Seq/LSTM connections with specialized medical prompt routers and FHIR query manager.",
+      tech: ["LangChain", "Rasa", "Sanic", "LSTM"],
       accent: "yellow",
       links: [
-        { text: "GitHub", url: "#" }
+        { text: "Architecture", url: "#" }
       ]
     }
   ],

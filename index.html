@@ -709,60 +709,62 @@
 const CONFIG = {
   // Basic Info
   name: {
-    first: "Your",
-    last: "Name"
+    first: "Roshan",
+    last: "Abraham"
   },
-  handle: "user",           // Used in nav logo and terminal
-  title: "Software Engineer",
-  location: "City, Country",
-  email: "you@example.com",
-  yoe: 5,                   // Years of experience
+  handle: "roshan",
+  title: "AI Solutions Consultant",
+  location: "India | USA | UK",
+  email: "abraham.roshan.a@gmail.com",
+  yoe: 5,
   status: "available for work",
   statusMessage: "open to opportunities",
 
   // Tagline shown under name
-  tagline: "Full-stack engineer building things at the intersection of performance and developer experience.",
+  tagline: "AI Engineer specializing in LLMOps, Agentic Systems, MLOps, and enterprise AI solutions. Building intelligent systems that transform how organizations work.",
 
   // Hero tags (skills shown as pills)
-  heroTags: ["TypeScript", "React", "Node.js", "Systems Design"],
+  heroTags: ["LLMOps", "Agentic AI", "MLOps", "RAG Systems", "Cloud AI", "Python"],
 
   // Stack shown in terminal JSON
-  stack: ["TypeScript", "React", "Node.js", "PostgreSQL"],
+  stack: ["LangChain", "PyTorch", "Vertex AI", "FastAPI", "Docker", "Vector DBs"],
 
-  // About section paragraphs (use <strong> for cyan highlights)
+  // About section paragraphs
   aboutParagraphs: [
-    "I'm a <strong>full-stack engineer</strong> passionate about building scalable systems and developer tools.",
-    "I specialize in <strong>modern web technologies</strong> and enjoy solving complex problems with elegant solutions.",
-    "Outside of work I contribute to <strong>open source</strong> and write about software development.",
-    "I believe the best code is the code you don't have to write."
+    "I'm an <strong>AI Solutions Consultant</strong> at Deloitte USI with 5+ years of experience building production AI systems for enterprise and government organizations.",
+    "I specialize in <strong>LLMOps, Agentic Orchestration, and Advanced RAG systems</strong> — architecting end-to-end ML pipelines from training to deployment at scale.",
+    "My expertise spans <strong>Medical AI infrastructure</strong>, custom LLM foundries, and building autonomous agent systems with complex chain-of-thought reasoning.",
+    "Winner of AI Hackathon for PR Agentic solutions. I believe in building AI that solves real problems with measurable impact."
   ],
 
   // Skills grouped by category
   skills: {
-    languages: {
-      label: "// languages",
+    ai_ml: {
+      label: "// ai & llm",
       color: "cyan",
       items: [
-        { name: "TypeScript", pct: 90 },
-        { name: "JavaScript", pct: 95 },
-        { name: "Python", pct: 70 }
+        { name: "LangChain / Agents", pct: 95 },
+        { name: "PyTorch / TensorFlow", pct: 90 },
+        { name: "LLM Fine-tuning", pct: 88 },
+        { name: "RAG / Vector DBs", pct: 92 }
       ]
     },
-    frontend: {
-      label: "// frontend",
+    cloud: {
+      label: "// cloud & mlops",
       color: "green",
       items: [
-        { name: "React / Next", pct: 90 },
-        { name: "CSS / Tailwind", pct: 85 }
+        { name: "GCP Vertex AI", pct: 90 },
+        { name: "AWS SageMaker", pct: 85 },
+        { name: "Docker / K8s", pct: 88 }
       ]
     },
     infrastructure: {
-      label: "// infrastructure",
+      label: "// data & infra",
       color: "orange",
       items: [
-        { name: "Node.js", pct: 88 },
-        { name: "PostgreSQL", pct: 75 },
-        { name: "Docker", pct: 70 }
+        { name: "PostgreSQL / BigQuery", pct: 85 },
+        { name: "MLflow / W&B", pct: 88 },
+        { name: "FastAPI / Flask", pct: 90 }
       ]
     }
   },
@@ -771,21 +773,21 @@ const CONFIG = {
   articles: [
     {
       date: "Jan 2025",
-      title: "Building Scalable APIs with TypeScript",
-      excerpt: "A practical guide to designing and implementing type-safe APIs that scale.",
+      title: "Building Production Agentic Systems with LangChain",
+      excerpt: "A deep dive into architecting multi-agent systems with specialized prompt routers and tool integrations for enterprise use cases.",
       tags: [
-        { text: "TypeScript", color: "c" },
-        { text: "API Design", color: "g" }
+        { text: "LangChain", color: "c" },
+        { text: "Agents", color: "g" }
       ],
       url: "#"
     },
     {
-      date: "Nov 2024",
-      title: "Modern State Management in React",
-      excerpt: "Comparing different state management approaches and when to use each.",
+      date: "Dec 2024",
+      title: "Advanced RAG: Beyond Basic Retrieval",
+      excerpt: "Implementing hybrid search, re-ranking, and knowledge graph integration for production RAG systems.",
       tags: [
-        { text: "React", color: "c" },
-        { text: "Frontend", color: "p" }
+        { text: "RAG", color: "c" },
+        { text: "Vector DB", color: "p" }
       ],
       url: "#"
     }
@@ -794,24 +796,43 @@ const CONFIG = {
   // Projects
   projects: [
     {
-      icon: "//",
-      name: "Project One",
-      desc: "A description of your first project. What it does and why it matters.",
-      tech: ["TypeScript", "React", "Node.js"],
+      icon: "🤖",
+      name: "Custom LLM Foundry",
+      desc: "End-to-end LLM training pipeline with custom data collection, instruction tuning, and registry management using Docker and W&B.",
+      tech: ["LlaMA2", "vLLM", "W&B", "Docker"],
       accent: "cyan",
       links: [
-        { text: "GitHub", url: "#" },
+        { text: "GitHub", url: "#" }
+      ]
+    },
+    {
+      icon: "🏥",
+      name: "Medical AI Infrastructure",
+      desc: "Document OCR engine with NER parser for medical documents. FHIR translation and LLM-powered knowledge base for healthcare.",
+      tech: ["Document AI", "FHIR", "NER", "GCP"],
+      accent: "green",
+      links: [
         { text: "Demo", url: "#" }
       ]
     },
     {
-      icon: "{}",
-      name: "Project Two",
-      desc: "Another project description. Highlight the key features and technologies used.",
-      tech: ["Python", "FastAPI", "PostgreSQL"],
-      accent: "green",
+      icon: "🔗",
+      name: "Agentic RAG System",
+      desc: "Multi-agent orchestration with specialized routers, chain-of-thought reasoning, and embedded knowledge indexing.",
+      tech: ["LangChain", "Pinecone", "FastAPI"],
+      accent: "purple",
       links: [
         { text: "GitHub", url: "#" }
+      ]
+    },
+    {
+      icon: "⚡",
+      name: "MLOps Engine",
+      desc: "Dynamic model deployment pipeline with Terraform, Docker Helm, serverless and edge deployment options.",
+      tech: ["MLflow", "Terraform", "GKE", "SageMaker"],
+      accent: "orange",
+      links: [
+        { text: "Docs", url: "#" }
       ]
     }
   ],
@@ -820,8 +841,8 @@ const CONFIG = {
   connections: [
     {
       name: "GitHub",
-      handle: "@username",
-      url: "https://github.com",
+      handle: "@dweebster",
+      url: "https://github.com/dweebyuserx",
       icon: "git",
       color: "--bright",
       badge: "ACTIVE",
@@ -830,8 +851,8 @@ const CONFIG = {
     },
     {
       name: "LinkedIn",
-      handle: "/in/username",
-      url: "https://linkedin.com",
+      handle: "/in/roshan-abraham",
+      url: "https://linkedin.com/in/roshan-abraham",
       icon: "in",
       color: "#0a66c2",
       badge: "NETWORK",
@@ -839,29 +860,19 @@ const CONFIG = {
       badgeColor: "#4da3ff"
     },
     {
-      name: "Twitter / X",
-      handle: "@username",
-      url: "https://twitter.com",
-      icon: "x",
-      color: "--cyan",
-      badge: "SOCIAL",
-      badgeBg: "rgba(77,217,240,0.1)",
-      badgeColor: "var(--cyan)"
-    },
-    {
-      name: "Blog",
-      handle: "blog.example.com",
-      url: "#",
-      icon: "blog",
-      color: "--orange",
-      badge: "BLOG",
-      badgeBg: "rgba(255,159,74,0.1)",
-      badgeColor: "var(--orange)"
+      name: "HuggingFace",
+      handle: "@dweebster",
+      url: "https://huggingface.co/dweebster",
+      icon: "hf",
+      color: "--yellow",
+      badge: "MODELS",
+      badgeBg: "rgba(251,191,36,0.1)",
+      badgeColor: "var(--yellow)"
     },
     {
       name: "Email",
-      handle: "you@example.com",
-      url: "mailto:you@example.com",
+      handle: "abraham.roshan.a@gmail.com",
+      url: "mailto:abraham.roshan.a@gmail.com",
       icon: "mail",
       color: "--green",
       badge: "DIRECT",
@@ -869,19 +880,29 @@ const CONFIG = {
       badgeColor: "var(--green)"
     },
     {
-      name: "Portfolio",
-      handle: "example.com",
-      url: "#",
-      icon: "web",
+      name: "Resume",
+      handle: "Download PDF",
+      url: "AICV_20251201_160508_0000.pdf",
+      icon: "doc",
       color: "--purple",
-      badge: "WEBSITE",
+      badge: "CV",
       badgeBg: "rgba(167,139,250,0.1)",
       badgeColor: "var(--purple)"
+    },
+    {
+      name: "Deloitte",
+      handle: "AI Consultant",
+      url: "https://deloitte.com",
+      icon: "work",
+      color: "--cyan",
+      badge: "CURRENT",
+      badgeBg: "rgba(77,217,240,0.1)",
+      badgeColor: "var(--cyan)"
     }
   ],
 
   // Footer
-  footerCta: "open to freelance, full-time, and interesting conversations",
+  footerCta: "open to AI consulting, enterprise solutions, and interesting collaborations",
   copyrightYear: new Date().getFullYear(),
   lastUpdated: "Feb 2025"
 };
