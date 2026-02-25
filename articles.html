@@ -336,6 +336,49 @@
     main { padding: 100px 24px 60px; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
+
+  /* Expanded article body */
+  .article-body {
+    display: none;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .article-body.open { display: block; }
+  .article-body p {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.95;
+    margin-bottom: 18px;
+  }
+  .article-body p strong { color: var(--cyan); font-weight: 400; }
+  .article-body p code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--orange);
+  }
+  .article-close-btn {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-family: var(--font-mono);
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .article-close-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .article-card.expanded { border-color: var(--cyan); }
+  .article-card.expanded::before { transform: scaleY(1); }
+  .article-card { cursor: pointer; }
+  .article-card.hidden { display: none; }
 </style>
 </head>
 <body>
@@ -365,12 +408,14 @@
     <p class="subtitle">Thoughts on AI engineering, LLMOps, agentic systems, and building intelligent applications.</p>
   </div>
 
-  <div class="filter-bar fade-up" style="transition-delay:0.1s">
-    <button class="filter-btn active">All</button>
-    <button class="filter-btn">LLMOps</button>
-    <button class="filter-btn">Agents</button>
-    <button class="filter-btn">RAG</button>
-    <button class="filter-btn">MLOps</button>
+  <div class="filter-bar fade-up" style="transition-delay:0.1s" id="filterBar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="LLMOps">LLMOps</button>
+    <button class="filter-btn" data-filter="Agents">Agents</button>
+    <button class="filter-btn" data-filter="RAG">RAG</button>
+    <button class="filter-btn" data-filter="MLOps">MLOps</button>
+    <button class="filter-btn" data-filter="Medical AI">Medical AI</button>
+    <button class="filter-btn" data-filter="Ethics">Ethics</button>
   </div>
 
   <div class="articles-list" id="articlesList"></div>
@@ -386,71 +431,67 @@ const CONFIG = {
 
   articles: [
     {
+      date: "Feb 2026",
+      readTime: "14 min read",
+      title: "The End of Seeing is Believing: How to Prove Anything in the Age of Generative AI",
+      excerpt: "A new architectural approach for truth validation — building a trusted layer between society and AI-generated content via blockchain-anchored provenance.",
+      categories: ["Ethics"],
+      tags: [{ text: "Blockchain", color: "c" }, { text: "Ethics", color: "p" }, { text: "GenAI", color: "o" }],
+      body: `<p>We are entering an era where a single laptop can generate photorealistic footage, clone a voice from three seconds of audio, or fabricate a government press release indistinguishable from the real one. The long-held axiom that <strong>seeing is believing</strong> has been quietly revoked — and society hasn't caught up yet.</p><p>The problem isn't synthetic media itself. It's the absence of a <strong>trusted provenance layer</strong>. When a video is published today, there is no standardised, tamper-evident record of how it was created, by whom, and whether it passed through generative pipelines. We sign code commits, we fingerprint financial transactions — yet we leave media unsigned.</p><p>My proposed architecture chains three primitives together: <strong>Content Credentials</strong> (C2PA standard) embedded at creation time, a <strong>decentralised ledger</strong> for immutable provenance anchoring, and a lightweight <strong>browser-native verifier</strong> that surfaces provenance inline without user friction. The ledger doesn't store the content — it stores a hash commitment and a creation attestation, keeping it scalable and privacy-preserving.</p><p>The harder problem is social trust, not technical trust. A cryptographic receipt means nothing if users never see it. The UX layer — surfacing a small, unobtrusive provenance badge on media — is where this breaks down in practice. I explore interface patterns that make trust signals legible without crying wolf on every image.</p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
+    },
+    {
       date: "Jan 2025",
       readTime: "12 min read",
       title: "Building Production Agentic Systems with LangChain",
       excerpt: "A deep dive into architecting multi-agent systems with specialized prompt routers, tool integrations, and chain-of-thought reasoning for enterprise use cases.",
-      tags: [
-        { text: "LangChain", color: "c" },
-        { text: "Agents", color: "g" },
-        { text: "LLMOps", color: "p" }
-      ],
-      url: "#"
+      categories: ["Agents", "LLMOps"],
+      tags: [{ text: "LangChain", color: "c" }, { text: "Agents", color: "g" }, { text: "LLMOps", color: "p" }],
+      body: `<p>Most agentic demos collapse in production. The gap between a working notebook demo and a <strong>reliable enterprise agent</strong> comes down to three things: routing fidelity, tool error recovery, and state management across long-horizon tasks.</p><p>The architecture I've settled on uses a <strong>supervisor agent</strong> that receives the raw user intent and routes to specialised sub-agents — each with a tightly scoped system prompt, a curated tool set, and isolated memory. This prevents context bleed and makes each agent independently testable. The supervisor never executes tools directly; it only orchestrates.</p><p>For state management I use a <code>RedisCheckpointer</code> behind LangGraph — giving us resumable, inspectable execution graphs. This was critical for our State Government deployment where a session might span multiple hours with human-in-the-loop approval steps. The graph state is serialised and restored transparently, so the agent picks up exactly where it left off.</p><p>Tool error recovery is where most frameworks are still weak. I wrap every tool call in a <strong>retry-with-reflection loop</strong>: on failure, the agent is shown the error, asked to reason about what went wrong, and re-attempts with a corrected input. This reduced tool call failures in production by ~60% compared to simple retry.</p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
     },
     {
       date: "Dec 2024",
       readTime: "10 min read",
       title: "Advanced RAG: Beyond Basic Retrieval",
-      excerpt: "Implementing hybrid search, re-ranking, and knowledge graph integration for production RAG systems. Covers FAISS, Pinecone, and Weaviate optimizations.",
-      tags: [
-        { text: "RAG", color: "c" },
-        { text: "Vector DB", color: "p" }
-      ],
-      url: "#"
+      excerpt: "Implementing hybrid search, re-ranking, and knowledge graph integration for production RAG systems. Covers FAISS, Pinecone, and Weaviate optimisations.",
+      categories: ["RAG", "LLMOps"],
+      tags: [{ text: "RAG", color: "c" }, { text: "Vector DB", color: "p" }],
+      body: `<p>Vanilla RAG — embed a question, fetch top-k chunks, stuff them in a prompt — gets you 60% of the way there. To reach production quality you need to think about <strong>three distinct failure modes</strong>: retrieval misses, context pollution, and generation hallucination on retrieved facts.</p><p>Hybrid search solves retrieval misses. Pairing dense embeddings with BM25 sparse retrieval catches keyword-sensitive queries that embedding similarity fails on (model names, product codes, acronyms). I use <code>Weaviate</code>'s built-in hybrid endpoint which merges results via Reciprocal Rank Fusion — no extra infrastructure needed.</p><p>Context pollution happens when you retrieve too many marginally relevant chunks. A <strong>cross-encoder re-ranker</strong> (I use <code>ms-marco-MiniLM-L-6-v2</code>) scores chunk–query pairs at a deeper semantic level and drops chunks below a calibrated threshold. In our medical document system this halved hallucinated FHIR field values.</p><p>For complex multi-hop questions — where the answer requires joining information from two separate documents — I layer a <strong>query decomposition step</strong> before retrieval. The LLM breaks the query into sub-questions, each is retrieved independently, then the partial answers are synthesised. This is the pattern behind our highest-accuracy RAG deployment.</p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
     },
     {
       date: "Oct 2024",
       readTime: "15 min read",
       title: "Fine-tuning LLMs for Domain-Specific Tasks",
-      excerpt: "Complete guide to instruction tuning LlaMA2, Mistral, and CodeLlama models. Covers data preparation, training with W&B, and deployment with vLLM.",
-      tags: [
-        { text: "LLM Training", color: "o" },
-        { text: "MLOps", color: "g" }
-      ],
-      url: "#"
+      excerpt: "Complete guide to instruction tuning LlaMA2, Mistral, and Qwen models. Covers data preparation, training with W&B, and deployment with vLLM.",
+      categories: ["LLMOps", "MLOps"],
+      tags: [{ text: "LLM Training", color: "o" }, { text: "MLOps", color: "g" }],
+      body: `<p>Off-the-shelf LLMs are generalists. When you need consistent format adherence, domain vocabulary, or controlled output schemas in production, <strong>fine-tuning is usually the right call</strong> — not prompt engineering. This is what I've learned from training Gemma, Qwen2.5, and LlaMA variants across medical, legal, and government domains.</p><p>Dataset quality is the only lever that matters. I spend 70% of fine-tuning project time on <strong>data pipeline construction</strong>: extraction from raw docs, injection-based augmentation to cover rare cases, and automated quality filtering using a smaller judge model. A clean 5,000-sample dataset beats a noisy 100,000-sample one every time.</p><p>Training setup: <code>unsloth</code> for 2–4x faster QLoRA training, <code>W&B</code> for experiment tracking, and <code>lm-evaluation-harness</code> / <code>LightEval</code> for benchmark comparison against the base model. I always train three LoRA ranks (8, 16, 32) in parallel and pick based on downstream task eval, not training loss.</p><p>Deployment is where most guides stop. I use <code>vLLM</code> behind a FastAPI gateway with speculative decoding enabled for 1.5–2x throughput. LoRA adapters are hot-swapped without restarting the server — critical when serving multiple fine-tuned variants for different clients on the same base model.</p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
     },
     {
       date: "Aug 2024",
       readTime: "8 min read",
       title: "MLOps Pipeline Design with Vertex AI",
-      excerpt: "Building end-to-end ML pipelines on GCP with Vertex AI, Cloud Build, and Artifact Registry. From training to production deployment.",
-      tags: [
-        { text: "GCP", color: "c" },
-        { text: "MLOps", color: "p" }
-      ],
-      url: "#"
+      excerpt: "Building end-to-end ML pipelines on GCP with Vertex AI Pipelines, Cloud Build, and Artifact Registry. From training to production deployment.",
+      categories: ["MLOps"],
+      tags: [{ text: "GCP", color: "c" }, { text: "MLOps", color: "p" }],
+      body: `<p>Vertex AI Pipelines is Kubeflow under the hood — but the managed execution, built-in caching, and tight GCP integration make it the right choice if you're already on GCP. Here's how I structure pipelines for teams that need scheduled retraining without babysitting infrastructure.</p><p>Each pipeline is <strong>component-based</strong>: data validation → feature engineering → training → evaluation → conditional promotion. The evaluation component compares the new model against the current production model on a held-out eval set. If it doesn't beat the baseline by a configured threshold, the run is logged but promotion is skipped — no human needed.</p><p>Model artifacts land in Vertex AI Model Registry with full lineage tracking. Deployment is via Vertex AI Endpoints using a <strong>blue-green canary strategy</strong> — traffic gradually shifts from old to new model over 24 hours, with automatic rollback triggered by monitoring alert policies on prediction quality metrics.</p><p>The part that saves the most time: pipeline caching. Components are cached by their inputs and code hash. A full pipeline run that takes 40 minutes becomes a 2-minute incremental run when only the downstream stages have changed — which is the common case during iteration.</p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
     },
     {
       date: "Jun 2024",
       readTime: "10 min read",
       title: "Medical AI: Document OCR to FHIR Translation",
-      excerpt: "Designing NER parsers for complex medical documents and translating raw corpus to FHIR resources. Covers EPIC and Cerner integration patterns.",
-      tags: [
-        { text: "Medical AI", color: "g" },
-        { text: "NER", color: "o" }
-      ],
-      url: "#"
+      excerpt: "Designing NER parsers for complex medical documents and translating raw corpus to FHIR R4 resources. Covers EPIC and Cerner integration patterns.",
+      categories: ["Medical AI"],
+      tags: [{ text: "Medical AI", color: "g" }, { text: "NER", color: "o" }],
+      body: `<p>Healthcare data is messy by design — unstructured PDFs, handwritten notes, inconsistent abbreviations, and multi-page discharge summaries where the clinically relevant values are buried in prose. Building a reliable OCR→NER→FHIR pipeline requires every stage to be robust to this messiness.</p><p>For OCR I use <strong>Google Document AI</strong> with layout-aware parsing enabled. This preserves table structure and paragraph boundaries, which NER models need to correctly scope entity spans. Running raw Tesseract output into NER directly was our first mistake — layout-blind OCR destroys the context that makes medical entities recognisable.</p><p>The NER layer is a fine-tuned <strong>BioBERT</strong> model with custom entity types: <code>MEDICATION</code>, <code>DOSAGE</code>, <code>CONDITION</code>, <code>PROCEDURE</code>, <code>FHIR_CODE</code>. After extraction, a rule-based normaliser maps raw entity text to standard SNOMED CT and ICD-10 codes using a pre-built lookup table + fuzzy match fallback.</p><p>FHIR R4 resource construction is the final step: entities are mapped to their FHIR resource types (<code>MedicationStatement</code>, <code>Condition</code>, etc.) and written to GCP FHIRstore. We use <strong>ABHA</strong> identifiers for patient linking in the Indian healthcare context — a layer of complexity not covered in most open-source FHIR libraries.</p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
     },
     {
       date: "Apr 2024",
       readTime: "7 min read",
       title: "Stable Diffusion Fine-tuning with ControlNet",
-      excerpt: "Training custom styles on SD-XL 2.0 with ControlNet v1.1. Includes QR code generation and artistic style transfer techniques.",
-      tags: [
-        { text: "Stable Diffusion", color: "p" },
-        { text: "Visual AI", color: "c" }
-      ],
-      url: "#"
+      excerpt: "Training custom styles on SD-XL 2.0 with ControlNet v1.1. QR code generation, artistic style transfer, and automated dataset pipelines.",
+      categories: [],
+      tags: [{ text: "Stable Diffusion", color: "p" }, { text: "Visual AI", color: "c" }],
+      body: `<p>Stable Diffusion fine-tuning has matured significantly since the early DreamBooth days. The current best practice stack — <strong>LoRA adapters + SDXL + automated dataset curation</strong> — makes it practical to train high-quality custom styles in under 4 hours on a single A100.</p><p>Dataset quality is everything. I run a three-stage curation pipeline: scrape candidate images, run <code>LAION-aesthetics-predictor</code> to filter for quality, then use BLIP-2 to auto-caption with controlled vocabulary. This removes the bottleneck of manual captioning for large style datasets.</p><p>LoRA training at rank 16–32 gives style generalisation without overfitting to specific compositions. The key hyperparameter most guides miss: <strong>caption dropout rate</strong> at 10–15% forces the model to learn style without over-indexing on text alignment, which makes the adapter more flexible at inference time.</p><p>For ControlNet conditioning I use depth maps and canny edge conditioning simultaneously — this lets the fine-tuned style transfer apply to arbitrary compositions while preserving structural coherence. The QR code generation variant uses a tiled ControlNet conditioning approach where the QR module is encoded as a structural constraint.</p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
     }
   ],
 
@@ -464,7 +505,9 @@ function render() {
   document.getElementById('navStatus').textContent = CONFIG.status;
 
   document.getElementById('articlesList').innerHTML = CONFIG.articles.map((a, i) => `
-    <a href="${a.url}" class="article-card fade-up" style="transition-delay:${0.15 + i * 0.05}s">
+    <div class="article-card fade-up" data-categories="${(a.categories||[]).join(',')}"
+         style="transition-delay:${0.15 + i * 0.05}s"
+         onclick="toggleArticle(event, null, ${i})">
       <div class="article-meta">
         <div class="article-date">${a.date}</div>
         <div class="article-read-time">${a.readTime}</div>
@@ -478,7 +521,8 @@ function render() {
         <span class="read-more">READ ARTICLE</span>
         <span class="article-arrow">→</span>
       </div>
-    </a>
+      <div class="article-body">${a.body}</div>
+    </div>
   `).join('');
 
   document.getElementById('footer').innerHTML = `
@@ -490,6 +534,49 @@ function render() {
   // Re-observe new elements
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 }
+
+function toggleArticle(e, closeBtn, idx) {
+  // If triggered by close button inside card, don't re-toggle
+  if (closeBtn) {
+    e.stopPropagation();
+    const card = closeBtn.closest('.article-card');
+    card.querySelector('.article-body').classList.remove('open');
+    card.classList.remove('expanded');
+    return;
+  }
+  // Don't toggle if clicking on a tag or button
+  if (e.target.closest('.atag') || e.target.closest('button')) return;
+  const card = e.currentTarget;
+  const body = card.querySelector('.article-body');
+  const isOpen = body.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.article-card.expanded').forEach(c => {
+    c.querySelector('.article-body').classList.remove('open');
+    c.classList.remove('expanded');
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    card.classList.add('expanded');
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+}
+
+// Filter logic
+document.getElementById('filterBar').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filter = btn.dataset.filter;
+  document.querySelectorAll('.article-card').forEach(card => {
+    if (filter === 'all') {
+      card.classList.remove('hidden');
+    } else {
+      const cats = card.dataset.categories || '';
+      card.classList.toggle('hidden', !cats.split(',').includes(filter));
+    }
+  });
+});
 
 // Cursor
 const cursor = document.getElementById('cursor');

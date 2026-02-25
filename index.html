@@ -772,6 +772,16 @@ const CONFIG = {
   // Articles (most recent first)
   articles: [
     {
+      date: "Feb 2026",
+      title: "The End of Seeing is Believing",
+      excerpt: "A new architectural approach for truth validation — building a trusted layer between society and AI-generated content.",
+      tags: [
+        { text: "Ethics", color: "p" },
+        { text: "Blockchain", color: "c" }
+      ],
+      url: "articles.html"
+    },
+    {
       date: "Jan 2025",
       title: "Building Production Agentic Systems with LangChain",
       excerpt: "A deep dive into architecting multi-agent systems with specialized prompt routers and tool integrations for enterprise use cases.",
@@ -779,17 +789,7 @@ const CONFIG = {
         { text: "LangChain", color: "c" },
         { text: "Agents", color: "g" }
       ],
-      url: "#"
-    },
-    {
-      date: "Dec 2024",
-      title: "Advanced RAG: Beyond Basic Retrieval",
-      excerpt: "Implementing hybrid search, re-ranking, and knowledge graph integration for production RAG systems.",
-      tags: [
-        { text: "RAG", color: "c" },
-        { text: "Vector DB", color: "p" }
-      ],
-      url: "#"
+      url: "articles.html"
     }
   ],
 
@@ -802,7 +802,8 @@ const CONFIG = {
       tech: ["LlaMA2", "vLLM", "W&B", "Docker"],
       accent: "cyan",
       links: [
-        { text: "GitHub", url: "#" }
+        { text: "HuggingFace", url: "https://huggingface.co/dweebster" },
+        { text: "All Projects", url: "projects.html" }
       ]
     },
     {
@@ -812,7 +813,7 @@ const CONFIG = {
       tech: ["Document AI", "FHIR", "NER", "GCP"],
       accent: "green",
       links: [
-        { text: "Demo", url: "#" }
+        { text: "Discuss", url: "mailto:abraham.roshan.a@gmail.com?subject=Medical AI Inquiry" }
       ]
     },
     {
@@ -822,7 +823,7 @@ const CONFIG = {
       tech: ["LangChain", "Pinecone", "FastAPI"],
       accent: "purple",
       links: [
-        { text: "GitHub", url: "#" }
+        { text: "GitHub", url: "https://github.com/dweebyuserx" }
       ]
     },
     {
@@ -832,7 +833,8 @@ const CONFIG = {
       tech: ["MLflow", "Terraform", "GKE", "SageMaker"],
       accent: "orange",
       links: [
-        { text: "Docs", url: "#" }
+        { text: "GitHub", url: "https://github.com/dweebyuserx" },
+        { text: "All Projects", url: "projects.html" }
       ]
     }
   ],
@@ -985,7 +987,7 @@ function render() {
   // Articles
   const articlesList = document.getElementById('articlesList');
   articlesList.innerHTML = CONFIG.articles.map((a, i) => `
-    <div class="article-item fade-up" style="transition-delay:${i * 0.05}s">
+    <a href="articles.html" class="article-item fade-up" style="transition-delay:${i * 0.05}s; text-decoration:none; color:inherit; cursor:none;">
       <div class="article-date">${a.date}</div>
       <div>
         <div class="article-title">${a.title}</div>
@@ -995,7 +997,7 @@ function render() {
         </div>
       </div>
       <div class="article-arrow">→</div>
-    </div>
+    </a>
   `).join('');
 
   // Projects
