@@ -447,6 +447,59 @@
     .featured-header { flex-direction: column; gap: 16px; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
+
+  /* Active card */
+  .project-card.active {
+    border-color: var(--accent, var(--cyan));
+    box-shadow: 0 0 20px rgba(77,217,240,0.12);
+  }
+
+  /* Click-to-feature hint */
+  .swap-hint {
+    font-size: 9px;
+    color: var(--dim);
+    letter-spacing: 0.08em;
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .project-card:hover .swap-hint { opacity: 1; }
+
+  /* Featured panel fade transition */
+  .featured-swap { transition: opacity 0.25s; }
+  .featured-swap.fading { opacity: 0; }
+
+  /* Variant table inside featured panel */
+  .feat-variants {
+    margin: 16px 0;
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: 4px;
+    border-left: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .feat-variant-row { display: flex; align-items: baseline; gap: 10px; font-size: 11px; }
+  .feat-variant-label { color: var(--dim); min-width: 20px; text-align: right; flex-shrink: 0; }
+  .feat-variant-text { color: var(--muted); line-height: 1.5; }
+  .feat-variant-tech { color: var(--dim); font-size: 10px; }
+
+  /* Touch: hide custom cursor */
+  @media (hover: none) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  /* 1-col grid on small phones */
+  @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
+
+  /* Nav overflow on small phones */
+  @media (max-width: 520px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    .nav-status { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -637,24 +690,26 @@ function render() {
   const fp = CONFIG.featuredProject;
   document.getElementById('featuredProject').innerHTML = `
     <div class="featured-project">
-      <div class="featured-header">
-        <span class="featured-icon">${fp.icon}</span>
-        <div>
-          <div class="featured-title">${fp.name}</div>
-          <div class="featured-tagline">${fp.tagline}</div>
+      <div class="featured-swap" id="featuredSwap">
+        <div class="featured-header">
+          <span class="featured-icon">${fp.icon}</span>
+          <div>
+            <div class="featured-title" id="featTitle">${fp.name}</div>
+            <div class="featured-tagline">${fp.tagline}</div>
+          </div>
         </div>
-      </div>
-      <div class="featured-desc">${fp.desc}</div>
-      <div class="featured-tech">
-        ${fp.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
-      </div>
-      <div class="featured-links">
-        ${fp.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}
+        <div class="featured-desc">${fp.desc}</div>
+        <div class="featured-tech">
+          ${fp.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
+        </div>
+        <div class="featured-links">
+          ${fp.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}
+        </div>
       </div>
     </div>
   `;
 
-  document.getElementById('projectsGrid').innerHTML = CONFIG.projects.map(p => {
+  document.getElementById('projectsGrid').innerHTML = CONFIG.projects.map((p, i) => {
     const buildsBadge = p.builds ? `<div class="builds-badge">× <span>${p.builds}</span> builds &nbsp;·&nbsp; multiple calibrations</div>` : '';
     const variantsList = p.variants ? `
       <div class="variants-list">
@@ -666,7 +721,7 @@ function render() {
       </div>` : '';
     const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
     return `
-      <div class="project-card" style="--accent:var(--${p.accent})">
+      <div class="project-card${i === 0 ? ' active' : ''}" style="--accent:var(--${p.accent})" data-idx="${i}" onclick="setFeatured(+this.dataset.idx)">
         <span class="project-icon">${p.icon}</span>
         <div class="project-name">${p.name}</div>
         ${buildsBadge}
@@ -676,6 +731,7 @@ function render() {
           ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
         </div>
         ${links}
+        <div class="swap-hint">↑ set as featured</div>
       </div>`;
   }).join('');
 
@@ -684,6 +740,57 @@ function render() {
     <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
     <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
   `;
+}
+
+// Terminal streaming text
+function typeStream(el, speed) {
+  if (!el) return;
+  speed = speed || 30;
+  const finalHTML = el.innerHTML;
+  const text = el.textContent;
+  el.textContent = '';
+  let i = 0;
+  (function tick() {
+    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
+    else { el.innerHTML = finalHTML; }
+  })();
+}
+
+// Swap featured project
+function setFeatured(idx) {
+  const swap = document.getElementById('featuredSwap');
+  if (!swap) return;
+  swap.classList.add('fading');
+  setTimeout(() => {
+    const p = CONFIG.projects[idx];
+    const tagline = p.tagline || '';
+    const variantsHtml = p.variants ? `
+      <div class="feat-variants">
+        ${p.variants.map(v => `
+          <div class="feat-variant-row">
+            <span class="feat-variant-label">${v.label}</span>
+            <span class="feat-variant-text">${v.text} <span class="feat-variant-tech">· ${v.tech}</span></span>
+          </div>`).join('')}
+      </div>` : '';
+    swap.innerHTML = `
+      <div class="featured-header">
+        <span class="featured-icon">${p.icon}</span>
+        <div>
+          <div class="featured-title" id="featTitle">${p.name}</div>
+          ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
+        </div>
+      </div>
+      <div class="featured-desc">${p.desc}</div>
+      ${variantsHtml}
+      <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}</div>
+      <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}</div>
+    `;
+    swap.classList.remove('fading');
+    typeStream(document.getElementById('featTitle'), 22);
+    document.querySelectorAll('.project-card').forEach((card, i) => {
+      card.classList.toggle('active', i === idx);
+    });
+  }, 220);
 }
 
 // Cursor
@@ -731,6 +838,7 @@ window.addEventListener('load', () => {
   render();
   setupHovers();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  typeStream(document.querySelector('.page-header h1'));
 });
 </script>
 </body>

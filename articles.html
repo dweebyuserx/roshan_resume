@@ -337,6 +337,19 @@
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
 
+  /* Touch: hide custom cursor */
+  @media (hover: none) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  /* Nav overflow on small phones */
+  @media (max-width: 520px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    .nav-status { display: none; }
+  }
+
   /* Expanded article body */
   .article-body {
     display: none;
@@ -578,6 +591,20 @@ document.getElementById('filterBar').addEventListener('click', e => {
   });
 });
 
+// Terminal streaming text
+function typeStream(el, speed) {
+  if (!el) return;
+  speed = speed || 30;
+  const finalHTML = el.innerHTML;
+  const text = el.textContent;
+  el.textContent = '';
+  let i = 0;
+  (function tick() {
+    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
+    else { el.innerHTML = finalHTML; }
+  })();
+}
+
 // Cursor
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
@@ -623,6 +650,7 @@ window.addEventListener('load', () => {
   render();
   setupHovers();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  typeStream(document.querySelector('.page-header h1'));
 });
 </script>
 </body>

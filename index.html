@@ -603,6 +603,19 @@
     .article-date { padding-top: 0; }
     .article-arrow { display: none; }
   }
+
+  /* Touch: hide custom cursor */
+  @media (hover: none) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  /* Nav overflow on small phones */
+  @media (max-width: 520px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    .nav-status { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -1051,6 +1064,20 @@ function render() {
   `;
 }
 
+// Terminal streaming text
+function typeStream(el, speed) {
+  if (!el) return;
+  speed = speed || 30;
+  const finalHTML = el.innerHTML;
+  const text = el.textContent;
+  el.textContent = '';
+  let i = 0;
+  (function tick() {
+    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
+    else { el.innerHTML = finalHTML; }
+  })();
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // CURSOR
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1230,6 +1257,8 @@ window.addEventListener('load', () => {
   document.querySelectorAll('#hero .fade-up').forEach((el, i) => {
     setTimeout(() => el.classList.add('visible'), i * 200 + 100);
   });
+
+  typeStream(document.querySelector('.hero-content h1'));
 
   // Connection lines
   const connSec = document.getElementById('connections');

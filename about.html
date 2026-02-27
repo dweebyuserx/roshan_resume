@@ -502,6 +502,38 @@
   @media (max-width: 600px) {
     .tree-container { display: none; }
     .tree-fallback { display: grid; }
+    .skill-row { grid-template-columns: auto 1fr auto; }
+    .skill-name { font-size: 10px; }
+  }
+
+  /* ─── HOBBIES ─────────────────────────────────────────────── */
+  .hobbies-section { margin-top: 80px; width: 100%; }
+  .hobby-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .hobby-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1 1 180px;
+  }
+  .hobby-icon { font-size: 28px; line-height: 1; }
+  .hobby-label { font-size: 12px; font-weight: 600; color: var(--bright); }
+  .hobby-desc { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 2px; }
+
+  /* Touch: hide custom cursor */
+  @media (hover: none) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  /* Nav overflow on small phones */
+  @media (max-width: 520px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    .nav-status { display: none; }
   }
 </style>
 </head>
@@ -573,6 +605,12 @@
       <svg id="skillTreeSvg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
     <div class="tree-fallback" id="treeFallback"></div>
+  </section>
+
+  <!-- Hobbies & Interests -->
+  <section class="hobbies-section fade-up" style="transition-delay:0.15s">
+    <div class="section-label" data-n="08">hobbies & interests</div>
+    <div class="hobby-grid" id="hobbiesGrid"></div>
   </section>
 </main>
 
@@ -705,6 +743,14 @@ const CONFIG = {
     { id: "medai",   label: "Medical AI",      color: "--red",    icon: "▸", leaves: ["FHIR","Epic/Cerner","ABHA","OCR-NER","FHIRstore","PyHealth"] }
   ],
 
+  hobbies: [
+    { icon: "🏄", label: "Surfing",    desc: "Chasing swells, reading ocean patterns." },
+    { icon: "🎸", label: "Music",      desc: "Guitar, sound design, endless playlists." },
+    { icon: "🎬", label: "Cinephile",  desc: "Arthouse, sci-fi, anything with vision." },
+    { icon: "📖", label: "Reading",    desc: "Research papers, philosophy, spec fiction." },
+    { icon: "🔧", label: "Tinkering",  desc: "IoT, embedded hardware, building for fun." }
+  ],
+
   copyrightYear: new Date().getFullYear(),
   lastUpdated: "Feb 2025"
 };
@@ -774,6 +820,7 @@ function render() {
   renderTimeline();
   renderCerts();
   renderSkillTree();
+  renderHobbies();
 }
 
 // ── Timeline ────────────────────────────────────────────────
@@ -795,7 +842,9 @@ function renderTimeline() {
     '--green':  { bg: 'rgba(61,255,160,0.12)',  border: 'rgba(61,255,160,0.7)'  },
     '--orange': { bg: 'rgba(255,159,74,0.12)',  border: 'rgba(255,159,74,0.7)'  },
     '--purple': { bg: 'rgba(167,139,250,0.12)', border: 'rgba(167,139,250,0.7)' },
-    '--cyan':   { bg: 'rgba(77,217,240,0.12)',  border: 'rgba(77,217,240,0.7)'  }
+    '--cyan':   { bg: 'rgba(77,217,240,0.12)',  border: 'rgba(77,217,240,0.7)'  },
+    '--yellow': { bg: 'rgba(251,191,36,0.12)',  border: 'rgba(251,191,36,0.7)'  },
+    '--red':    { bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.7)' }
   };
   tracks.innerHTML = CONFIG.timeline.map((job, i) => {
     const l = pct(job.start), w = pct(job.end) - pct(job.start);
@@ -979,6 +1028,34 @@ function renderSkillTree() {
   }).join('');
 }
 
+// ── Hobbies ──────────────────────────────────────────────────
+function renderHobbies() {
+  const grid = document.getElementById('hobbiesGrid');
+  if (!grid) return;
+  grid.innerHTML = CONFIG.hobbies.map(h => `
+    <div class="hobby-card">
+      <span class="hobby-icon">${h.icon}</span>
+      <div>
+        <div class="hobby-label">${h.label}</div>
+        <div class="hobby-desc">${h.desc}</div>
+      </div>
+    </div>`).join('');
+}
+
+// Terminal streaming text
+function typeStream(el, speed) {
+  if (!el) return;
+  speed = speed || 30;
+  const finalHTML = el.innerHTML;
+  const text = el.textContent;
+  el.textContent = '';
+  let i = 0;
+  (function tick() {
+    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
+    else { el.innerHTML = finalHTML; }
+  })();
+}
+
 function hlDomain(id) {
   document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('dim', l.dataset.dom !== id));
   document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('hl', l.dataset.dom === id));
@@ -1009,19 +1086,6 @@ function animRing() {
 }
 animRing();
 
-document.querySelectorAll('a, button').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    ring.style.width = '44px';
-    ring.style.height = '44px';
-    ring.style.borderColor = 'rgba(77,217,240,0.7)';
-  });
-  el.addEventListener('mouseleave', () => {
-    ring.style.width = '28px';
-    ring.style.height = '28px';
-    ring.style.borderColor = 'rgba(77,217,240,0.4)';
-  });
-});
-
 // Fade in
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => {
@@ -1044,6 +1108,7 @@ window.addEventListener('load', () => {
     el.addEventListener('mouseenter', () => { ring.style.width='44px'; ring.style.height='44px'; ring.style.borderColor='rgba(77,217,240,0.7)'; });
     el.addEventListener('mouseleave', () => { ring.style.width='28px'; ring.style.height='28px'; ring.style.borderColor='rgba(77,217,240,0.4)'; });
   });
+  typeStream(document.querySelector('.page-header h1'));
 });
 </script>
 </body>
