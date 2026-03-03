@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — projects</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
@@ -541,6 +543,7 @@
 <footer id="footer"></footer>
 
 <script>
+const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
 const CONFIG = {
   name: { first: "Roshan", last: "Abraham" },
   handle: "roshan",
@@ -559,7 +562,7 @@ const CONFIG = {
     desc: "Production multi-agent orchestration platform built for State Government PR workflows. Specialized prompt routers, chain-of-thought reasoning, tool integrations via MCP, and Firebase-backed state management. Powered by Gemma/Claude on GCP with ADK orchestration.",
     tech: ["ADK", "Gemma / Claude", "FastAPI", "GCP", "Firebase", "MCP"],
     links: [
-      { text: "Contact for Demo", url: "mailto:abraham.roshan.a@gmail.com" }
+      { text: "Contact for Demo", url: 'mailto:' + _em }
     ]
   },
 
@@ -571,7 +574,7 @@ const CONFIG = {
       tech: ["Document AI", "FHIR", "NER", "GCP", "ML Pipeline"],
       accent: "green",
       links: [
-        { text: "Discuss Project", url: "mailto:abraham.roshan.a@gmail.com?subject=Medical AI Infrastructure Inquiry" }
+        { text: "Discuss Project", url: 'mailto:' + _em + '?subject=Medical AI Infrastructure Inquiry' }
       ]
     },
     {
@@ -582,7 +585,7 @@ const CONFIG = {
       accent: "cyan",
       links: [
         { text: "HuggingFace Profile", url: "https://huggingface.co/dweebster" },
-        { text: "Discuss", url: "mailto:abraham.roshan.a@gmail.com?subject=LLM Foundry Inquiry" }
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=LLM Foundry Inquiry' }
       ]
     },
     {
@@ -600,7 +603,7 @@ const CONFIG = {
       ],
       links: [
         { text: "GitHub", url: "https://github.com/dweebyuserx" },
-        { text: "Discuss", url: "mailto:abraham.roshan.a@gmail.com?subject=RAG System Inquiry" }
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=RAG System Inquiry' }
       ]
     },
     {
@@ -621,7 +624,7 @@ const CONFIG = {
       accent: "yellow",
       links: [
         { text: "GitHub", url: "https://github.com/dweebyuserx" },
-        { text: "Discuss", url: "mailto:abraham.roshan.a@gmail.com?subject=Cattle Detection Project Inquiry" }
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=Cattle Detection Project Inquiry' }
       ]
     },
     {
@@ -703,7 +706,7 @@ function render() {
           ${fp.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
         </div>
         <div class="featured-links">
-          ${fp.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}
+          ${fp.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
         </div>
       </div>
     </div>
@@ -719,7 +722,7 @@ function render() {
             <span class="variant-text">${v.text} <span class="variant-tech">· ${v.tech}</span></span>
           </div>`).join('')}
       </div>` : '';
-    const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
+    const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
     return `
       <div class="project-card${i === 0 ? ' active' : ''}" style="--accent:var(--${p.accent})" data-idx="${i}" onclick="setFeatured(+this.dataset.idx)">
         <span class="project-icon">${p.icon}</span>
@@ -783,7 +786,7 @@ function setFeatured(idx) {
       <div class="featured-desc">${p.desc}</div>
       ${variantsHtml}
       <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}</div>
-      <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}</div>
+      <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
     `;
     swap.classList.remove('fading');
     typeStream(document.getElementById('featTitle'), 22);

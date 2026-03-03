@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — connect</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
@@ -396,6 +398,17 @@
   @media (max-width: 600px) {
     .nodes-grid { grid-template-columns: 1fr; }
   }
+
+  @media (hover: none) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none; }
+  }
+
+  @media (max-width: 520px) {
+    .nav-links { gap: 16px; }
+    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    .nav-status { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -454,10 +467,11 @@
 <footer id="footer"></footer>
 
 <script>
+const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
 const CONFIG = {
   name: { first: "Roshan", last: "Abraham" },
   handle: "roshan",
-  email: "abraham.roshan.a@gmail.com",
+  email: _em,
   status: "open to opportunities",
 
   ctaText: "I'm currently open to AI consulting, full-time positions, and interesting collaborations in LLMOps, Agentic AI, and MLOps.",
@@ -499,8 +513,8 @@ const CONFIG = {
     },
     {
       name: "Email",
-      handle: "abraham.roshan.a@gmail.com",
-      url: "mailto:abraham.roshan.a@gmail.com",
+      handle: _em,
+      url: 'mailto:' + _em,
       icon: "◉",
       color: "--green",
       badge: "DIRECT",
@@ -522,7 +536,8 @@ const CONFIG = {
     {
       name: "Resume",
       handle: "Download PDF",
-      url: "AICV_20251201_160508_0000.pdf",
+      url: "roshan-abraham-cv.pdf",
+      download: true,
       icon: "◆",
       color: "--purple",
       badge: "DOCUMENT",
@@ -548,7 +563,7 @@ function render() {
   document.getElementById('nodesGrid').innerHTML = CONFIG.connections.map(c => {
     const colorVal = c.color.startsWith('--') ? `var(${c.color})` : c.color;
     return `
-      <a href="${c.url}" target="_blank" class="node-card" style="--node-color:${colorVal}">
+      <a href="${c.url}" target="_blank" rel="noopener noreferrer" ${c.download ? 'download' : ''} class="node-card" style="--node-color:${colorVal}">
         <span class="node-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
         <span class="node-icon">${c.icon}</span>
         <div class="node-name">${c.name}</div>

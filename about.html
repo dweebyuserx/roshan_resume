@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — about</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
@@ -885,7 +887,7 @@ function renderCerts() {
         <button class="cert-courses-toggle" onclick="toggleCourses(this)">▸ ${c.courses.length} courses</button>
         <ul class="cert-courses-list">${c.courses.map(course => `<li>${course}</li>`).join('')}</ul>
       </div>` : '<div></div>';
-    const verify = c.url ? `<a class="cert-verify" href="${c.url}" target="_blank" rel="noopener">verify ↗</a>` : '';
+    const verify = c.url ? `<a class="cert-verify" href="${c.url}" target="_blank" rel="noopener noreferrer">verify ↗</a>` : '';
     return `
       <div class="cert-card" style="border-left-color:var(${c.color})">
         <div class="cert-top">

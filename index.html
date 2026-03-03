@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — resume</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
@@ -719,6 +721,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // CONFIG - Edit this object with your personal data
 // ═══════════════════════════════════════════════════════════════════════════════
+const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
 const CONFIG = {
   // Basic Info
   name: {
@@ -728,7 +731,7 @@ const CONFIG = {
   handle: "roshan",
   title: "AI Solutions Consultant",
   location: "India | USA | UK",
-  email: "abraham.roshan.a@gmail.com",
+  email: _em,
   yoe: 5,
   status: "available for work",
   statusMessage: "open to opportunities",
@@ -826,7 +829,7 @@ const CONFIG = {
       tech: ["Document AI", "FHIR", "NER", "GCP"],
       accent: "green",
       links: [
-        { text: "Discuss", url: "mailto:abraham.roshan.a@gmail.com?subject=Medical AI Inquiry" }
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=Medical AI Inquiry' }
       ]
     },
     {
@@ -886,8 +889,8 @@ const CONFIG = {
     },
     {
       name: "Email",
-      handle: "abraham.roshan.a@gmail.com",
-      url: "mailto:abraham.roshan.a@gmail.com",
+      handle: _em,
+      url: 'mailto:' + _em,
       icon: "mail",
       color: "--green",
       badge: "DIRECT",
@@ -897,7 +900,8 @@ const CONFIG = {
     {
       name: "Resume",
       handle: "Download PDF",
-      url: "AICV_20251201_160508_0000.pdf",
+      url: "roshan-abraham-cv.pdf",
+      download: true,
       icon: "doc",
       color: "--purple",
       badge: "CV",
@@ -1024,7 +1028,7 @@ function render() {
         ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
       </div>
       <div class="project-links">
-        ${p.links.map(l => `<a href="${l.url}" target="_blank" class="plink">↗ ${l.text}</a>`).join('')}
+        ${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
       </div>
     </div>
   `).join('');
@@ -1038,7 +1042,7 @@ function render() {
   nodesGrid.innerHTML = CONFIG.connections.map(c => {
     const colorVal = c.color.startsWith('--') ? `var(${c.color})` : c.color;
     return `
-      <a href="${c.url}" target="_blank" class="node-card" style="--node-color:${colorVal}">
+      <a href="${c.url}" target="_blank" rel="noopener noreferrer" ${c.download ? 'download' : ''} class="node-card" style="--node-color:${colorVal}">
         <span class="node-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
         <span class="node-icon">${ICONS[c.icon] || '~'}</span>
         <div class="node-name">${c.name}</div>
