@@ -291,6 +291,13 @@
     color: var(--dim);
     letter-spacing: 0.06em;
   }
+  .tech-pill-cyan   { border-color: rgba(77,217,240,0.35);  color: var(--cyan);   background: rgba(77,217,240,0.06); }
+  .tech-pill-green  { border-color: rgba(61,255,160,0.35);  color: var(--green);  background: rgba(61,255,160,0.06); }
+  .tech-pill-orange { border-color: rgba(255,159,74,0.35);  color: var(--orange); background: rgba(255,159,74,0.06); }
+  .tech-pill-purple { border-color: rgba(167,139,250,0.35); color: var(--purple); background: rgba(167,139,250,0.06); }
+  .tech-pill-pink   { border-color: rgba(244,114,182,0.35); color: var(--pink);   background: rgba(244,114,182,0.06); }
+  .tech-pill-yellow { border-color: rgba(251,191,36,0.35);  color: var(--yellow); background: rgba(251,191,36,0.06); }
+  .tech-pill-red    { border-color: rgba(248,113,113,0.35); color: var(--red);    background: rgba(248,113,113,0.06); }
 
   .featured-links {
     display: flex;
@@ -614,7 +621,6 @@ const CONFIG = {
         { label: "v4", text: "Agentic RAG with tool use for Govt document retrieval", tech: "ADK · Vertex AI · GCP" }
       ],
       links: [
-        { text: "GitHub", url: "https://github.com/dweebyuserx" },
         { text: "Discuss", url: 'mailto:' + _em + '?subject=RAG System Inquiry' }
       ]
     },
@@ -625,7 +631,7 @@ const CONFIG = {
       tech: ["BigQuery", "Model Registry", "TFX", "GCP Scheduler"],
       accent: "orange",
       links: [
-        { text: "GitHub", url: "https://github.com/dweebyuserx" }
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=MLOps Engine Inquiry' }
       ]
     },
     {
@@ -635,7 +641,6 @@ const CONFIG = {
       tech: ["TFX", "Serverless", "Zapier", "OCR", "Model Registry"],
       accent: "yellow",
       links: [
-        { text: "GitHub", url: "https://github.com/dweebyuserx" },
         { text: "Discuss", url: 'mailto:' + _em + '?subject=Cattle Detection Project Inquiry' }
       ]
     },
@@ -646,7 +651,7 @@ const CONFIG = {
       tech: ["Raspberry Pi", "Python", "YOLOv5", "CV"],
       accent: "green",
       links: [
-        { text: "GitHub", url: "https://github.com/dweebyuserx" }
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=IoT Garden Inquiry' }
       ]
     },
     {
@@ -656,8 +661,7 @@ const CONFIG = {
       tech: ["Diffusers", "ControlNet", "LoRA", "DreamBooth", "HuggingFace"],
       accent: "pink",
       links: [
-        { text: "HuggingFace", url: "https://huggingface.co/dweebster" },
-        { text: "GitHub", url: "https://github.com/dweebyuserx" }
+        { text: "HuggingFace", url: "https://huggingface.co/dweebster" }
       ]
     },
     {
@@ -703,7 +707,7 @@ const CONFIG = {
         { label: "v3", text: "LLM-backed RAG chatbot with contextual memory and Ollama local serving", tech: "LangChain · Ollama · Redis · FastAPI" }
       ],
       links: [
-        { text: "GitHub", url: "https://github.com/dweebyuserx" }
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=ChatBot Systems Inquiry' }
       ]
     }
   ],
@@ -745,7 +749,7 @@ function render() {
         </div>
         <div class="featured-desc">${fp.desc}</div>
         <div class="featured-tech">
-          ${fp.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
+          ${fp.tech.map(t => `<span class="tech-pill tech-pill-cyan">${t}</span>`).join('')}
         </div>
         <div class="featured-links">
           ${fp.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
@@ -773,7 +777,7 @@ function render() {
         <div class="project-desc">${p.desc}</div>
         ${variantsList}
         <div class="project-tech">
-          ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
+          ${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}
         </div>
         ${links}
         <div class="swap-hint">↑ set as featured</div>
@@ -827,7 +831,7 @@ function setFeatured(idx) {
       </div>
       <div class="featured-desc">${p.desc}</div>
       ${variantsHtml}
-      <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}</div>
+      <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}</div>
       <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
     `;
     swap.classList.remove('fading');
