@@ -79,8 +79,9 @@ Planning MLOps and all segments. Developed and architected API systems for model
 | Python / FastAPI | 95% |
 | FHIR / Medical AI | 60% |
 | PostgreSQL / BigQuery | 80% |
+| Claude code/ openclaw | 75% |
 
-**Stack:** LangChain, PyTorch, Vertex AI, FastAPI, Docker, Vector DBs
+**Stack:** ADK, claudeSDK, PyTorch, Vertex AI, FastAPI, Docker, Vector DBs
 
 **Tags:** LLMOps · Agentic AI · MLOps · RAG Systems · Cloud AI · Python
 
@@ -105,8 +106,25 @@ Planning MLOps and all segments. Developed and architected API systems for model
 
 ### Agentic PR Platform *(Featured — AI Hackathon Winner)*
 Multi-agent orchestration platform with specialized routers, chain-of-thought reasoning, and tool integration for enterprise State Govt deployments at Deloitte.
-**Tech:** ADK, Gemma/Claude, FastAPI, GCP, Firebase, MCP
-*Deloitte USI, 2025*
+**Tech:** ADK, Gemma/Claude, VertexAI, Firebase, MCP, 
+
+---
+
+### Claude Agent Code Conversion & Testing Workflow
+Multi-agent system for automated code conversion, dynamic test generation, and structured reporting — engineered for record-minimal token consumption via aggressive prompt caching, context pruning, and tool-use optimization.
+**Tech:** Claude Agent SDK, Anthropic API, MCP, prompt caching, dynamic test harness
+
+---
+
+### Education Data Transformation Pipeline
+Intelligent pipeline that ingests raw educational source content and transforms it into student-profile-adapted learning material. Generates personalized KT reports and feedback metrics benchmarked against WHO psychological development standards.
+**Tech:** ADK, LLM openrouter, redis RAG, custom student profile modeling, WHO psych standards, data transformation pipelines
+
+---
+
+### In-Store Navigation AI Agent *(NetworkX)*
+Conversational AI agent that understands physical store layouts modeled as graphs using NetworkX. Enables natural-language navigation assistance, aisle-level routing, and contextual product discovery in retail environments.
+**Tech:** NetworkX, conversational AI, graph traversal, spatial reasoning, Claude
 
 ---
 
@@ -117,14 +135,14 @@ Document OCR engine with NER parser for medical documents. FHIR translation and 
 ---
 
 ### Custom LLM Foundry
-End-to-end LLM Fine-tuning pipeline with custom data collection and injection based generation, instruction tuning, and registry management using transformers lib from huggingface for Evaluations and Benchmarking.
-**Tech:** gemma/qwen2.5, vLLM/unsloth, W&B/HF, Docker/RunPod
+LLM Fine-tuning pipeline with custom data collection and injection based generation, instruction tuning, and registry management using transformers lib from huggingface and W&B for Evaluations and Benchmarking.
+**Tech:** gemma/qwen2.5, vLLM/unsloth, W&B/HF, Docker/RunPod, DSPy
 
 ---
 
 ### Advanced RAG System
 Built Multiple RAG systems of varying caliber. From Multi-agent orchestration with specialized routers, embedded knowledge indexing, prompt caching, Specialised chunking strat, Eval testing to Hybrid search with re-ranking, All have been configured as usecase requiremetns for deployment needs.
-**Tech:** Weaveate, Milvus, ADK, RAGAS, Pinecone, Redis
+**Tech:** Weaveate, Milvus, ADK, RAGAS, DSPy, Redis
 
 ---
 

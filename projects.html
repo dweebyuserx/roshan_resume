@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — projects</title>
 <style>
@@ -503,6 +503,18 @@
     .nav-status { display: none; }
   }
 </style>
+<!-- ░░ Analytics — fill in IDs after account setup ░░ -->
+<!-- Cloudflare Web Analytics: https://dash.cloudflare.com → Analytics & Logs → Web Analytics -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+  data-cf-beacon='{"token":"CLOUDFLARE_TOKEN_HERE"}'></script>
+<!-- Microsoft Clarity: https://clarity.microsoft.com → New Project → Get Tracking Code -->
+<script type="text/javascript">
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window,document,"clarity","script","CLARITY_ID_HERE");
+</script>
 </head>
 <body>
 
@@ -550,7 +562,7 @@ const CONFIG = {
   status: "available for work",
 
   stats: {
-    projects: "15+",
+    projects: "18+",
     deployments: "40+",
     award: "AI Hackathon Winner"
   },
@@ -646,6 +658,36 @@ const CONFIG = {
       links: [
         { text: "HuggingFace", url: "https://huggingface.co/dweebster" },
         { text: "GitHub", url: "https://github.com/dweebyuserx" }
+      ]
+    },
+    {
+      icon: "🔁",
+      name: "Claude Agent Code Conversion & Testing Workflow",
+      desc: "Multi-agent system for automated code conversion, dynamic test generation, and structured reporting. Engineered for record-minimal token consumption via aggressive prompt caching, context pruning, and optimised tool-use patterns.",
+      tech: ["Claude Agent SDK", "Anthropic API", "MCP", "Prompt Caching", "Dynamic Test Harness"],
+      accent: "cyan",
+      links: [
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=Code Conversion Agent Inquiry' }
+      ]
+    },
+    {
+      icon: "🎓",
+      name: "Education Data Transformation Pipeline",
+      desc: "Intelligent pipeline that ingests raw educational source content and transforms it into student-profile-adapted learning material. Generates personalised KT reports and feedback metrics benchmarked against WHO psychological development standards.",
+      tech: ["LLM Pipelines", "RAG", "Student Profile Modeling", "WHO Psych Standards", "Data Transformation"],
+      accent: "green",
+      links: [
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=Education Pipeline Inquiry' }
+      ]
+    },
+    {
+      icon: "🗺️",
+      name: "In-Store Navigation AI Agent",
+      desc: "Conversational AI agent that understands physical store layouts modeled as graphs using NetworkX. Enables natural-language navigation assistance, aisle-level routing, and contextual product discovery in retail environments.",
+      tech: ["NetworkX", "Conversational AI", "Graph Traversal", "Spatial Reasoning", "Claude"],
+      accent: "purple",
+      links: [
+        { text: "Discuss", url: 'mailto:' + _em + '?subject=Navigation Agent Inquiry' }
       ]
     },
     {
