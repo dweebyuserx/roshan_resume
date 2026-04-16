@@ -25,9 +25,16 @@ My expertise spans **Medical AI infrastructure**, custom LLM foundries, and buil
 ## Experience
 
 ### AI Solutions Consultant — Deloitte USI
-*2024 — Present*
+*Jan 2024 — Present*
 
 Handling Govt projects and transforming AI solutions for enterprise consumption. Building Agentic solutions for State Govt organizations. Winner of AI Hackathon for PR Agentic solutions. Blockchain-ready chatbot provisioning.
+
+---
+
+### AI Team Lead — Appsynergies
+*2021 — Jan 2024*
+
+Planning MLOps and all segments. Developed and architected API systems for model inference. Delivered real-world optimized AI solutions leveraging custom industry expertise. Mentoring junior AI engineers on the team.
 
 ---
 
@@ -45,10 +52,17 @@ Large scale data scraping and text dataset generation. Blockchain-ready chatbot 
 
 ---
 
-### AI Team Lead — Appsynergies
-*2019 — 2024*
+### AI Engineer — Appsynergies
+*2019 — 2021*
 
-Planning MLOps and all segments. Developed and architected API systems for model inference. Delivered real-world optimized AI solutions leveraging custom industry expertise. Mentoring junior AI engineers on the team.
+Developed and integrated ML models into production pipelines. Built inference APIs and data preprocessing systems. Contributed to early MLOps foundations for the team.
+
+---
+
+### Data Scientist Intern — QDgrees
+*2018 — 2019*
+
+Applied ML and statistical modelling for data analysis. Built and deployed predictive models and data pipelines.
 
 ---
 ## Skills
@@ -192,7 +206,7 @@ St. Aloysius Institute of Technology
 | Platform | Handle |
 |----------|--------|
 | GitHub | [@dweebyuserx](https://github.com/dweebyuserx) |
-| LinkedIn | [/in/roshan-abraham](https://linkedin.com/in/roshan-abraham) |
+| LinkedIn | [/in/roshan-abraham-187474138](https://www.linkedin.com/in/roshan-abraham-187474138/) |
 | Hugging Face | [@dweebster](https://huggingface.co/dweebster) |
 | Email | [abraham.roshan.a@gmail.com](mailto:abraham.roshan.a@gmail.com) |
 
