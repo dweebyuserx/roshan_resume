@@ -5,618 +5,573 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>~/user — resume</title>
+<title>Roshan Abraham — AI Solutions Consultant</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
 
   :root {
-    --bg: #0a0b0d;
-    --bg2: #0f1117;
-    --bg3: #141720;
-    --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
-    --cyan: #4dd9f0;
-    --green: #3dffa0;
-    --orange: #ff9f4a;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --yellow: #fbbf24;
-    --red: #f87171;
+    --void: #030014;
+    --bg2: #07050f;
+    --bg3: #0d0a1a;
+    --border: #1a1530;
+    --text: #b8b4d0;
+    --bright: #e8e4ff;
+    --dim: #5a5580;
+    --page-color: #00f5ff;
     --font-mono: 'JetBrains Mono', monospace;
     --font-display: 'Syne', sans-serif;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg);
+    background: var(--void);
     color: var(--text);
     font-family: var(--font-mono);
     font-size: 13px;
     line-height: 1.8;
     overflow-x: hidden;
-    cursor: none;
   }
 
-  /* Custom cursor */
-  .cursor {
-    width: 6px; height: 6px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s;
-    box-shadow: 0 0 12px var(--cyan);
-  }
-  .cursor-ring {
-    width: 28px; height: 28px;
-    border: 1px solid rgba(77,217,240,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
-  }
-
-  /* Scanline overlay */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='52'%3E%3Cpolygon points='30,2 58,17 58,47 30,62 2,47 2,17' fill='none' stroke='%23ffffff' stroke-width='0.4' stroke-opacity='0.06'/%3E%3C/svg%3E");
+    background-size: 60px 52px;
     pointer-events: none;
-    z-index: 1000;
+    z-index: 0;
   }
 
-  /* NAV */
+  /* Nav */
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
+    position: sticky;
+    top: 0;
     z-index: 100;
+    backdrop-filter: blur(20px);
+    background: rgba(3, 0, 20, 0.8);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 40px;
-    background: rgba(10,11,13,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
   }
 
   .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--cyan);
-    letter-spacing: 0.05em;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--bright);
     text-decoration: none;
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 1;
   }
-  .nav-logo span { color: var(--muted); }
 
   .nav-links {
     display: flex;
-    gap: 32px;
-    list-style: none;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
   }
+
   .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.1em;
     text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
+    color: var(--dim);
     transition: color 0.2s;
-    position: relative;
-    cursor: none;
+    padding-bottom: 2px;
   }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
+
   .nav-links a:hover { color: var(--bright); }
-  .nav-links a:hover::before { opacity: 1; }
-
-  .nav-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
+  .nav-links a.active {
+    color: var(--page-color);
+    border-bottom: 1px solid var(--page-color);
   }
 
-  /* SECTIONS */
-  section {
-    min-height: 100vh;
-    padding: 120px 60px 80px;
-    position: relative;
-  }
-
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 48px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .section-label::before { content: attr(data-n); color: var(--cyan); }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    max-width: 200px;
-  }
-
-  /* HERO */
-  #hero {
-    display: grid;
-    grid-template-columns: 1fr 420px;
-    gap: 60px;
-    align-items: center;
-  }
-
-  .hero-terminal {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-  }
-
-  .term-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
-  }
-  .term-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .term-dot.r { background: #ff5f57; }
-  .term-dot.y { background: #febc2e; }
-  .term-dot.g { background: #28c840; }
-  .term-title {
-    flex: 1;
-    text-align: center;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .term-body { padding: 24px; font-size: 13px; line-height: 1.9; }
-
-  .t-prompt { color: var(--green); }
-  .t-cmd { color: var(--bright); }
-  .t-out { color: var(--text); }
-  .t-key { color: var(--cyan); }
-  .t-val { color: var(--orange); }
-  .t-str { color: var(--green); }
-  .t-comment { color: var(--muted); font-style: italic; }
-  .t-dim { color: var(--dim); }
-  .t-cursor {
+  .avail-dot {
     display: inline-block;
-    width: 8px; height: 14px;
-    background: var(--cyan);
-    animation: blink 1s step-end infinite;
-    vertical-align: text-bottom;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #00ff88;
+    box-shadow: 0 0 6px #00ff88;
+    animation: pulse-dot 2s ease-in-out infinite;
+    margin-left: 4px;
   }
 
-  .hero-content h1 {
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: calc(100vh - 56px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--page-color);
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+
+  .hero-name {
     font-family: var(--font-display);
-    font-size: clamp(42px, 6vw, 80px);
     font-weight: 800;
-    line-height: 1;
+    font-size: clamp(3rem, 8vw, 7rem);
+    position: relative;
     color: var(--bright);
+    line-height: 1;
     margin-bottom: 16px;
   }
-  .hero-content h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+
+  .hero-name::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #ff2d78;
+    mix-blend-mode: screen;
+    clip-path: polygon(0 20%, 100% 20%, 100% 45%, 0 45%);
+    animation: glitch-top 8s 4s infinite;
+    pointer-events: none;
   }
 
-  .hero-tagline {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 32px;
-    max-width: 480px;
+  .hero-name::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #00f5ff;
+    mix-blend-mode: screen;
+    clip-path: polygon(0 55%, 100% 55%, 100% 80%, 0 80%);
+    animation: glitch-bot 8s 4s infinite;
+    pointer-events: none;
+  }
+
+  @keyframes glitch-top {
+    0%, 97%, 100% { transform: translateX(0); }
+    98% { transform: translateX(-3px); }
+    99% { transform: translateX(2px); }
+  }
+
+  @keyframes glitch-bot {
+    0%, 97%, 100% { transform: translateX(0); }
+    98% { transform: translateX(3px); }
+    99% { transform: translateX(-2px); }
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+    color: var(--dim);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-subtitle span {
+    color: var(--page-color);
+  }
+
+  .hero-location {
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.07);
+    border: 1px solid rgba(0, 255, 136, 0.25);
+    padding: 5px 12px;
+    margin-bottom: 28px;
   }
 
   .hero-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 40px;
-  }
-  .tag {
-    padding: 4px 12px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    font-size: 11px;
-    color: var(--cyan);
-    background: rgba(77,217,240,0.04);
-    letter-spacing: 0.05em;
+    margin-bottom: 36px;
   }
 
-  .hero-cta {
+  .hero-tag {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--page-color);
+    border: 1px solid rgba(0, 245, 255, 0.25);
+    padding: 3px 10px;
+    background: rgba(0, 245, 255, 0.05);
+  }
+
+  .hero-ctas {
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
   }
-  .btn {
-    padding: 10px 24px;
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-family: var(--font-mono);
     font-size: 12px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
+    color: var(--void);
+    background: var(--page-color);
     border: none;
-    border-radius: 3px;
-    cursor: none;
+    padding: 10px 24px;
     text-decoration: none;
-    transition: all 0.2s;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.1s;
   }
-  .btn-primary {
-    background: var(--cyan);
-    color: var(--bg);
-    font-weight: 700;
+
+  .btn-primary:hover {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.4);
+    transform: translateY(-1px);
   }
-  .btn-primary:hover { background: #7be8fa; transform: translateY(-1px); }
-  .btn-ghost {
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--page-color);
     background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
+    border: 1px solid var(--page-color);
+    padding: 10px 24px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
   }
-  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
 
-  /* ABOUT */
-  #about { background: var(--bg2); }
+  .btn-secondary:hover {
+    background: rgba(0, 245, 255, 0.08);
+    box-shadow: 0 0 16px rgba(0, 245, 255, 0.2);
+  }
 
-  .about-grid {
+  /* Section */
+  .section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 64px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--page-color);
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--bright);
+    margin-bottom: 48px;
+  }
+
+  /* City Skyline Skills */
+  .skyline {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 200px;
+    padding-bottom: 0;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .building-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+  }
+
+  .building {
+    width: 40px;
+    background: linear-gradient(to top, var(--page-color), transparent);
+    position: relative;
+    height: 0;
+    transition: height 1s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.85;
+  }
+
+  .building.animated {
+    /* height set by JS */
+  }
+
+  .building::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: var(--page-color);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--page-color);
+  }
+
+  .building-label {
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    text-align: center;
+    max-width: 52px;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .building-pct {
+    font-size: 10px;
+    color: var(--page-color);
+    text-align: center;
+  }
+
+  /* Featured Project */
+  .featured-card {
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .featured-card:hover {
+    border-color: var(--page-color);
+    box-shadow: 0 0 30px rgba(0, 245, 255, 0.1);
+  }
+
+  .featured-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .featured-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    background: rgba(251, 191, 36, 0.07);
+    padding: 3px 10px;
+    margin-bottom: 16px;
+  }
+
+  .featured-card h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--bright);
+    margin-bottom: 8px;
+  }
+
+  .featured-card p {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    max-width: 640px;
+  }
+
+  .tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tech-pill {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    background: var(--bg3);
+  }
+
+  /* Article preview */
+  .article-preview {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--page-color);
+    background: var(--bg2);
+    padding: 24px 28px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+
+  .article-preview:hover {
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.08);
+  }
+
+  .article-meta {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    margin-bottom: 8px;
+  }
+
+  .article-preview h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--bright);
+    margin-bottom: 8px;
+  }
+
+  .article-preview p {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* Two-col grid */
+  .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: start;
-  }
-
-  .about-text p {
-    font-size: 14px;
-    line-height: 1.9;
-    color: var(--text);
-    margin-bottom: 20px;
-  }
-  .about-text p strong { color: var(--cyan); font-weight: 400; }
-
-  .skills-grid {
-    display: grid;
     gap: 24px;
   }
 
-  .skill-group-label {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
-  }
-
-  .skill-bars { display: grid; gap: 10px; }
-
-  .skill-row {
-    display: grid;
-    grid-template-columns: 130px 1fr 30px;
-    align-items: center;
-    gap: 12px;
-  }
-  .skill-name { font-size: 11px; color: var(--text); }
-  .skill-track {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .skill-fill {
-    height: 100%;
-    border-radius: 2px;
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 1s cubic-bezier(0.4,0,0.2,1);
-  }
-  .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
-  .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
-  .skill-fill.orange { background: linear-gradient(90deg, var(--orange), var(--pink)); }
-  .skill-pct { font-size: 10px; color: var(--muted); text-align: right; }
-
-  /* ARTICLES */
-  #articles { position: relative; }
-
-  .articles-list { display: grid; gap: 1px; }
-
-  .article-item {
-    display: grid;
-    grid-template-columns: 80px 1fr auto;
-    gap: 32px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border);
-    align-items: start;
-    cursor: none;
+  /* Footer */
+  footer {
     position: relative;
-    transition: all 0.2s;
-  }
-  .article-item::before {
-    content: '';
-    position: absolute;
-    left: -60px; right: -60px; top: 0; bottom: 0;
-    background: rgba(77,217,240,0.02);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .article-item:hover::before { opacity: 1; }
-
-  .article-date {
-    font-size: 11px;
-    color: var(--muted);
-    padding-top: 4px;
-    letter-spacing: 0.05em;
-  }
-
-  .article-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 8px;
-    transition: color 0.2s;
-  }
-  .article-item:hover .article-title { color: var(--cyan); }
-
-  .article-excerpt {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 12px;
-  }
-
-  .article-tags { display: flex; gap: 6px; }
-  .atag {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 2px;
-    letter-spacing: 0.06em;
-  }
-  .atag-c { background: rgba(77,217,240,0.1); color: var(--cyan); }
-  .atag-g { background: rgba(61,255,160,0.1); color: var(--green); }
-  .atag-o { background: rgba(255,159,74,0.1); color: var(--orange); }
-  .atag-p { background: rgba(167,139,250,0.1); color: var(--purple); }
-
-  .article-arrow {
-    font-size: 18px;
-    color: var(--border);
-    padding-top: 4px;
-    transition: all 0.2s;
-  }
-  .article-item:hover .article-arrow { color: var(--cyan); transform: translateX(4px); }
-
-  /* PROJECTS */
-  #projects { background: var(--bg2); }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-  }
-
-  .project-card {
-    background: var(--bg2);
-    padding: 32px;
-    position: relative;
-    cursor: none;
-    overflow: hidden;
-    transition: background 0.3s;
-  }
-  .project-card:hover { background: var(--bg3); }
-
-  .project-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent, var(--cyan));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-  }
-  .project-card:hover::after { transform: scaleX(1); }
-
-  .project-icon {
-    font-size: 28px;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .project-name {
-    font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-
-  .project-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .project-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-  .tech-pill {
-    font-size: 10px;
-    padding: 2px 8px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--dim);
-    letter-spacing: 0.06em;
-  }
-
-  .project-links { display: flex; gap: 16px; }
-  .plink {
-    font-size: 11px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.06em;
-    transition: color 0.2s;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 32px 64px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 4px;
-    cursor: none;
-  }
-  .plink:hover { color: var(--cyan); }
-
-  /* CONNECTIONS */
-  #connections { position: relative; min-height: 100vh; overflow: hidden; }
-
-  .connections-canvas {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .connections-content {
-    position: relative;
-    z-index: 2;
-  }
-
-  .nodes-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .node-card {
-    position: relative;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 32px;
-    text-align: center;
-    cursor: none;
-    transition: all 0.3s;
-    text-decoration: none;
-    display: block;
-  }
-  .node-card:hover {
-    border-color: var(--node-color, var(--cyan));
-    box-shadow: 0 0 30px rgba(77,217,240,0.1);
-    transform: translateY(-4px);
-  }
-
-  .node-icon { font-size: 36px; margin-bottom: 12px; display: block; }
-  .node-name {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 6px;
-  }
-  .node-handle {
     font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.06em;
+    color: var(--dim);
+    cursor: pointer;
   }
-  .node-badge {
-    position: absolute;
-    top: 12px; right: 12px;
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 2px;
+
+  footer:hover .footer-hint { opacity: 1; }
+  .footer-hint {
+    font-size: 10px;
+    color: var(--dim);
+    opacity: 0;
+    transition: opacity 0.3s;
     letter-spacing: 0.1em;
   }
 
-  /* CONNECTION LINES SVG */
-  .connection-svg {
-    position: absolute;
+  /* Pong Dialog */
+  #pong-dialog {
+    position: fixed;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 60px;
-    display: flex;
+    margin: auto;
+    width: 640px;
+    height: 460px;
+    background: var(--bg2);
+    border: 1px solid var(--page-color);
+    box-shadow: 0 0 40px rgba(0, 245, 255, 0.2);
+    padding: 0;
+    z-index: 10000;
+    display: none;
+    flex-direction: column;
     align-items: center;
+  }
+
+  #pong-dialog.open { display: flex; }
+
+  #pong-header {
+    width: 100%;
+    padding: 12px 20px;
+    display: flex;
     justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
     font-size: 11px;
-    color: var(--muted);
+    letter-spacing: 0.1em;
+    color: var(--dim);
   }
 
-  /* ANIMATIONS */
-  @keyframes blink { 50% { opacity: 0; } }
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  #pong-close {
+    background: none;
+    border: none;
+    color: var(--dim);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 2px 8px;
+  }
 
-  .fade-up {
+  #pong-close:hover { color: var(--bright); }
+
+  #pong-canvas {
+    display: block;
+  }
+
+  /* Data-animate fade-up */
+  [data-animate] {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  [data-animate].in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   /* Mobile */
-  @media (max-width: 900px) {
-    #hero { grid-template-columns: 1fr; }
-    .hero-terminal { display: none; }
-    .about-grid { grid-template-columns: 1fr; }
-    nav { padding: 16px 24px; }
-    section { padding: 100px 24px 60px; }
-    .nodes-grid { grid-template-columns: 1fr 1fr; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-    .article-item { grid-template-columns: 1fr; gap: 8px; }
-    .article-date { padding-top: 0; }
-    .article-arrow { display: none; }
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .hero { padding: 48px 20px; }
+    .section { padding: 48px 20px; }
+    .hero-name { font-size: clamp(2.5rem, 12vw, 4rem); }
+    .grid-2 { grid-template-columns: 1fr; }
+    footer { padding: 24px 20px; flex-direction: column; gap: 8px; text-align: center; }
+    #pong-dialog { width: 95vw; height: auto; }
+    #cursor-trail { display: none !important; }
   }
 
-  /* Touch: hide custom cursor */
-  @media (hover: none) {
-    body { cursor: auto; }
-    .cursor, .cursor-ring { display: none; }
-  }
-
-  /* Nav overflow on small phones */
-  @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
-    .nav-status { display: none; }
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-name::before, .hero-name::after { animation: none; }
+    [data-animate] { opacity: 1; transform: none; transition: none; }
+    .building { transition: none; }
   }
 </style>
 <!-- ░░ Analytics — fill in IDs after account setup ░░ -->
@@ -634,645 +589,330 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo" id="navLogo"></a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="about.html">about</a></li>
-    <li><a href="articles.html">articles</a></li>
-    <li><a href="projects.html">projects</a></li>
-    <li><a href="connect.html">connect</a></li>
-  </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span id="navStatus"></span>
+  <a href="_cybernoir_index.html" class="nav-logo">ROSHAN ABRAHAM</a>
+  <div class="nav-links">
+    <a href="_cybernoir_index.html" class="active">HOME</a>
+    <a href="_cybernoir_about.html">ABOUT</a>
+    <a href="_cybernoir_projects.html">PROJECTS</a>
+    <a href="_cybernoir_articles.html">ARTICLES</a>
+    <a href="_cybernoir_connect.html">CONNECT</a>
+    <span class="avail-dot" title="Available for work"></span>
   </div>
 </nav>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-content fade-up">
-    <h1 id="heroName"></h1>
-    <p class="hero-tagline" id="heroTagline"></p>
-    <div class="hero-tags" id="heroTags"></div>
-    <div class="hero-cta">
-      <a href="#connections" class="btn btn-primary">get in touch</a>
-      <a href="#projects" class="btn btn-ghost">view projects</a>
-    </div>
+<!-- Hero -->
+<section class="hero">
+  <p class="hero-label">// AI SOLUTIONS CONSULTANT</p>
+  <h1 class="hero-name" data-text="ROSHAN ABRAHAM">ROSHAN ABRAHAM</h1>
+  <p class="hero-subtitle"><span>AI Solutions Consultant</span> — 5+ years engineering intelligence into production</p>
+  <div class="hero-location">
+    <span>📍 India</span>
+    <span style="color:var(--border)">|</span>
+    <span>Deloitte USI</span>
   </div>
-
-  <div class="hero-terminal fade-up" style="transition-delay:0.2s">
-    <div class="term-bar">
-      <div class="term-dot r"></div>
-      <div class="term-dot y"></div>
-      <div class="term-dot g"></div>
-      <div class="term-title" id="termTitle"></div>
-    </div>
-    <div class="term-body" id="termBody"></div>
+  <div class="hero-status">
+    <span class="avail-dot"></span>
+    AVAILABLE FOR WORK
   </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="section-label" data-n="01">about me</div>
-  <div class="about-grid">
-    <div class="about-text fade-up" id="aboutText"></div>
-    <div class="skills-grid fade-up" style="transition-delay:0.15s" id="skillsGrid"></div>
+  <div class="hero-tags">
+    <span class="hero-tag">#LLMOps</span>
+    <span class="hero-tag">#AgenticAI</span>
+    <span class="hero-tag">#MLOps</span>
+    <span class="hero-tag">#RAG</span>
+    <span class="hero-tag">#CloudAI</span>
+  </div>
+  <div class="hero-ctas">
+    <a href="roshan-abraham-cv.pdf" download class="btn-primary">↓ Download CV</a>
+    <a href="_cybernoir_projects.html" class="btn-secondary">View Projects →</a>
   </div>
 </section>
 
-<!-- ARTICLES -->
-<section id="articles">
-  <div class="section-label" data-n="02">articles</div>
-  <div class="articles-list" id="articlesList"></div>
+<!-- Skills Skyline -->
+<section class="section">
+  <p class="section-label">// CAPABILITY SPECTRUM</p>
+  <h2 class="section-title" data-animate>Skills — City Skyline</h2>
+  <div class="skyline" id="skyline" data-animate>
+    <!-- buildings injected by JS -->
+  </div>
+  <p style="font-size:10px;color:var(--dim);letter-spacing:0.1em;position:relative;z-index:1">
+    SCROLL RIGHT FOR MORE &nbsp;→
+  </p>
 </section>
 
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-label" data-n="03">projects</div>
-  <div class="projects-grid fade-up" id="projectsGrid"></div>
-</section>
-
-<!-- CONNECTIONS -->
-<section id="connections">
-  <div class="section-label" data-n="04">connections</div>
-  <div class="connections-content">
-    <svg class="connection-svg" id="connSvg"></svg>
-
-    <div style="text-align:center; margin-bottom:48px" class="fade-up" id="centerNode">
-      <div style="
-        display:inline-block;
-        background:var(--bg2);
-        border:1px solid var(--cyan);
-        border-radius:4px;
-        padding:20px 36px;
-        box-shadow:0 0 40px rgba(77,217,240,0.15);
-      ">
-        <div style="font-size:13px;color:var(--cyan);letter-spacing:0.1em;margin-bottom:4px;">YOU ARE HERE</div>
-        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--bright)" id="centerName"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px" id="centerEmail"></div>
-      </div>
+<!-- Featured Project -->
+<section class="section" style="padding-top:0">
+  <p class="section-label">// FEATURED PROJECT</p>
+  <h2 class="section-title" data-animate>Agentic PR Platform</h2>
+  <div class="featured-card" data-animate>
+    <div class="featured-badge">★ AI HACKATHON WINNER</div>
+    <h3>Agentic PR Platform</h3>
+    <p>End-to-end multi-agent PR analysis pipeline built on Google ADK and Gemma/Claude. Leverages Vertex AI for model serving, Firebase for real-time state management, and MCP for tool orchestration. Processes PRs autonomously — review, summarize, risk-score, and suggest fixes.</p>
+    <div class="tech-pills">
+      <span class="tech-pill">ADK</span>
+      <span class="tech-pill">Gemma/Claude</span>
+      <span class="tech-pill">Vertex AI</span>
+      <span class="tech-pill">Firebase</span>
+      <span class="tech-pill">MCP</span>
     </div>
-
-    <div class="nodes-grid fade-up" style="transition-delay:0.2s" id="nodesGrid"></div>
-
-    <div style="text-align:center;margin-top:60px;font-size:12px;color:var(--muted)" class="fade-up" style="transition-delay:0.3s" id="connectCta">
-      <span style="color:var(--green)"></span>
+    <div style="margin-top:20px">
+      <a href="_cybernoir_projects.html" class="btn-secondary" style="font-size:11px;padding:7px 18px">Explore All Projects →</a>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
-<footer id="footer"></footer>
+<!-- Article Preview -->
+<section class="section" style="padding-top:0">
+  <p class="section-label">// LATEST WRITING</p>
+  <h2 class="section-title" data-animate>From the Field</h2>
+  <div class="grid-2" data-animate>
+    <a href="_cybernoir_articles.html" class="article-preview">
+      <p class="article-meta">FEB 2026 &nbsp;·&nbsp; #Blockchain &nbsp;·&nbsp; #AI &nbsp;·&nbsp; #Ethics</p>
+      <h3>The End of Seeing is Believing</h3>
+      <p>Deepfakes, synthetic media, and the crumbling epistemic contract — exploring what happens when AI dissolves the boundary between real and fabricated reality.</p>
+    </a>
+    <a href="_cybernoir_connect.html" class="article-preview" style="border-left-color:var(--dim); opacity:0.5">
+      <p class="article-meta">COMING SOON</p>
+      <h3>Building Production RAG Systems</h3>
+      <p>Hard-won lessons from shipping four generations of retrieval-augmented generation infrastructure at enterprise scale.</p>
+    </a>
+  </div>
+</section>
+
+<footer id="main-footer" title="Double-click for a surprise">
+  <span>© 2026 Roshan Abraham — abraham.roshan.a@gmail.com</span>
+  <span class="footer-hint">double-click for a surprise</span>
+  <span style="color:var(--border)">roshan.dev</span>
+</footer>
+
+<!-- Pong Dialog -->
+<div id="pong-dialog" role="dialog" aria-label="Neon Pong">
+  <div id="pong-header">
+    <span>NEON PONG &nbsp;—&nbsp; first to 7 wins &nbsp;|&nbsp; move mouse to control left paddle</span>
+    <button id="pong-close">✕ CLOSE</button>
+  </div>
+  <canvas id="pong-canvas" width="600" height="400"></canvas>
+</div>
+
+<!-- Vapor Cursor Trail -->
+<canvas id="cursor-trail" style="position:fixed;inset:0;pointer-events:none;z-index:9999;"></canvas>
+<script>
+(function(){
+  const c=document.getElementById('cursor-trail'),ctx=c.getContext('2d');
+  let W,H; function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;} resize();
+  window.addEventListener('resize',resize);
+  const trail=[],MAX=15;
+  document.addEventListener('mousemove',e=>{trail.push({x:e.clientX,y:e.clientY});if(trail.length>MAX)trail.shift();});
+  const pc=getComputedStyle(document.documentElement).getPropertyValue('--page-color').trim()||'#00f5ff';
+  function draw(){ctx.clearRect(0,0,W,H);trail.forEach((pt,i)=>{const a=(i/MAX)*0.35,r=(i/MAX)*5;ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);ctx.fillStyle=pc;ctx.globalAlpha=a;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(draw);}
+  draw();
+  if(window.matchMedia('(hover:none)').matches)c.style.display='none';
+})();
+</script>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════════
-// CONFIG - Edit this object with your personal data
-// ═══════════════════════════════════════════════════════════════════════════════
-const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
-const CONFIG = {
-  // Basic Info
-  name: {
-    first: "Roshan",
-    last: "Abraham"
-  },
-  handle: "roshan",
-  title: "AI Solutions Consultant",
-  location: "India | USA | UK",
-  email: _em,
-  yoe: 5,
-  status: "available for work",
-  statusMessage: "open to opportunities",
+// IntersectionObserver animations
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('in-view'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
 
-  // Tagline shown under name
-  tagline: "AI Engineer specializing in LLMOps, Agentic Systems, MLOps, and enterprise AI solutions. Building intelligent systems that transform how organizations work.",
+// City Skyline Skills
+const SKILLS = [
+  { name:'LlamaIndex/ADK', pct:95 },
+  { name:'Adv RAG/VectorDBs', pct:92 },
+  { name:'Model Steering', pct:88 },
+  { name:'LightEval/RAGAS', pct:88 },
+  { name:'ML Feature Eng', pct:88 },
+  { name:'LLM Serving', pct:75 },
+  { name:'NumPy/JAX/TF', pct:45 },
+  { name:'GCP Vertex AI', pct:95 },
+  { name:'Docker', pct:75 },
+  { name:'AWS Bedrock', pct:65 },
+  { name:'OpenUI/W&B', pct:60 },
+  { name:'Python/FastAPI', pct:95 },
+  { name:'PostgreSQL/BQ', pct:80 },
+  { name:'Claude Code', pct:75 },
+  { name:'FHIR', pct:60 }
+];
 
-  // Hero tags (skills shown as pills)
-  heroTags: ["LLMOps", "Agentic AI", "MLOps", "RAG Systems", "Cloud AI", "Python"],
+const skyline = document.getElementById('skyline');
+const maxPct = 95;
+const maxH = 160;
 
-  // Stack shown in terminal JSON
-  stack: ["LangChain", "PyTorch", "Vertex AI", "FastAPI", "Docker", "Vector DBs"],
-
-  // About section paragraphs
-  aboutParagraphs: [
-    "I'm an <strong>AI Solutions Consultant</strong> at Deloitte USI with 5+ years of experience building production AI systems for enterprise and government organizations.",
-    "I specialize in <strong>LLMOps, Agentic Orchestration, and Advanced RAG systems</strong> — architecting end-to-end ML pipelines from training to deployment at scale.",
-    "My expertise spans <strong>Medical AI infrastructure</strong>, custom LLM foundries, and building autonomous agent systems with complex chain-of-thought reasoning.",
-    "Winner of AI Hackathon for PR Agentic solutions. I believe in building AI that solves real problems with measurable impact."
-  ],
-
-  // Skills grouped by category
-  skills: {
-    ai_ml: {
-      label: "// ai & llm",
-      color: "cyan",
-      items: [
-        { name: "LangChain / Agents", pct: 95 },
-        { name: "PyTorch / TensorFlow", pct: 90 },
-        { name: "LLM Fine-tuning", pct: 88 },
-        { name: "RAG / Vector DBs", pct: 92 }
-      ]
-    },
-    cloud: {
-      label: "// cloud & mlops",
-      color: "green",
-      items: [
-        { name: "GCP Vertex AI", pct: 90 },
-        { name: "AWS SageMaker", pct: 85 },
-        { name: "Docker / K8s", pct: 88 }
-      ]
-    },
-    infrastructure: {
-      label: "// data & infra",
-      color: "orange",
-      items: [
-        { name: "PostgreSQL / BigQuery", pct: 85 },
-        { name: "MLflow / W&B", pct: 88 },
-        { name: "FastAPI / Flask", pct: 90 }
-      ]
-    }
-  },
-
-  // Articles (most recent first)
-  articles: [
-    {
-      date: "Feb 2026",
-      title: "The End of Seeing is Believing",
-      excerpt: "A new architectural approach for truth validation — building a trusted layer between society and AI-generated content.",
-      tags: [
-        { text: "Ethics", color: "p" },
-        { text: "Blockchain", color: "c" }
-      ],
-      url: "articles.html"
-    },
-  ],
-
-  // Projects
-  projects: [
-    {
-      icon: "🤖",
-      name: "Custom LLM Foundry",
-      desc: "End-to-end LLM training pipeline with custom data collection, instruction tuning, and registry management using Docker and W&B.",
-      tech: ["LlaMA2", "vLLM", "W&B", "Docker"],
-      accent: "cyan",
-      links: [
-        { text: "HuggingFace", url: "https://huggingface.co/dweebster" },
-        { text: "All Projects", url: "projects.html" }
-      ]
-    },
-    {
-      icon: "🏥",
-      name: "Medical AI Infrastructure",
-      desc: "Document OCR engine with NER parser for medical documents. FHIR translation and LLM-powered knowledge base for healthcare.",
-      tech: ["Document AI", "FHIR", "NER", "GCP"],
-      accent: "green",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Medical AI Inquiry' }
-      ]
-    },
-    {
-      icon: "🔗",
-      name: "Agentic RAG System",
-      desc: "Multi-agent orchestration with specialized routers, chain-of-thought reasoning, and embedded knowledge indexing.",
-      tech: ["LangChain", "Pinecone", "FastAPI"],
-      accent: "purple",
-      links: [
-        { text: "All Projects", url: "projects.html" }
-      ]
-    },
-    {
-      icon: "⚡",
-      name: "MLOps Engine",
-      desc: "Dynamic model deployment pipeline with Terraform, Docker Helm, serverless and edge deployment options.",
-      tech: ["MLflow", "Terraform", "GKE", "SageMaker"],
-      accent: "orange",
-      links: [
-        { text: "All Projects", url: "projects.html" }
-      ]
-    }
-  ],
-
-  // Social connections
-  connections: [
-    {
-      name: "GitHub",
-      handle: "@dweebster",
-      url: "https://github.com/dweebyuserx",
-      icon: "git",
-      color: "--bright",
-      badge: "ACTIVE",
-      badgeBg: "rgba(200,207,232,0.08)",
-      badgeColor: "var(--bright)"
-    },
-    {
-      name: "LinkedIn",
-      handle: "/in/roshan-abraham-187474138",
-      url: "https://www.linkedin.com/in/roshan-abraham-187474138/",
-      icon: "in",
-      color: "#0a66c2",
-      badge: "NETWORK",
-      badgeBg: "rgba(10,102,194,0.15)",
-      badgeColor: "#4da3ff"
-    },
-    {
-      name: "HuggingFace",
-      handle: "@dweebster",
-      url: "https://huggingface.co/dweebster",
-      icon: "hf",
-      color: "--yellow",
-      badge: "MODELS",
-      badgeBg: "rgba(251,191,36,0.1)",
-      badgeColor: "var(--yellow)"
-    },
-    {
-      name: "Email",
-      handle: _em,
-      url: 'mailto:' + _em,
-      icon: "mail",
-      color: "--green",
-      badge: "DIRECT",
-      badgeBg: "rgba(61,255,160,0.1)",
-      badgeColor: "var(--green)"
-    },
-    {
-      name: "Resume",
-      handle: "Download PDF",
-      url: "roshan-abraham-cv.pdf",
-      download: true,
-      icon: "doc",
-      color: "--purple",
-      badge: "CV",
-      badgeBg: "rgba(167,139,250,0.1)",
-      badgeColor: "var(--purple)"
-    },
-    {
-      name: "Deloitte",
-      handle: "AI Consultant",
-      url: "https://deloitte.com",
-      icon: "work",
-      color: "--cyan",
-      badge: "CURRENT",
-      badgeBg: "rgba(77,217,240,0.1)",
-      badgeColor: "var(--cyan)"
-    }
-  ],
-
-  // Footer
-  footerCta: "open to AI consulting, enterprise solutions, and interesting collaborations",
-  copyrightYear: new Date().getFullYear(),
-  lastUpdated: "Feb 2025"
-};
-
-// Icon mapping for connections
-const ICONS = {
-  git: "",
-  in: "",
-  x: "",
-  blog: "",
-  mail: "",
-  web: ""
-};
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// RENDER FUNCTIONS - Populate HTML from CONFIG
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function render() {
-  // Update page title
-  document.title = `~/${CONFIG.handle} — resume`;
-
-  // Nav
-  document.getElementById('navLogo').innerHTML = `<span>~/</span>${CONFIG.handle}.dev`;
-  document.getElementById('navStatus').textContent = CONFIG.status;
-
-  // Hero
-  document.getElementById('heroName').innerHTML = `${CONFIG.name.first}<br><em>${CONFIG.name.last}.</em>`;
-  document.getElementById('heroTagline').textContent = CONFIG.tagline;
-
-  const heroTags = document.getElementById('heroTags');
-  heroTags.innerHTML = CONFIG.heroTags.map(t => `<span class="tag">${t}</span>`).join('');
-
-  // Terminal
-  document.getElementById('termTitle').textContent = `${CONFIG.handle}@dev — ~/resume — zsh`;
-  document.getElementById('termBody').innerHTML = `
-    <div><span class="t-prompt">❯</span> <span class="t-cmd">cat profile.json</span></div>
-    <div class="t-comment">// loading...</div>
-    <br>
-    <div><span class="t-dim">{</span></div>
-    <div>&nbsp;&nbsp;<span class="t-key">"name"</span>: <span class="t-str">"${CONFIG.name.first} ${CONFIG.name.last}"</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"role"</span>: <span class="t-str">"${CONFIG.title}"</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"yoe"</span>: <span class="t-val">${CONFIG.yoe}</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"location"</span>: <span class="t-str">"${CONFIG.location}"</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"stack"</span>: [</div>
-    ${CONFIG.stack.map((s, i) => `<div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"${s}"</span>${i < CONFIG.stack.length - 1 ? ',' : ''}</div>`).join('')}
-    <div>&nbsp;&nbsp;],</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"status"</span>: <span class="t-str" style="color:var(--green)">"${CONFIG.statusMessage}"</span></div>
-    <div><span class="t-dim">}</span></div>
-    <br>
-    <div><span class="t-prompt">❯</span> <span class="t-cursor"></span></div>
-  `;
-
-  // About
-  document.getElementById('aboutText').innerHTML = CONFIG.aboutParagraphs.map(p => `<p>${p}</p>`).join('');
-
-  // Skills
-  const skillsGrid = document.getElementById('skillsGrid');
-  let skillsHtml = '';
-  for (const [key, group] of Object.entries(CONFIG.skills)) {
-    skillsHtml += `
-      <div>
-        <div class="skill-group-label">${group.label}</div>
-        <div class="skill-bars">
-          ${group.items.map(s => `
-            <div class="skill-row">
-              <span class="skill-name">${s.name}</span>
-              <div class="skill-track">
-                <div class="skill-fill ${group.color}" style="width:${s.pct}%"></div>
-              </div>
-              <span class="skill-pct">${s.pct}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
-  skillsGrid.innerHTML = skillsHtml;
-
-  // Articles
-  const articlesList = document.getElementById('articlesList');
-  articlesList.innerHTML = CONFIG.articles.map((a, i) => `
-    <a href="articles.html" class="article-item fade-up" style="transition-delay:${i * 0.05}s; text-decoration:none; color:inherit; cursor:none;">
-      <div class="article-date">${a.date}</div>
-      <div>
-        <div class="article-title">${a.title}</div>
-        <div class="article-excerpt">${a.excerpt}</div>
-        <div class="article-tags">
-          ${a.tags.map(t => `<span class="atag atag-${t.color}">${t.text}</span>`).join('')}
-        </div>
-      </div>
-      <div class="article-arrow">→</div>
-    </a>
-  `).join('');
-
-  // Projects
-  const projectsGrid = document.getElementById('projectsGrid');
-  projectsGrid.innerHTML = CONFIG.projects.map(p => `
-    <div class="project-card" style="--accent:var(--${p.accent})">
-      <span class="project-icon">${p.icon}</span>
-      <div class="project-name">${p.name}</div>
-      <div class="project-desc">${p.desc}</div>
-      <div class="project-tech">
-        ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
-      </div>
-      <div class="project-links">
-        ${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
-      </div>
-    </div>
-  `).join('');
-
-  // Connections center node
-  document.getElementById('centerName').textContent = `${CONFIG.name.first} ${CONFIG.name.last}`;
-  document.getElementById('centerEmail').textContent = CONFIG.email;
-
-  // Connection nodes
-  const nodesGrid = document.getElementById('nodesGrid');
-  nodesGrid.innerHTML = CONFIG.connections.map(c => {
-    const colorVal = c.color.startsWith('--') ? `var(${c.color})` : c.color;
-    return `
-      <a href="${c.url}" target="_blank" rel="noopener noreferrer" ${c.download ? 'download' : ''} class="node-card" style="--node-color:${colorVal}">
-        <span class="node-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
-        <span class="node-icon">${ICONS[c.icon] || '~'}</span>
-        <div class="node-name">${c.name}</div>
-        <div class="node-handle">${c.handle}</div>
-      </a>
-    `;
-  }).join('');
-
-  // Connect CTA
-  document.getElementById('connectCta').innerHTML = `<span style="color:var(--green)">❯</span> ${CONFIG.footerCta}`;
-
-  // Footer
-  document.getElementById('footer').innerHTML = `
-    <div style="color:var(--dim);font-size:11px">
-      <span style="color:var(--cyan)">❯</span> built with HTML, CSS &amp; vanilla JS — no frameworks
-    </div>
-    <div style="font-size:11px;color:var(--dim)">
-      © ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last} — <span style="color:var(--muted)">MIT License</span>
-    </div>
-    <div style="font-size:11px">
-      <span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}
-    </div>
-  `;
-}
-
-// Terminal streaming text
-function typeStream(el, speed) {
-  if (!el) return;
-  speed = speed || 30;
-  const finalHTML = el.innerHTML;
-  const text = el.textContent;
-  el.textContent = '';
-  let i = 0;
-  (function tick() {
-    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
-    else { el.innerHTML = finalHTML; }
-  })();
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CURSOR
-// ═══════════════════════════════════════════════════════════════════════════════
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
+SKILLS.forEach(s => {
+  const wrap = document.createElement('div');
+  wrap.className = 'building-wrap';
+  const building = document.createElement('div');
+  building.className = 'building';
+  building.dataset.height = Math.round((s.pct / maxPct) * maxH);
+  const label = document.createElement('div');
+  label.className = 'building-label';
+  label.textContent = s.name;
+  const pctEl = document.createElement('div');
+  pctEl.className = 'building-pct';
+  pctEl.textContent = s.pct + '%';
+  wrap.appendChild(building);
+  wrap.appendChild(pctEl);
+  wrap.appendChild(label);
+  skyline.appendChild(wrap);
 });
 
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
-function setupCursorHovers() {
-  document.querySelectorAll('a, button, .node-card, .article-item, .project-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '44px';
-      ring.style.height = '44px';
-      ring.style.borderColor = 'rgba(77,217,240,0.7)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '28px';
-      ring.style.height = '28px';
-      ring.style.borderColor = 'rgba(77,217,240,0.4)';
-    });
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// SCROLL REVEAL
-// ═══════════════════════════════════════════════════════════════════════════════
-const observer = new IntersectionObserver(entries => {
+// Animate buildings on scroll
+const skylineObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      e.target.querySelectorAll('.skill-fill').forEach(bar => {
-        setTimeout(() => { bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`; }, 200);
+    if(e.isIntersecting) {
+      skyline.querySelectorAll('.building').forEach((b, i) => {
+        setTimeout(() => {
+          b.style.height = b.dataset.height + 'px';
+        }, i * 60);
       });
+      skylineObs.unobserve(e.target);
     }
   });
 }, { threshold: 0.1 });
+skylineObs.observe(skyline);
 
-function setupObservers() {
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+// Pong mini-game
+const footer = document.getElementById('main-footer');
+const pongDialog = document.getElementById('pong-dialog');
+const pongClose = document.getElementById('pong-close');
+const pongCanvas = document.getElementById('pong-canvas');
+const pctx = pongCanvas.getContext('2d');
+let pongRunning = false, animId;
 
-  const aboutObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.skill-fill').forEach((bar, i) => {
-          setTimeout(() => {
-            bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`;
-          }, i * 80 + 200);
-        });
-      }
-    });
-  }, { threshold: 0.3 });
+footer.addEventListener('dblclick', () => {
+  pongDialog.classList.add('open');
+  if(!pongRunning) startPong();
+});
+pongClose.addEventListener('click', () => {
+  pongDialog.classList.remove('open');
+  pongRunning = false;
+  cancelAnimationFrame(animId);
+});
 
-  const aboutSection = document.getElementById('about');
-  if (aboutSection) aboutObs.observe(aboutSection);
-}
+function pongBeep(freq){try{const AC=new AudioContext(),o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='square';o.frequency.value=freq;g.gain.setValueAtTime(0.1,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.08);o.start();o.stop(AC.currentTime+0.09);}catch(e){}}
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CONNECTION SVG LINES
-// ═══════════════════════════════════════════════════════════════════════════════
-function drawConnections() {
-  const svg = document.getElementById('connSvg');
-  const section = document.getElementById('connections');
-  const center = document.getElementById('centerNode');
-  const grid = document.getElementById('nodesGrid');
+function startPong() {
+  pongRunning = true;
+  const W=600, H=400;
+  let ballX=W/2, ballY=H/2, ballDX=3.5, ballDY=2.5;
+  let playerY=H/2-30, aiY=H/2-30;
+  let pScore=0, aScore=0;
+  let mouseY=H/2;
 
-  if (!svg || !center || !grid) return;
+  pongCanvas.addEventListener('mousemove', e => {
+    const rect = pongCanvas.getBoundingClientRect();
+    mouseY = e.clientY - rect.top;
+  });
 
-  svg.innerHTML = '';
-  const secRect = section.getBoundingClientRect();
-  const cenRect = center.getBoundingClientRect();
+  function reset() {
+    ballX=W/2; ballY=H/2;
+    ballDX = (Math.random()>0.5?1:-1)*3.5;
+    ballDY = (Math.random()>0.5?1:-1)*2.5;
+  }
 
-  const cx = cenRect.left + cenRect.width/2 - secRect.left;
-  const cy = cenRect.top + cenRect.height - secRect.top + section.scrollTop;
+  function loop() {
+    if(!pongRunning) return;
+    pctx.fillStyle='#030014'; pctx.fillRect(0,0,W,H);
 
-  const cards = grid.querySelectorAll('.node-card');
-  const colors = ['#c8cfe8','#4da3ff','#4dd9f0','#ff9f4a','#3dffa0','#a78bfa'];
+    // dashed center line
+    pctx.setLineDash([6,8]);
+    pctx.strokeStyle='#1a1530';
+    pctx.lineWidth=1;
+    pctx.beginPath(); pctx.moveTo(W/2,0); pctx.lineTo(W/2,H); pctx.stroke();
+    pctx.setLineDash([]);
 
-  cards.forEach((card, i) => {
-    const r = card.getBoundingClientRect();
-    const tx = r.left + r.width/2 - secRect.left;
-    const ty = r.top + r.height/2 - secRect.top + section.scrollTop;
+    // move player paddle
+    playerY = Math.max(0, Math.min(H-60, mouseY - 30));
 
-    const color = colors[i % colors.length];
+    // move AI
+    const aiCenter = aiY + 30;
+    if(aiCenter < ballY - 5) aiY = Math.min(aiY + 2.5, H - 60);
+    else if(aiCenter > ballY + 5) aiY = Math.max(aiY - 2.5, 0);
 
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    const mx2 = (cx + tx)/2;
-    const my2 = cy + (ty-cy)*0.4;
-    const d = `M ${cx} ${cy} Q ${mx2} ${my2} ${tx} ${ty}`;
-    path.setAttribute('d', d);
-    path.setAttribute('stroke', color);
-    path.setAttribute('stroke-width', '1');
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke-dasharray', '4 6');
-    path.setAttribute('opacity', '0.3');
+    // move ball
+    ballX += ballDX; ballY += ballDY;
+    if(ballY <= 0 || ballY >= H) { ballDY *= -1; pongBeep(220); }
 
-    const len = path.getTotalLength ? path.getTotalLength() : 200;
-    path.style.strokeDashoffset = len;
-    path.style.strokeDasharray = `4 6`;
-
-    svg.appendChild(path);
-
-    setTimeout(() => {
-      path.style.transition = `stroke-dashoffset 1.2s ease ${i*0.12}s`;
-      path.style.strokeDashoffset = '0';
-      path.style.opacity = '0.4';
-    }, 500);
-
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('r', '3');
-    circle.setAttribute('fill', color);
-    circle.style.filter = `drop-shadow(0 0 4px ${color})`;
-
-    let progress = Math.random();
-    function animDot() {
-      progress = (progress + 0.003) % 1;
-      const len2 = path.getTotalLength ? path.getTotalLength() : 200;
-      const pt = path.getPointAtLength(progress * len2);
-      circle.setAttribute('cx', pt.x);
-      circle.setAttribute('cy', pt.y);
-      circle.setAttribute('opacity', Math.sin(progress * Math.PI) * 0.9);
-      requestAnimationFrame(animDot);
+    // player paddle collision (left, x=12..20)
+    if(ballX <= 20 && ballX >= 12 && ballY >= playerY && ballY <= playerY+60) {
+      ballDX = Math.abs(ballDX);
+      ballDY += (ballY-(playerY+30))*0.05;
+      pongBeep(440);
     }
-    svg.appendChild(circle);
-    setTimeout(() => animDot(), 1200 + i * 150);
-  });
+
+    // ai paddle collision (right, x=W-20..W-12)
+    if(ballX >= W-20 && ballX <= W-12 && ballY >= aiY && ballY <= aiY+60) {
+      ballDX = -Math.abs(ballDX);
+      ballDY += (ballY-(aiY+30))*0.05;
+      pongBeep(330);
+    }
+
+    // scoring
+    if(ballX < 0) { aScore++; pongBeep(110); reset(); }
+    if(ballX > W) { pScore++; pongBeep(660); reset(); }
+
+    // draw paddles
+    pctx.shadowColor='#ff2d78'; pctx.shadowBlur=15;
+    pctx.fillStyle='#ff2d78';
+    pctx.fillRect(12, playerY, 8, 60);
+
+    pctx.shadowColor='#00f5ff'; pctx.shadowBlur=15;
+    pctx.fillStyle='#00f5ff';
+    pctx.fillRect(W-20, aiY, 8, 60);
+
+    // draw ball
+    pctx.shadowColor='#e8e4ff'; pctx.shadowBlur=12;
+    pctx.fillStyle='#e8e4ff';
+    pctx.beginPath(); pctx.arc(ballX,ballY,5,0,Math.PI*2); pctx.fill();
+    pctx.shadowBlur=0;
+
+    // scores
+    pctx.font='700 28px Syne, sans-serif';
+    pctx.fillStyle='#1a1530';
+    pctx.textAlign='center';
+    pctx.fillText(pScore, W/2-60, 40);
+    pctx.fillText(aScore, W/2+60, 40);
+
+    // win check
+    if(pScore>=7 || aScore>=7) {
+      pctx.fillStyle='rgba(3,0,20,0.85)'; pctx.fillRect(0,0,W,H);
+      pctx.font='700 32px Syne, sans-serif';
+      pctx.fillStyle=pScore>=7?'#00ff88':'#ff2d78';
+      pctx.textAlign='center';
+      pctx.fillText(pScore>=7?'YOU WIN':'AI WINS', W/2, H/2-10);
+      pctx.font='400 13px JetBrains Mono, monospace';
+      pctx.fillStyle='#5a5580';
+      pctx.fillText('double-click footer to play again', W/2, H/2+24);
+      pongRunning=false;
+      return;
+    }
+
+    animId = requestAnimationFrame(loop);
+  }
+
+  loop();
 }
 
-const connObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) setTimeout(drawConnections, 100); });
-}, { threshold: 0.2 });
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// PARALLAX & NAV HIGHLIGHT
-// ═══════════════════════════════════════════════════════════════════════════════
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  const hero = document.getElementById('hero');
-  if (hero) hero.style.transform = `translateY(${y * 0.04}px)`;
-});
-
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(sec => {
-    if (window.scrollY >= sec.offsetTop - 200) current = sec.id;
-  });
-  navLinks.forEach(a => {
-    a.style.color = a.getAttribute('href') === '#'+current ? 'var(--cyan)' : '';
-  });
-});
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════════════
-window.addEventListener('load', () => {
-  render();
-  setupCursorHovers();
-  setupObservers();
-
-  // Hero fade in immediately
-  document.querySelectorAll('#hero .fade-up').forEach((el, i) => {
-    setTimeout(() => el.classList.add('visible'), i * 200 + 100);
-  });
-
-  typeStream(document.querySelector('.hero-content h1'));
-
-  // Connection lines
-  const connSec = document.getElementById('connections');
-  if (connSec) connObs.observe(connSec);
-
-  setTimeout(drawConnections, 300);
-});
-
-window.addEventListener('resize', drawConnections);
+// Konami Code Easter Egg
+const K=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let ki=0;
+document.addEventListener('keydown',e=>{if(e.key===K[ki])ki++;else ki=0;if(ki===K.length){ki=0;phantomAccess();}});
+function phantomAccess(){
+  let s=0;
+  const t=setInterval(()=>{document.body.style.filter=s++%2?'none':'hue-rotate(90deg) brightness(2)';if(s>12){clearInterval(t);document.body.style.filter='none';showMsg();}},80);
+}
+function showMsg(){
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:#030014;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:pointer';
+  d.innerHTML='<p style="font-family:JetBrains Mono;color:#00f5ff;font-size:14px;opacity:0.6">PHANTOM ACCESS GRANTED</p><h2 id="pt" style="font-family:Syne;font-size:3rem;color:#e8e4ff"></h2><p style="font-family:JetBrains Mono;color:#5a5580;font-size:12px">ESC to dismiss</p>';
+  document.body.appendChild(d);
+  const msg='YOU FOUND THE GHOST IN THE MACHINE',el=d.querySelector('#pt');
+  let i=0;const iv=setInterval(()=>{el.textContent+=msg[i++];if(i>=msg.length)clearInterval(iv);},60);
+  d.onclick=()=>d.remove();
+  document.addEventListener('keydown',function f(e){if(e.key==='Escape'){d.remove();document.removeEventListener('keydown',f);}});
+}
 </script>
 </body>
 </html>

@@ -5,26 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>~/user — projects</title>
+<title>Projects — Roshan Abraham</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
 
   :root {
-    --bg: #0a0b0d;
-    --bg2: #0f1117;
-    --bg3: #141720;
-    --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
-    --cyan: #4dd9f0;
-    --green: #3dffa0;
-    --orange: #ff9f4a;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --yellow: #fbbf24;
-    --red: #f87171;
+    --void: #030014;
+    --bg2: #07050f;
+    --bg3: #0d0a1a;
+    --border: #1a1530;
+    --text: #b8b4d0;
+    --bright: #e8e4ff;
+    --dim: #5a5580;
+    --page-color: #ff2d78;
     --font-mono: 'JetBrains Mono', monospace;
     --font-display: 'Syne', sans-serif;
   }
@@ -33,487 +26,368 @@
   html { scroll-behavior: smooth; }
 
   body {
-    background: var(--bg);
+    background: var(--void);
     color: var(--text);
     font-family: var(--font-mono);
     font-size: 13px;
     line-height: 1.8;
     overflow-x: hidden;
-    cursor: none;
-  }
-
-  .cursor {
-    width: 6px; height: 6px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 12px var(--cyan);
-  }
-  .cursor-ring {
-    width: 28px; height: 28px;
-    border: 1px solid rgba(77,217,240,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
   }
 
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='52'%3E%3Cpolygon points='30,2 58,17 58,47 30,62 2,47 2,17' fill='none' stroke='%23ffffff' stroke-width='0.4' stroke-opacity='0.06'/%3E%3C/svg%3E");
+    background-size: 60px 52px;
     pointer-events: none;
-    z-index: 1000;
+    z-index: 0;
   }
 
   nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
+    position: sticky;
+    top: 0;
     z-index: 100;
+    backdrop-filter: blur(20px);
+    background: rgba(3, 0, 20, 0.8);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 40px;
-    background: rgba(10,11,13,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
   }
 
   .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--cyan);
-    letter-spacing: 0.05em;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--bright);
     text-decoration: none;
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 1;
   }
-  .nav-logo span { color: var(--muted); }
 
   .nav-links {
     display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    transition: color 0.2s;
-    cursor: none;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { color: var(--bright); }
-  .nav-links a:hover::before { opacity: 1; }
-  .nav-links a.active { color: var(--cyan); }
-
-  .nav-status {
-    display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
   }
 
-  main {
-    padding: 120px 60px 80px;
-    max-width: 1200px;
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    color: var(--dim);
+    transition: color 0.2s;
+    padding-bottom: 2px;
+  }
+
+  .nav-links a:hover { color: var(--bright); }
+  .nav-links a.active {
+    color: var(--page-color);
+    border-bottom: 1px solid var(--page-color);
+  }
+
+  .avail-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #00ff88;
+    box-shadow: 0 0 6px #00ff88;
+    animation: pulse-dot 2s ease-in-out infinite;
+    margin-left: 4px;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .page-hero {
+    position: relative;
+    z-index: 1;
+    padding: 80px 64px 40px;
+    max-width: 1100px;
     margin: 0 auto;
   }
 
-  .page-header {
-    margin-bottom: 60px;
+  .page-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--page-color);
+    margin-bottom: 16px;
+    opacity: 0.8;
   }
 
-  .page-header h1 {
+  .page-title {
     font-family: var(--font-display);
-    font-size: clamp(36px, 5vw, 56px);
     font-weight: 800;
+    font-size: clamp(2.5rem, 5vw, 4rem);
     color: var(--bright);
+    line-height: 1;
     margin-bottom: 16px;
   }
-  .page-header h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
 
-  .page-header .breadcrumb {
+  .strip-hint {
     font-size: 11px;
-    color: var(--muted);
+    color: var(--dim);
     letter-spacing: 0.1em;
-    margin-bottom: 24px;
-  }
-  .page-header .breadcrumb a {
-    color: var(--cyan);
-    text-decoration: none;
+    position: relative;
+    z-index: 1;
+    margin-top: 8px;
   }
 
-  .page-header .subtitle {
-    font-size: 14px;
-    color: var(--muted);
-    max-width: 600px;
+  /* Film Strip */
+  .film-strip-wrap {
+    position: relative;
+    z-index: 1;
+    padding: 0;
   }
 
-  .projects-stats {
+  .film-strip {
     display: flex;
-    gap: 48px;
-    margin: 48px 0;
-    padding: 24px 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    gap: 24px;
+    padding: 48px 64px;
+    scrollbar-width: none;
+    cursor: grab;
+    user-select: none;
   }
 
-  .stat-item {
-    text-align: center;
+  .film-strip::-webkit-scrollbar { display: none; }
+  .film-strip.is-dragging { cursor: grabbing; }
+
+  /* Card flip */
+  .project-card {
+    flex: 0 0 320px;
+    height: 420px;
+    scroll-snap-align: start;
+    perspective: 1000px;
+    cursor: pointer;
   }
 
-  .stat-value {
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+  }
+
+  .project-card.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-front, .card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    overflow: hidden;
+  }
+
+  .card-back {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Iridescent shimmer */
+  .card-front::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,45,120,0.08) 0%, rgba(0,245,255,0.08) 33%, rgba(124,58,237,0.08) 66%, rgba(255,45,120,0.08) 100%);
+    background-size: 300% 300%;
+    animation: holo-shimmer 4s ease infinite;
+    pointer-events: none;
+    border-radius: 8px;
+  }
+
+  @keyframes holo-shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Card front content */
+  .card-num {
+    position: absolute;
+    bottom: 16px;
+    right: 20px;
     font-family: var(--font-display);
-    font-size: 32px;
     font-weight: 800;
-    color: var(--cyan);
+    font-size: 80px;
+    color: var(--border);
+    line-height: 1;
+    pointer-events: none;
+    z-index: 0;
   }
 
-  .stat-label {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+  .card-content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--bright);
+    line-height: 1.2;
+    margin-bottom: 10px;
     margin-top: 4px;
   }
 
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .section-label::before { content: attr(data-n); color: var(--cyan); }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    max-width: 200px;
-  }
-
-  .featured-project {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 48px;
-    margin-bottom: 48px;
-    position: relative;
-    overflow: hidden;
-  }
-  .featured-project::before {
-    content: 'FEATURED';
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    padding: 4px 10px;
-    background: rgba(77,217,240,0.1);
-    color: var(--cyan);
-    border-radius: 2px;
-  }
-
-  .featured-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    margin-bottom: 24px;
-  }
-
-  .featured-icon {
-    font-size: 48px;
-    line-height: 1;
-  }
-
-  .featured-title {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-
-  .featured-tagline {
-    font-size: 13px;
-    color: var(--cyan);
-  }
-
-  .featured-desc {
-    font-size: 14px;
+  .card-desc {
+    font-size: 11px;
     color: var(--text);
-    line-height: 1.9;
-    margin-bottom: 24px;
-    max-width: 700px;
+    line-height: 1.6;
+    flex: 1;
   }
 
-  .featured-tech {
+  .card-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
+    gap: 5px;
+    margin-top: 12px;
   }
 
-  .tech-pill {
-    font-size: 10px;
-    padding: 4px 12px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
+  .card-pill {
+    font-size: 9px;
+    letter-spacing: 0.05em;
     color: var(--dim);
-    letter-spacing: 0.06em;
-  }
-  .tech-pill-cyan   { border-color: rgba(77,217,240,0.35);  color: var(--cyan);   background: rgba(77,217,240,0.06); }
-  .tech-pill-green  { border-color: rgba(61,255,160,0.35);  color: var(--green);  background: rgba(61,255,160,0.06); }
-  .tech-pill-orange { border-color: rgba(255,159,74,0.35);  color: var(--orange); background: rgba(255,159,74,0.06); }
-  .tech-pill-purple { border-color: rgba(167,139,250,0.35); color: var(--purple); background: rgba(167,139,250,0.06); }
-  .tech-pill-yellow { border-color: rgba(251,191,36,0.35);  color: var(--yellow); background: rgba(251,191,36,0.06); }
-  .tech-pill-pink   { border-color: rgba(244,114,182,0.35); color: var(--pink);   background: rgba(244,114,182,0.06); }
-  .tech-pill-cyan   { border-color: rgba(77,217,240,0.35);  color: var(--cyan);   background: rgba(77,217,240,0.06); }
-  .tech-pill-green  { border-color: rgba(61,255,160,0.35);  color: var(--green);  background: rgba(61,255,160,0.06); }
-  .tech-pill-orange { border-color: rgba(255,159,74,0.35);  color: var(--orange); background: rgba(255,159,74,0.06); }
-  .tech-pill-purple { border-color: rgba(167,139,250,0.35); color: var(--purple); background: rgba(167,139,250,0.06); }
-  .tech-pill-pink   { border-color: rgba(244,114,182,0.35); color: var(--pink);   background: rgba(244,114,182,0.06); }
-  .tech-pill-yellow { border-color: rgba(251,191,36,0.35);  color: var(--yellow); background: rgba(251,191,36,0.06); }
-  .tech-pill-red    { border-color: rgba(248,113,113,0.35); color: var(--red);    background: rgba(248,113,113,0.06); }
-
-  .featured-links {
-    display: flex;
-    gap: 20px;
-  }
-
-  .plink {
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.06em;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: none;
-  }
-  .plink:hover { color: var(--cyan); }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 24px;
-  }
-
-  .project-card {
-    background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 28px;
-    position: relative;
-    cursor: none;
-    overflow: hidden;
-    transition: all 0.3s;
-  }
-  .project-card:hover {
+    padding: 2px 7px;
     background: var(--bg3);
-    border-color: var(--accent, var(--cyan));
-    transform: translateY(-4px);
   }
 
-  .project-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent, var(--cyan));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-  }
-  .project-card:hover::after { transform: scaleX(1); }
-
-  .project-icon {
-    font-size: 24px;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .project-name {
-    font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-
-  .project-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .project-tech {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 20px;
-  }
-
-  .project-links {
-    display: flex;
-    gap: 16px;
-  }
-
-  .builds-badge {
+  .hackathon-badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     font-size: 9px;
     letter-spacing: 0.1em;
+    color: #fbbf24;
+    border: 1px solid rgba(251,191,36,0.3);
+    background: rgba(251,191,36,0.07);
     padding: 3px 8px;
-    border-radius: 10px;
-    background: rgba(77,217,240,0.07);
-    border: 1px solid rgba(77,217,240,0.2);
-    color: var(--cyan);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
-  .builds-badge span { color: var(--bright); font-weight: 600; }
-  .variants-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin: 8px 0 12px;
-    padding: 10px 12px;
-    background: var(--bg);
-    border-radius: 4px;
-    border-left: 2px solid var(--border);
-  }
-  .variant-row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    font-size: 10px;
-  }
-  .variant-label {
+
+  .flip-hint {
+    font-size: 9px;
+    letter-spacing: 0.08em;
     color: var(--dim);
-    min-width: 14px;
-    text-align: right;
+    margin-top: 10px;
+    opacity: 0.7;
   }
-  .variant-text { color: var(--muted); line-height: 1.5; }
-  .variant-tech { color: var(--dim); font-size: 9px; }
+
+  /* Card back content */
+  .card-back-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--bright);
+    margin-bottom: 8px;
+  }
+
+  .card-back-desc {
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.6;
+    flex: 1;
+    overflow: auto;
+  }
+
+  .card-back-stack {
+    margin-top: 12px;
+  }
+
+  .card-back-stack-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--page-color);
+    margin-bottom: 6px;
+  }
+
+  .card-back-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .card-link {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--page-color);
+    border: 1px solid rgba(255,45,120,0.3);
+    padding: 4px 10px;
+    text-decoration: none;
+    transition: background 0.2s;
+    background: none;
+    cursor: pointer;
+  }
+
+  .card-link:hover { background: rgba(255,45,120,0.1); }
 
   footer {
+    position: relative;
+    z-index: 1;
     border-top: 1px solid var(--border);
-    padding: 32px 60px;
+    padding: 32px 64px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     font-size: 11px;
-    color: var(--muted);
-  }
-
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
-
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    main { padding: 100px 24px 60px; }
-    .projects-stats { flex-wrap: wrap; gap: 24px; }
-    .featured-project { padding: 24px; }
-    .featured-header { flex-direction: column; gap: 16px; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-  }
-
-  /* Active card */
-  .project-card.active {
-    border-color: var(--accent, var(--cyan));
-    box-shadow: 0 0 20px rgba(77,217,240,0.12);
-  }
-
-  /* Click-to-feature hint */
-  .swap-hint {
-    font-size: 9px;
     color: var(--dim);
-    letter-spacing: 0.08em;
-    margin-top: 12px;
+    cursor: pointer;
+  }
+
+  footer:hover .footer-hint { opacity: 1; }
+  .footer-hint {
+    font-size: 10px;
+    color: var(--dim);
     opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .project-card:hover .swap-hint { opacity: 1; }
-
-  /* Featured panel fade transition */
-  .featured-swap { transition: opacity 0.25s; }
-  .featured-swap.fading { opacity: 0; }
-
-  /* Variant table inside featured panel */
-  .feat-variants {
-    margin: 16px 0;
-    padding: 14px 16px;
-    background: var(--bg);
-    border-radius: 4px;
-    border-left: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .feat-variant-row { display: flex; align-items: baseline; gap: 10px; font-size: 11px; }
-  .feat-variant-label { color: var(--dim); min-width: 20px; text-align: right; flex-shrink: 0; }
-  .feat-variant-text { color: var(--muted); line-height: 1.5; }
-  .feat-variant-tech { color: var(--dim); font-size: 10px; }
-
-  /* Touch: hide custom cursor */
-  @media (hover: none) {
-    body { cursor: auto; }
-    .cursor, .cursor-ring { display: none; }
+    transition: opacity 0.3s;
+    letter-spacing: 0.1em;
   }
 
-  /* 1-col grid on small phones */
-  @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .page-hero { padding: 48px 20px 24px; }
+    .film-strip {
+      flex-wrap: wrap;
+      overflow-x: visible;
+      scroll-snap-type: none;
+      padding: 24px 20px;
+      gap: 20px;
+    }
+    .project-card { flex: 0 0 100%; height: auto; }
+    .card-inner { transform-style: flat; }
+    .project-card.flipped .card-inner { transform: none; }
+    .card-back { position: static; transform: none; backface-visibility: visible; margin-top: 8px; }
+    .card-front { position: static; backface-visibility: visible; }
+    footer { padding: 24px 20px; flex-direction: column; gap: 8px; text-align: center; }
+    #cursor-trail { display: none !important; }
+  }
 
-  /* Nav overflow on small phones */
-  @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
-    .nav-status { display: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .card-front::before { animation: none; }
+    .card-inner { transition: none; }
   }
 </style>
 <!-- ░░ Analytics — fill in IDs after account setup ░░ -->
@@ -531,370 +405,494 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
 <nav>
-  <a href="index.html" class="nav-logo"><span>~/</span><span id="navHandle"></span>.dev</a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="about.html">about</a></li>
-    <li><a href="articles.html">articles</a></li>
-    <li><a href="projects.html" class="active">projects</a></li>
-    <li><a href="connect.html">connect</a></li>
-  </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span id="navStatus"></span>
+  <a href="_cybernoir_index.html" class="nav-logo">ROSHAN ABRAHAM</a>
+  <div class="nav-links">
+    <a href="_cybernoir_index.html">HOME</a>
+    <a href="_cybernoir_about.html">ABOUT</a>
+    <a href="_cybernoir_projects.html" class="active">PROJECTS</a>
+    <a href="_cybernoir_articles.html">ARTICLES</a>
+    <a href="_cybernoir_connect.html">CONNECT</a>
+    <span class="avail-dot" title="Available for work"></span>
   </div>
 </nav>
 
-<main>
-  <div class="page-header fade-up">
-    <div class="breadcrumb"><a href="index.html">~</a> / projects</div>
-    <h1>Projects & <em>Work.</em></h1>
-    <p class="subtitle">AI systems and tools I've built — from LLM foundries to enterprise agentic platforms.</p>
-  </div>
+<div class="page-hero">
+  <p class="page-label">// PROJECT ARCHIVE</p>
+  <h1 class="page-title">Projects (11)</h1>
+  <p class="strip-hint">← drag to explore →</p>
+</div>
 
-  <div class="projects-stats fade-up" style="transition-delay:0.1s" id="statsSection"></div>
+<div class="film-strip-wrap">
+  <div class="film-strip" id="film-strip">
 
-  <div class="section-label fade-up" style="transition-delay:0.15s" data-n="01">featured</div>
-  <div id="featuredProject" class="fade-up" style="transition-delay:0.2s"></div>
-
-  <div class="section-label fade-up" style="transition-delay:0.25s" data-n="02">all projects</div>
-  <div class="projects-grid fade-up" style="transition-delay:0.3s" id="projectsGrid"></div>
-</main>
-
-<footer id="footer"></footer>
-
-<script>
-const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
-const CONFIG = {
-  name: { first: "Roshan", last: "Abraham" },
-  handle: "roshan",
-  status: "available for work",
-
-  stats: {
-    projects: "18+",
-    deployments: "40+",
-    award: "AI Hackathon Winner"
-  },
-
-  featuredProject: {
-    icon: "🤖",
-    name: "Agentic PR Platform",
-    tagline: "AI Hackathon Winner · Deloitte USI, 2025",
-    desc: "Production multi-agent orchestration platform built for State Government PR workflows. Specialized prompt routers, chain-of-thought reasoning, tool integrations via MCP, and Firebase-backed state management. Powered by Gemma/Claude on GCP with ADK orchestration.",
-    tech: ["ADK", "Gemma / Claude", "FastAPI", "GCP", "Firebase", "MCP"],
-    links: [
-      { text: "Contact for Demo", url: 'mailto:' + _em }
-    ]
-  },
-
-  projects: [
-    {
-      icon: "🏥",
-      name: "Medical AI Infrastructure",
-      desc: "Document OCR engine with NER parser for medical documents. FHIR translation layer, LLM-powered knowledge base. EPIC and Cerner distributor integration. ABHA-compliant end-to-end OCR→NER→FHIR pipeline.",
-      tech: ["Document AI", "FHIR", "NER", "GCP", "ML Pipeline"],
-      accent: "green",
-      links: [
-        { text: "Discuss Project", url: 'mailto:' + _em + '?subject=Medical AI Infrastructure Inquiry' }
-      ]
-    },
-    {
-      icon: "⚡",
-      name: "Custom LLM Foundry",
-      desc: "End-to-end fine-tuning pipeline with injection-based dataset generation, instruction tuning, HuggingFace transformers for eval/benchmarking, and model registry. Optimized for low-VRAM deployment via unsloth.",
-      tech: ["Gemma / Qwen2.5", "vLLM / unsloth", "W&B / HF", "Docker / RunPod"],
-      accent: "cyan",
-      links: [
-        { text: "HuggingFace Profile", url: "https://huggingface.co/dweebster" },
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=LLM Foundry Inquiry' }
-      ]
-    },
-    {
-      icon: "🔗",
-      name: "RAG Systems",
-      desc: "Built across multiple scales and use cases — from enterprise multi-agent retrieval to lightweight hybrid search pipelines.",
-      tech: ["Weaviate", "Milvus", "Pinecone", "Redis", "ADK", "RAGAS"],
-      accent: "purple",
-      builds: 4,
-      variants: [
-        { label: "v1", text: "Hybrid search + re-ranking with Pinecone", tech: "LangChain · Pinecone · FastAPI" },
-        { label: "v2", text: "Multi-agent router with embedded knowledge indexing + prompt caching", tech: "ADK · Milvus · Redis" },
-        { label: "v3", text: "Specialised chunking strategy + eval testing with RAGAS", tech: "LlamaIndex · RAGAS · Weaviate" },
-        { label: "v4", text: "Agentic RAG with tool use for Govt document retrieval", tech: "ADK · Vertex AI · GCP" }
-      ],
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=RAG System Inquiry' }
-      ]
-    },
-    {
-      icon: "🔄",
-      name: "MLOps Engine",
-      desc: "Dynamic model trainer and evaluator using BigQuery. Scheduled model compare-and-retrain pipeline for classification and regression models with automatic registry promotion.",
-      tech: ["BigQuery", "Model Registry", "TFX", "GCP Scheduler"],
-      accent: "orange",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=MLOps Engine Inquiry' }
-      ]
-    },
-    {
-      icon: "🐄",
-      name: "Disease Detection in Cattle",
-      desc: "Schedule-driven cattle monitoring via CCTV. Frames churned through TFX serving endpoints, classifying against a seasonal disease model. On positive detection, ear tag OCR'd and alert dispatched to rancher.",
-      tech: ["TFX", "Serverless", "Zapier", "OCR", "Model Registry"],
-      accent: "yellow",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Cattle Detection Project Inquiry' }
-      ]
-    },
-    {
-      icon: "🌿",
-      name: "IoT Garden",
-      desc: "Plant-trained YOLO model regulating life support systems on a Raspberry Pi. Real-time sensor data streamed over WiFi to a mobile app. Edge inference at sub-200ms.",
-      tech: ["Raspberry Pi", "Python", "YOLOv5", "CV"],
-      accent: "green",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=IoT Garden Inquiry' }
-      ]
-    },
-    {
-      icon: "🎨",
-      name: "Stable Diffusion Pipeline",
-      desc: "Custom fine-tuning pipeline with DreamBooth + LoRA adapters. ControlNet for conditioning, automated dataset curation, and text-to-image/QR generation.",
-      tech: ["Diffusers", "ControlNet", "LoRA", "DreamBooth", "HuggingFace"],
-      accent: "pink",
-      links: [
-        { text: "HuggingFace", url: "https://huggingface.co/dweebster" }
-      ]
-    },
-    {
-      icon: "🔁",
-      name: "Claude Agent Code Conversion & Testing Workflow",
-      desc: "Multi-agent system for automated code conversion, dynamic test generation, and structured reporting. Engineered for record-minimal token consumption via aggressive prompt caching, context pruning, and optimised tool-use patterns.",
-      tech: ["Claude Agent SDK", "Anthropic API", "MCP", "Prompt Caching", "Dynamic Test Harness"],
-      accent: "cyan",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Code Conversion Agent Inquiry' }
-      ]
-    },
-    {
-      icon: "🎓",
-      name: "Education Data Transformation Pipeline",
-      desc: "Intelligent pipeline that ingests raw educational source content and transforms it into student-profile-adapted learning material. Generates personalised KT reports and feedback metrics benchmarked against WHO psychological development standards.",
-      tech: ["LLM Pipelines", "RAG", "Student Profile Modeling", "WHO Psych Standards", "Data Transformation"],
-      accent: "green",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Education Pipeline Inquiry' }
-      ]
-    },
-    {
-      icon: "🗺️",
-      name: "In-Store Navigation AI Agent",
-      desc: "Conversational AI agent that understands physical store layouts modeled as graphs using NetworkX. Enables natural-language navigation assistance, aisle-level routing, and contextual product discovery in retail environments.",
-      tech: ["NetworkX", "Conversational AI", "Graph Traversal", "Spatial Reasoning", "Claude"],
-      accent: "purple",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Navigation Agent Inquiry' }
-      ]
-    },
-    {
-      icon: "💬",
-      name: "ChatBot Systems",
-      desc: "Multiple chatbot applications designed and shipped across the stack — from intent-based RASA flows to full LLM-backed RAG bots.",
-      tech: ["LangChain", "RASA", "Dialogflow", "Redis", "FastAPI", "Ollama"],
-      accent: "yellow",
-      builds: 3,
-      variants: [
-        { label: "v1", text: "RASA intent + entity NLU with custom actions and webhook integrations", tech: "RASA · Sanic · PostgreSQL" },
-        { label: "v2", text: "Dialogflow CX for enterprise multichannel deployment", tech: "Dialogflow · GCP · Firebase" },
-        { label: "v3", text: "LLM-backed RAG chatbot with contextual memory and Ollama local serving", tech: "LangChain · Ollama · Redis · FastAPI" }
-      ],
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=ChatBot Systems Inquiry' }
-      ]
-    }
-  ],
-
-  copyrightYear: new Date().getFullYear(),
-  lastUpdated: "Feb 2025"
-};
-
-function render() {
-  document.title = `~/${CONFIG.handle} — projects`;
-  document.getElementById('navHandle').textContent = CONFIG.handle;
-  document.getElementById('navStatus').textContent = CONFIG.status;
-
-  document.getElementById('statsSection').innerHTML = `
-    <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.projects}</div>
-      <div class="stat-label">Projects</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.deployments}</div>
-      <div class="stat-label">Deployments</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.award}</div>
-      <div class="stat-label">Recognition</div>
-    </div>
-  `;
-
-  const fp = CONFIG.featuredProject;
-  document.getElementById('featuredProject').innerHTML = `
-    <div class="featured-project">
-      <div class="featured-swap" id="featuredSwap">
-        <div class="featured-header">
-          <span class="featured-icon">${fp.icon}</span>
-          <div>
-            <div class="featured-title" id="featTitle">${fp.name}</div>
-            <div class="featured-tagline">${fp.tagline}</div>
+    <!-- Card 1: Agentic PR Platform -->
+    <div class="project-card" id="card-1">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">01</div>
+          <div class="card-content">
+            <div class="hackathon-badge">★ AI HACKATHON WINNER</div>
+            <div class="card-name">Agentic PR Platform</div>
+            <p class="card-desc">End-to-end multi-agent PR analysis pipeline. Autonomous review, risk scoring, and fix suggestions powered by ADK and Gemma/Claude on Vertex AI.</p>
+            <div class="card-pills">
+              <span class="card-pill">ADK</span>
+              <span class="card-pill">Gemma/Claude</span>
+              <span class="card-pill">Vertex AI</span>
+              <span class="card-pill">Firebase</span>
+              <span class="card-pill">MCP</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
           </div>
         </div>
-        <div class="featured-desc">${fp.desc}</div>
-        <div class="featured-tech">
-          ${fp.tech.map(t => `<span class="tech-pill tech-pill-cyan">${t}</span>`).join('')}
-        </div>
-        <div class="featured-links">
-          ${fp.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">Agentic PR Platform</div>
+            <p class="card-back-desc">Multi-agent system built on Google ADK for fully autonomous PR analysis. Each agent specializes — one reviews code quality, one checks security patterns, one risk-scores changes, one generates fix suggestions. MCP handles tool orchestration; Firebase manages real-time state. Deployed on Vertex AI with Gemma and Claude models switchable at runtime. Won AI Hackathon for novel agentic architecture.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">ADK</span><span class="card-pill">Gemma</span><span class="card-pill">Claude</span><span class="card-pill">Vertex AI</span><span class="card-pill">Firebase</span><span class="card-pill">MCP</span><span class="card-pill">Python</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <a href="_cybernoir_connect.html" class="card-link">Contact for details</a>
+            <button class="card-link" onclick="document.getElementById('card-1').classList.remove('flipped')">← Flip back</button>
+          </div>
         </div>
       </div>
     </div>
-  `;
 
-  document.getElementById('projectsGrid').innerHTML = CONFIG.projects.map((p, i) => {
-    const buildsBadge = p.builds ? `<div class="builds-badge">× <span>${p.builds}</span> builds &nbsp;·&nbsp; multiple calibrations</div>` : '';
-    const variantsList = p.variants ? `
-      <div class="variants-list">
-        ${p.variants.map(v => `
-          <div class="variant-row">
-            <span class="variant-label">${v.label}</span>
-            <span class="variant-text">${v.text} <span class="variant-tech">· ${v.tech}</span></span>
-          </div>`).join('')}
-      </div>` : '';
-    const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
-    return `
-      <div class="project-card${i === 0 ? ' active' : ''}" style="--accent:var(--${p.accent})" data-idx="${i}" onclick="setFeatured(+this.dataset.idx)">
-        <span class="project-icon">${p.icon}</span>
-        <div class="project-name">${p.name}</div>
-        ${buildsBadge}
-        <div class="project-desc">${p.desc}</div>
-        ${variantsList}
-        <div class="project-tech">
-          ${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}
+    <!-- Card 2: Medical AI Infra -->
+    <div class="project-card" id="card-2">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">02</div>
+          <div class="card-content">
+            <div class="card-name">Medical AI Infrastructure</div>
+            <p class="card-desc">Healthcare document AI pipeline processing 100GB+ of medical records. FHIR-compliant structured data extraction using OCR and NER at production scale on GCP.</p>
+            <div class="card-pills">
+              <span class="card-pill">Document AI</span>
+              <span class="card-pill">FHIR</span>
+              <span class="card-pill">NER</span>
+              <span class="card-pill">GCP</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
         </div>
-        ${links}
-        <div class="swap-hint">↑ set as featured</div>
-      </div>`;
-  }).join('');
-
-  document.getElementById('footer').innerHTML = `
-    <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
-    <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
-    <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
-  `;
-}
-
-// Terminal streaming text
-function typeStream(el, speed) {
-  if (!el) return;
-  speed = speed || 30;
-  const finalHTML = el.innerHTML;
-  const text = el.textContent;
-  el.textContent = '';
-  let i = 0;
-  (function tick() {
-    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
-    else { el.innerHTML = finalHTML; }
-  })();
-}
-
-// Swap featured project
-function setFeatured(idx) {
-  const swap = document.getElementById('featuredSwap');
-  if (!swap) return;
-  swap.classList.add('fading');
-  setTimeout(() => {
-    const p = CONFIG.projects[idx];
-    const tagline = p.tagline || '';
-    const variantsHtml = p.variants ? `
-      <div class="feat-variants">
-        ${p.variants.map(v => `
-          <div class="feat-variant-row">
-            <span class="feat-variant-label">${v.label}</span>
-            <span class="feat-variant-text">${v.text} <span class="feat-variant-tech">· ${v.tech}</span></span>
-          </div>`).join('')}
-      </div>` : '';
-    swap.innerHTML = `
-      <div class="featured-header">
-        <span class="featured-icon">${p.icon}</span>
-        <div>
-          <div class="featured-title" id="featTitle">${p.name}</div>
-          ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">Medical AI Infrastructure</div>
+            <p class="card-back-desc">Production system for MyDiGiRecords digitizing 100GB+ of legacy medical documents. GCP Document AI handles OCR; custom NER models extract clinical entities (diagnoses, medications, dates). All output normalized to FHIR R4 standard for interoperability. Runs as scalable GCP Cloud Run services with BigQuery for analytics. HIPAA-aligned data handling throughout.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">GCP Document AI</span><span class="card-pill">Cloud Run</span><span class="card-pill">FHIR R4</span><span class="card-pill">OCR</span><span class="card-pill">NER</span><span class="card-pill">BigQuery</span><span class="card-pill">Python</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-2').classList.remove('flipped')">← Flip back</button>
+          </div>
         </div>
       </div>
-      <div class="featured-desc">${p.desc}</div>
-      ${variantsHtml}
-      <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}</div>
-      <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
-    `;
-    swap.classList.remove('fading');
-    typeStream(document.getElementById('featTitle'), 22);
-    document.querySelectorAll('.project-card').forEach((card, i) => {
-      card.classList.toggle('active', i === idx);
-    });
-  }, 220);
-}
+    </div>
 
-// Cursor
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
+    <!-- Card 3: RAG Systems v1-v4 -->
+    <div class="project-card" id="card-3">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">03</div>
+          <div class="card-content">
+            <div class="card-name">RAG Systems v1–v4</div>
+            <p class="card-desc">Four generations of production RAG infrastructure — from naive retrieval to advanced DSPy-optimized pipelines with multi-vector search and RAGAS evaluation.</p>
+            <div class="card-pills">
+              <span class="card-pill">Weaviate</span>
+              <span class="card-pill">Milvus</span>
+              <span class="card-pill">ADK</span>
+              <span class="card-pill">RAGAS</span>
+              <span class="card-pill">DSPy</span>
+              <span class="card-pill">Redis</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">RAG Systems — All Variants</div>
+            <p class="card-back-desc">
+              <strong style="color:var(--bright)">v1 (Naive RAG):</strong> Weaviate + embedding retrieval, basic chunking, LLM generation.<br><br>
+              <strong style="color:var(--bright)">v2 (Advanced RAG):</strong> Milvus multi-vector, HyDE, reranking, query expansion.<br><br>
+              <strong style="color:var(--bright)">v3 (Agentic RAG):</strong> ADK-orchestrated agents with tool use, Redis caching, RAGAS eval loop.<br><br>
+              <strong style="color:var(--bright)">v4 (DSPy RAG):</strong> DSPy-compiled prompts, automated prompt optimization, LightEval benchmarking.
+            </p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">Weaviate</span><span class="card-pill">Milvus</span><span class="card-pill">ADK</span><span class="card-pill">DSPy</span><span class="card-pill">RAGAS</span><span class="card-pill">LightEval</span><span class="card-pill">Redis</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-3').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
+    <!-- Card 4: Custom LLM Foundry -->
+    <div class="project-card" id="card-4">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">04</div>
+          <div class="card-content">
+            <div class="card-name">Custom LLM Foundry</div>
+            <p class="card-desc">End-to-end fine-tuning and serving infrastructure for Gemma and Qwen2.5 models. vLLM for high-throughput inference, W&B for experiment tracking, full HuggingFace integration.</p>
+            <div class="card-pills">
+              <span class="card-pill">Gemma</span>
+              <span class="card-pill">Qwen2.5</span>
+              <span class="card-pill">vLLM</span>
+              <span class="card-pill">W&B</span>
+              <span class="card-pill">HuggingFace</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">Custom LLM Foundry</div>
+            <p class="card-back-desc">Private model fine-tuning pipeline for instruction-following and domain adaptation. QLoRA fine-tuning on Gemma 7B and Qwen2.5 variants. W&B sweeps for hyperparameter optimization. vLLM serving layer with OpenAI-compatible API endpoint. Models published to HuggingFace Hub (@dweebster). Supports multi-GPU distributed training with DeepSpeed ZeRO.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">Gemma</span><span class="card-pill">Qwen2.5</span><span class="card-pill">QLoRA</span><span class="card-pill">vLLM</span><span class="card-pill">W&B</span><span class="card-pill">HuggingFace</span><span class="card-pill">DeepSpeed</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <a href="https://huggingface.co/dweebster" target="_blank" rel="noopener" class="card-link">HuggingFace →</a>
+            <button class="card-link" onclick="document.getElementById('card-4').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: MLOps Engine -->
+    <div class="project-card" id="card-5">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">05</div>
+          <div class="card-content">
+            <div class="card-name">MLOps Engine</div>
+            <p class="card-desc">Production ML platform with BigQuery-backed feature store, automated retraining pipelines, model registry, and drift detection. Manages model lifecycle from experiment to production.</p>
+            <div class="card-pills">
+              <span class="card-pill">BigQuery</span>
+              <span class="card-pill">GCP</span>
+              <span class="card-pill">Python</span>
+              <span class="card-pill">Docker</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">MLOps Engine</div>
+            <p class="card-back-desc">Comprehensive MLOps platform built for Appsynergies client workloads. BigQuery feature store with time-travel for point-in-time correct training. Automated retraining triggers on data drift detection. Model registry with A/B traffic splitting. Containerized training jobs on GCP Vertex AI Pipelines. Monitoring dashboards for prediction quality and data quality.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">BigQuery</span><span class="card-pill">Vertex AI Pipelines</span><span class="card-pill">Docker</span><span class="card-pill">Python</span><span class="card-pill">GCP</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-5').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6: Disease Detection Cattle -->
+    <div class="project-card" id="card-6">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">06</div>
+          <div class="card-content">
+            <div class="card-name">Disease Detection — Cattle</div>
+            <p class="card-desc">Computer vision system for early disease detection in cattle using image classification. Serverless deployment with automated alert workflows via Zapier integrations.</p>
+            <div class="card-pills">
+              <span class="card-pill">TFX</span>
+              <span class="card-pill">Serverless</span>
+              <span class="card-pill">Zapier</span>
+              <span class="card-pill">TensorFlow</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">Disease Detection — Cattle</div>
+            <p class="card-back-desc">AgriTech CV system using TensorFlow Extended (TFX) for the full ML pipeline. Custom CNN model trained on cattle image datasets for disease classification (skin conditions, respiratory symptoms). Deployed serverlessly on GCP Cloud Functions. Zapier automations trigger vet alerts and record logging when disease probability exceeds threshold. Mobile-friendly capture interface for farm workers.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">TFX</span><span class="card-pill">TensorFlow</span><span class="card-pill">Cloud Functions</span><span class="card-pill">Zapier</span><span class="card-pill">Python</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-6').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 7: Stable Diffusion -->
+    <div class="project-card" id="card-7">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">07</div>
+          <div class="card-content">
+            <div class="card-name">Stable Diffusion Pipeline</div>
+            <p class="card-desc">Custom Stable Diffusion fine-tuning and inference pipeline with ComfyUI workflow automation. LoRA training, custom nodes, and batch generation with prompt engineering frameworks.</p>
+            <div class="card-pills">
+              <span class="card-pill">Stable Diffusion</span>
+              <span class="card-pill">Python</span>
+              <span class="card-pill">ComfyUI</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">Stable Diffusion Pipeline</div>
+            <p class="card-back-desc">Comprehensive image generation infrastructure. LoRA and DreamBooth fine-tuning for custom style/subject models. ComfyUI workflow automation with custom Python nodes for programmatic generation. Batch processing pipeline for high-volume image production. Prompt engineering library with style templates, negative prompt optimization, and CFG sweep tooling.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">Stable Diffusion</span><span class="card-pill">LoRA</span><span class="card-pill">DreamBooth</span><span class="card-pill">ComfyUI</span><span class="card-pill">Python</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-7').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 8: Claude Agent Code Conversion -->
+    <div class="project-card" id="card-8">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">08</div>
+          <div class="card-content">
+            <div class="card-name">Claude Agent Code Conversion</div>
+            <p class="card-desc">Agentic system using Claude SDK and MCP for automated codebase migration and language conversion. Multi-step reasoning with tool use for AST analysis and code transformation.</p>
+            <div class="card-pills">
+              <span class="card-pill">Claude SDK</span>
+              <span class="card-pill">MCP</span>
+              <span class="card-pill">Python</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">Claude Agent Code Conversion</div>
+            <p class="card-back-desc">Autonomous code migration agent built on Anthropic Claude SDK with MCP tool integration. Agent analyzes source codebase via AST parsing tools, plans migration strategy, executes incremental conversion with validation at each step. MCP provides filesystem, linting, and test-runner tools. Handles Python→TypeScript and legacy Java modernization use cases with high accuracy on business logic preservation.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">Claude SDK</span><span class="card-pill">MCP</span><span class="card-pill">Python</span><span class="card-pill">AST</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <a href="https://github.com/dweebyuserx" target="_blank" rel="noopener" class="card-link">GitHub →</a>
+            <button class="card-link" onclick="document.getElementById('card-8').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 9: Education Data Pipeline -->
+    <div class="project-card" id="card-9">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">09</div>
+          <div class="card-content">
+            <div class="card-name">Education Data Pipeline</div>
+            <p class="card-desc">Agentic curriculum personalization system using ADK with Redis-backed RAG. Ingests learning materials, builds learner knowledge graphs, generates personalized content paths.</p>
+            <div class="card-pills">
+              <span class="card-pill">ADK</span>
+              <span class="card-pill">Redis RAG</span>
+              <span class="card-pill">Python</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">Education Data Pipeline</div>
+            <p class="card-back-desc">Personalized learning platform backbone. ADK agents orchestrate curriculum ingestion, concept extraction, and learner profile management. Redis Vector Search provides low-latency RAG over course materials. Knowledge graph tracks prerequisite dependencies and learner mastery. Generates adaptive learning paths and practice questions tailored to individual skill gaps. REST API consumed by frontend LMS.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">ADK</span><span class="card-pill">Redis Vector Search</span><span class="card-pill">FastAPI</span><span class="card-pill">Python</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-9').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 10: In-Store Navigation AI -->
+    <div class="project-card" id="card-10">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">10</div>
+          <div class="card-content">
+            <div class="card-name">In-Store Navigation AI</div>
+            <p class="card-desc">Graph-based indoor navigation system using NetworkX for store layout modeling and Claude for natural language wayfinding queries. Real-time shelf availability integration.</p>
+            <div class="card-pills">
+              <span class="card-pill">NetworkX</span>
+              <span class="card-pill">Claude</span>
+              <span class="card-pill">Python</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">In-Store Navigation AI</div>
+            <p class="card-back-desc">Retail navigation system that converts store floor plans into NetworkX graphs. Shortest-path algorithms find optimal routes between product locations. Claude handles conversational queries ("find organic milk near the bakery") and translates to graph queries. Integrates with inventory APIs for real-time product location. Mobile web interface with step-by-step directions and aisle visualization.</p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">NetworkX</span><span class="card-pill">Claude</span><span class="card-pill">FastAPI</span><span class="card-pill">Python</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-10').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 11: ChatBot Systems v1-v3 -->
+    <div class="project-card" id="card-11">
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="card-num">11</div>
+          <div class="card-content">
+            <div class="card-name">ChatBot Systems v1–v3</div>
+            <p class="card-desc">Three generations of production chatbot infrastructure — from RASA-based intent systems to LangChain LLM pipelines with Redis session management and FastAPI backends.</p>
+            <div class="card-pills">
+              <span class="card-pill">LangChain</span>
+              <span class="card-pill">Redis</span>
+              <span class="card-pill">FastAPI</span>
+              <span class="card-pill">RASA</span>
+            </div>
+            <p class="flip-hint">Click to flip →</p>
+          </div>
+        </div>
+        <div class="card-back">
+          <div>
+            <div class="card-back-title">ChatBot Systems — All Variants</div>
+            <p class="card-back-desc">
+              <strong style="color:var(--bright)">v1 (RASA):</strong> Intent classification, entity extraction, dialogue management. Deployed for customer support.<br><br>
+              <strong style="color:var(--bright)">v2 (LangChain):</strong> LLM-powered with tool use, memory, Redis session persistence. Handles open-domain queries.<br><br>
+              <strong style="color:var(--bright)">v3 (Production):</strong> FastAPI microservice, multi-tenant, rate limiting, LLM fallback chains, analytics dashboard.
+            </p>
+            <div class="card-back-stack">
+              <div class="card-back-stack-label">FULL STACK</div>
+              <div class="card-pills">
+                <span class="card-pill">RASA</span><span class="card-pill">LangChain</span><span class="card-pill">Redis</span><span class="card-pill">FastAPI</span><span class="card-pill">Python</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-back-links">
+            <button class="card-link" onclick="document.getElementById('card-11').classList.remove('flipped')">← Flip back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /film-strip -->
+</div><!-- /film-strip-wrap -->
+
+<footer id="main-footer" title="Double-click for a surprise">
+  <span>© 2026 Roshan Abraham — abraham.roshan.a@gmail.com</span>
+  <span class="footer-hint">double-click for a surprise</span>
+  <span style="color:var(--border)">roshan.dev</span>
+</footer>
+
+<canvas id="cursor-trail" style="position:fixed;inset:0;pointer-events:none;z-index:9999;"></canvas>
+<script>
+(function(){
+  const c=document.getElementById('cursor-trail'),ctx=c.getContext('2d');
+  let W,H; function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;} resize();
+  window.addEventListener('resize',resize);
+  const trail=[],MAX=15;
+  document.addEventListener('mousemove',e=>{trail.push({x:e.clientX,y:e.clientY});if(trail.length>MAX)trail.shift();});
+  const pc=getComputedStyle(document.documentElement).getPropertyValue('--page-color').trim()||'#ff2d78';
+  function draw(){ctx.clearRect(0,0,W,H);trail.forEach((pt,i)=>{const a=(i/MAX)*0.35,r=(i/MAX)*5;ctx.beginPath();ctx.arc(pt.x,pt.y,r,0,Math.PI*2);ctx.fillStyle=pc;ctx.globalAlpha=a;ctx.fill();});ctx.globalAlpha=1;requestAnimationFrame(draw);}
+  draw();
+  if(window.matchMedia('(hover:none)').matches)c.style.display='none';
+})();
+</script>
+
+<script>
+// Card flip
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('click', function(e) {
+    // Don't flip if clicking a link/button
+    if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return;
+    this.classList.toggle('flipped');
+  });
 });
 
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
-function setupHovers() {
-  document.querySelectorAll('a, button, .project-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '44px';
-      ring.style.height = '44px';
-      ring.style.borderColor = 'rgba(77,217,240,0.7)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '28px';
-      ring.style.height = '28px';
-      ring.style.borderColor = 'rgba(77,217,240,0.4)';
-    });
-  });
-}
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-
-window.addEventListener('load', () => {
-  render();
-  setupHovers();
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  typeStream(document.querySelector('.page-header h1'));
+// Drag-to-scroll
+const strip = document.querySelector('.film-strip');
+let isDown = false, startX, scrollLeft;
+strip.addEventListener('mousedown', e => {
+  isDown = true;
+  strip.classList.add('is-dragging');
+  startX = e.pageX - strip.offsetLeft;
+  scrollLeft = strip.scrollLeft;
 });
+strip.addEventListener('mouseleave', () => { isDown = false; strip.classList.remove('is-dragging'); });
+strip.addEventListener('mouseup', () => { isDown = false; strip.classList.remove('is-dragging'); });
+strip.addEventListener('mousemove', e => {
+  if(!isDown) return;
+  e.preventDefault();
+  strip.scrollLeft = scrollLeft - (e.pageX - strip.offsetLeft - startX) * 1.5;
+});
+
+// Konami Code Easter Egg
+const K=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let ki=0;
+document.addEventListener('keydown',e=>{if(e.key===K[ki])ki++;else ki=0;if(ki===K.length){ki=0;phantomAccess();}});
+function phantomAccess(){
+  let s=0;
+  const t=setInterval(()=>{document.body.style.filter=s++%2?'none':'hue-rotate(90deg) brightness(2)';if(s>12){clearInterval(t);document.body.style.filter='none';showMsg();}},80);
+}
+function showMsg(){
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;background:#030014;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;cursor:pointer';
+  d.innerHTML='<p style="font-family:JetBrains Mono;color:#00f5ff;font-size:14px;opacity:0.6">PHANTOM ACCESS GRANTED</p><h2 id="pt" style="font-family:Syne;font-size:3rem;color:#e8e4ff"></h2><p style="font-family:JetBrains Mono;color:#5a5580;font-size:12px">ESC to dismiss</p>';
+  document.body.appendChild(d);
+  const msg='YOU FOUND THE GHOST IN THE MACHINE',el=d.querySelector('#pt');
+  let i=0;const iv=setInterval(()=>{el.textContent+=msg[i++];if(i>=msg.length)clearInterval(iv);},60);
+  d.onclick=()=>d.remove();
+  document.addEventListener('keydown',function f(e){if(e.key==='Escape'){d.remove();document.removeEventListener('keydown',f);}});
+}
 </script>
 </body>
 </html>
