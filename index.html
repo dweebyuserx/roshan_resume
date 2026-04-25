@@ -5,19 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>~/user — resume</title>
+<title>Roshan Abraham — PIXEL QUEST</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,400&family=Press+Start+2P&family=Syne:wght@400;700;800&display=swap');
 
   :root {
+    --sky-home: #5c94fc;
+    --sky-about: #1a1a2e;
+    --sky-projects: #0d1b2a;
+    --sky-articles: #2d1b00;
+    --sky-connect: #0a0a23;
+    --ground-dark: #3d2b1f;
+    --ground-mid: #6b3f2a;
+    --ground-light: #b55a1e;
+    --hud-bg: rgba(0,0,0,0.75);
+    --hud-border: rgba(255,255,255,0.15);
+    --font-game: 'Press Start 2P', monospace;
+    --font-body: 'JetBrains Mono', monospace;
+    --font-display: 'Syne', sans-serif;
     --bg: #0a0b0d;
     --bg2: #0f1117;
     --bg3: #141720;
     --border: #1e2230;
     --dim: #3a4055;
     --muted: #5a6380;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
     --cyan: #4dd9f0;
     --green: #3dffa0;
     --orange: #ff9f4a;
@@ -25,605 +36,447 @@
     --pink: #f472b6;
     --yellow: #fbbf24;
     --red: #f87171;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --text: #c8cfe8;
+    --bright: #e8eeff;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
 
   body {
-    background: var(--bg);
+    background: #000;
+    font-family: var(--font-body);
     color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: hidden;
-    cursor: none;
   }
 
-  /* Custom cursor */
-  .cursor {
-    width: 6px; height: 6px;
-    background: var(--cyan);
-    border-radius: 50%;
+  /* ── GAME CONTAINER ───────────────────────────────── */
+  #game-container {
     position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s;
-    box-shadow: 0 0 12px var(--cyan);
+    inset: 0;
+    background: #000;
   }
-  .cursor-ring {
-    width: 28px; height: 28px;
-    border: 1px solid rgba(77,217,240,0.4);
-    border-radius: 50%;
-    position: fixed;
+
+  #game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  /* ── HUD ──────────────────────────────────────────── */
+  #hud {
+    position: absolute;
+    inset: 0;
     pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
+    font-family: var(--font-game);
+  }
+
+  /* ── DIALOG BOX ───────────────────────────────────── */
+  #dialog-box {
+    position: absolute;
+    bottom: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(80%, 520px);
+    background: rgba(0,0,0,0.92);
+    border: 3px solid #fff;
+    padding: 14px 18px 10px;
+    font-family: var(--font-game);
+    font-size: clamp(7px, 1.5vw, 9px);
+    color: #fff;
+    line-height: 2;
+    z-index: 200;
+    display: none;
+  }
+  #dialog-text { min-height: 2.2em; }
+  #dialog-hint { text-align: right; font-size: clamp(5px, 1vw, 7px); color: #aaa; margin-top: 6px; }
+
+  /* ── TOUCH CONTROLS ───────────────────────────────── */
+  #touch-controls {
+    display: none;
+    position: fixed;
+    bottom: 40px;
+    left: 0; right: 0;
+    z-index: 500;
+    pointer-events: none;
+  }
+  #touch-controls > div {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    pointer-events: auto;
+  }
+  #touch-controls .tcol { display: flex; gap: 8px; }
+  .touch-btn {
+    width: 52px; height: 52px;
+    background: rgba(0,0,0,0.6);
+    border: 2px solid rgba(255,255,255,0.3);
+    color: #fff;
+    font-family: var(--font-game);
+    font-size: 9px;
+    cursor: pointer;
+    border-radius: 4px;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .touch-btn:active { background: rgba(255,255,255,0.2); }
+
+  /* ── MODE TOGGLE ──────────────────────────────────── */
+  #mode-toggle {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 1000;
+    background: rgba(0,0,0,0.85);
+    border: 2px solid #ffd700;
+    color: #ffd700;
+    font-family: var(--font-game);
+    font-size: clamp(6px, 1.2vw, 8px);
+    padding: 8px 12px;
+    cursor: pointer;
+    line-height: 1.6;
+    text-align: center;
+  }
+  #mode-toggle:hover { background: rgba(255,215,0,0.1); }
+
+  /* ── CREDITS OVERLAY ──────────────────────────────── */
+  #credits-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 800;
+    overflow: hidden;
+    font-family: var(--font-game);
+    color: #ffd700;
+    text-align: center;
+  }
+  #credits-scroll {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(8px, 1.5vw, 12px);
+    line-height: 3;
+    animation: scrollUp 60s linear forwards;
+    white-space: nowrap;
+  }
+  @keyframes scrollUp {
+    from { bottom: -20px; }
+    to { bottom: 110%; }
+  }
+  #credits-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    font-size: 8px;
+    color: #888;
+    cursor: pointer;
+    font-family: var(--font-game);
+    background: none; border: none;
+  }
+
+  /* ── TIME TRIAL RESULT ────────────────────────────── */
+  #trial-result {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-game);
+    text-align: center;
+    color: #fff;
+  }
+  #trial-result > div { font-size: clamp(8px, 1.5vw, 12px); line-height: 2.5; }
+
+  /* ══════════════════════════════════════════════════════
+     STRATEGY GUIDE
+  ══════════════════════════════════════════════════════ */
+  #strategy-guide {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    overflow-y: auto;
+    z-index: 100;
+    font-family: var(--font-body);
   }
 
   /* Scanline overlay */
-  body::before {
+  #strategy-guide::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
     pointer-events: none;
-    z-index: 1000;
+    z-index: 1;
   }
 
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 40px;
-    background: rgba(10,11,13,0.85);
+  #guide-nav {
+    position: sticky;
+    top: 0;
+    background: rgba(10,11,13,0.92);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
-  }
-
-  .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--cyan);
-    letter-spacing: 0.05em;
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--muted); }
-
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    transition: color 0.2s;
-    position: relative;
-    cursor: none;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { color: var(--bright); }
-  .nav-links a:hover::before { opacity: 1; }
-
-  .nav-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  /* SECTIONS */
-  section {
-    min-height: 100vh;
-    padding: 120px 60px 80px;
-    position: relative;
-  }
-
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 48px;
+    padding: 12px 32px;
     display: flex;
     align-items: center;
     gap: 16px;
+    flex-wrap: wrap;
+    z-index: 50;
   }
-  .section-label::before { content: attr(data-n); color: var(--cyan); }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    max-width: 200px;
+  #guide-nav .guide-logo {
+    font-family: var(--font-game);
+    font-size: 9px;
+    color: var(--cyan);
+    text-decoration: none;
+    margin-right: 8px;
   }
-
-  /* HERO */
-  #hero {
-    display: grid;
-    grid-template-columns: 1fr 420px;
-    gap: 60px;
-    align-items: center;
-  }
-
-  .hero-terminal {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
-  }
-
-  .term-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
-  }
-  .term-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .term-dot.r { background: #ff5f57; }
-  .term-dot.y { background: #febc2e; }
-  .term-dot.g { background: #28c840; }
-  .term-title {
-    flex: 1;
-    text-align: center;
-    font-size: 11px;
+  .guide-tab {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--muted);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    background: none; border: none;
+    font-family: var(--font-body);
+    transition: color 0.2s, background 0.2s;
+  }
+  .guide-tab:hover, .guide-tab.active { color: var(--cyan); background: rgba(77,217,240,0.08); }
+
+  #guide-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 32px 120px;
+    position: relative;
+    z-index: 2;
   }
 
-  .term-body { padding: 24px; font-size: 13px; line-height: 1.9; }
+  .guide-section { display: none; }
+  .guide-section.active { display: block; }
 
-  .t-prompt { color: var(--green); }
-  .t-cmd { color: var(--bright); }
-  .t-out { color: var(--text); }
-  .t-key { color: var(--cyan); }
-  .t-val { color: var(--orange); }
-  .t-str { color: var(--green); }
-  .t-comment { color: var(--muted); font-style: italic; }
-  .t-dim { color: var(--dim); }
-  .t-cursor {
-    display: inline-block;
-    width: 8px; height: 14px;
-    background: var(--cyan);
-    animation: blink 1s step-end infinite;
-    vertical-align: text-bottom;
+  /* Guide Hero */
+  .gh-hero {
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    border-radius: 8px;
+    padding: 36px;
+    margin-bottom: 32px;
   }
-
-  .hero-content h1 {
+  .gh-name {
     font-family: var(--font-display);
-    font-size: clamp(42px, 6vw, 80px);
+    font-size: clamp(28px, 5vw, 52px);
     font-weight: 800;
-    line-height: 1;
     color: var(--bright);
-    margin-bottom: 16px;
+    line-height: 1.1;
+    margin-bottom: 8px;
   }
-  .hero-content h1 em {
+  .gh-name em {
     font-style: normal;
     background: linear-gradient(135deg, var(--cyan), var(--purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
-  .hero-tagline {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 32px;
-    max-width: 480px;
-  }
-
-  .hero-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 40px;
-  }
-  .tag {
-    padding: 4px 12px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    font-size: 11px;
+  .gh-title {
+    font-size: 13px;
     color: var(--cyan);
-    background: rgba(77,217,240,0.04);
+    margin-bottom: 16px;
     letter-spacing: 0.05em;
   }
-
-  .hero-cta {
-    display: flex;
-    gap: 16px;
-  }
-  .btn {
-    padding: 10px 24px;
-    font-family: var(--font-mono);
+  .gh-tagline {
     font-size: 12px;
-    letter-spacing: 0.08em;
-    border: none;
-    border-radius: 3px;
-    cursor: none;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-  .btn-primary {
-    background: var(--cyan);
-    color: var(--bg);
-    font-weight: 700;
-  }
-  .btn-primary:hover { background: #7be8fa; transform: translateY(-1px); }
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
-
-  /* ABOUT */
-  #about { background: var(--bg2); }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: start;
-  }
-
-  .about-text p {
-    font-size: 14px;
-    line-height: 1.9;
     color: var(--text);
+    line-height: 1.8;
+    max-width: 640px;
     margin-bottom: 20px;
   }
-  .about-text p strong { color: var(--cyan); font-weight: 400; }
-
-  .skills-grid {
-    display: grid;
-    gap: 24px;
+  .gh-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .gh-tag {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: rgba(77,217,240,0.1);
+    border: 1px solid rgba(77,217,240,0.3);
+    color: var(--cyan);
   }
-
-  .skill-group-label {
+  .gh-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .gh-btn {
     font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 12px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-family: var(--font-body);
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
   }
+  .gh-btn:hover { opacity: 0.8; }
+  .gh-btn.primary { background: var(--cyan); color: #000; }
+  .gh-btn.secondary { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); }
 
-  .skill-bars { display: grid; gap: 10px; }
+  /* Guide cards grid */
+  .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; margin-bottom: 32px; }
+  .guide-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+  }
+  .gc-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .gc-title { font-size: 14px; font-weight: 600; color: var(--bright); margin-bottom: 6px; font-family: var(--font-display); }
+  .gc-sub { font-size: 11px; color: var(--cyan); margin-bottom: 8px; }
+  .gc-desc { font-size: 11px; color: var(--muted); line-height: 1.7; }
+  .gc-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+  .gc-tag { font-size: 8px; padding: 2px 7px; border-radius: 9px; background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+  .gc-featured { border-left: 3px solid var(--yellow); }
+  .gc-feat-badge { display: inline-block; font-size: 8px; padding: 2px 7px; background: rgba(251,191,36,0.12); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); border-radius: 3px; margin-bottom: 8px; letter-spacing: 0.05em; }
 
-  .skill-row {
-    display: grid;
-    grid-template-columns: 130px 1fr 30px;
-    align-items: center;
-    gap: 12px;
+  /* Experience list */
+  .exp-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 32px; }
+  .exp-item {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
   }
-  .skill-name { font-size: 11px; color: var(--text); }
-  .skill-track {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .skill-fill {
-    height: 100%;
-    border-radius: 2px;
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 1s cubic-bezier(0.4,0,0.2,1);
-  }
+  .exp-item:first-child { border-top: 1px solid var(--border); }
+  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
+  .exp-role { font-size: 14px; font-weight: 700; color: var(--bright); font-family: var(--font-display); }
+  .exp-co { font-size: 12px; color: var(--cyan); margin-top: 2px; }
+  .exp-date { font-size: 10px; color: var(--muted); white-space: nowrap; }
+  .exp-tag { font-size: 7px; letter-spacing: 0.1em; padding: 2px 6px; border-radius: 3px; margin-left: 8px; vertical-align: middle; }
+  .exp-tag.current { background: rgba(61,255,160,0.12); color: var(--green); border: 1px solid rgba(61,255,160,0.3); }
+  .exp-tag.concurrent { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
+  .exp-tag.foundation { background: rgba(255,159,74,0.1); color: var(--orange); border: 1px solid rgba(255,159,74,0.3); }
+  .exp-desc { font-size: 11px; color: var(--muted); line-height: 1.8; }
+
+  /* Skill bars */
+  .skills-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 28px; margin-bottom: 32px; }
+  .skill-group { margin-bottom: 28px; }
+  .skill-group:last-child { margin-bottom: 0; }
+  .skill-group-lbl { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .skill-row { display: grid; grid-template-columns: 160px 1fr 32px; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .skill-name { font-size: 10px; color: var(--text); }
+  .skill-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .skill-fill { height: 100%; border-radius: 2px; }
   .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
   .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
   .skill-fill.orange { background: linear-gradient(90deg, var(--orange), var(--pink)); }
-  .skill-pct { font-size: 10px; color: var(--muted); text-align: right; }
+  .skill-pct { font-size: 9px; color: var(--muted); text-align: right; }
 
-  /* ARTICLES */
-  #articles { position: relative; }
-
-  .articles-list { display: grid; gap: 1px; }
-
-  .article-item {
-    display: grid;
-    grid-template-columns: 80px 1fr auto;
-    gap: 32px;
-    padding: 28px 0;
-    border-bottom: 1px solid var(--border);
-    align-items: start;
-    cursor: none;
-    position: relative;
-    transition: all 0.2s;
-  }
-  .article-item::before {
-    content: '';
-    position: absolute;
-    left: -60px; right: -60px; top: 0; bottom: 0;
-    background: rgba(77,217,240,0.02);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .article-item:hover::before { opacity: 1; }
-
-  .article-date {
-    font-size: 11px;
-    color: var(--muted);
-    padding-top: 4px;
-    letter-spacing: 0.05em;
-  }
-
-  .article-title {
-    font-family: var(--font-display);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 8px;
-    transition: color 0.2s;
-  }
-  .article-item:hover .article-title { color: var(--cyan); }
-
-  .article-excerpt {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 12px;
-  }
-
-  .article-tags { display: flex; gap: 6px; }
-  .atag {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 2px;
-    letter-spacing: 0.06em;
-  }
-  .atag-c { background: rgba(77,217,240,0.1); color: var(--cyan); }
-  .atag-g { background: rgba(61,255,160,0.1); color: var(--green); }
-  .atag-o { background: rgba(255,159,74,0.1); color: var(--orange); }
-  .atag-p { background: rgba(167,139,250,0.1); color: var(--purple); }
-
-  .article-arrow {
-    font-size: 18px;
-    color: var(--border);
-    padding-top: 4px;
-    transition: all 0.2s;
-  }
-  .article-item:hover .article-arrow { color: var(--cyan); transform: translateX(4px); }
-
-  /* PROJECTS */
-  #projects { background: var(--bg2); }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-  }
-
-  .project-card {
+  /* Article card */
+  .article-card {
     background: var(--bg2);
-    padding: 32px;
-    position: relative;
-    cursor: none;
-    overflow: hidden;
-    transition: background 0.3s;
-  }
-  .project-card:hover { background: var(--bg3); }
-
-  .project-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent, var(--cyan));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-  }
-  .project-card:hover::after { transform: scaleX(1); }
-
-  .project-icon {
-    font-size: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
     margin-bottom: 16px;
-    display: block;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
+  .article-meta { font-size: 10px; color: var(--muted); margin-bottom: 8px; }
+  .article-title { font-size: 16px; font-weight: 700; color: var(--bright); margin-bottom: 8px; font-family: var(--font-display); line-height: 1.3; }
+  .article-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .article-tag { font-size: 8px; padding: 2px 8px; border-radius: 10px; background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+  .article-coming { opacity: 0.4; }
 
-  .project-name {
+  /* Connect links */
+  .connect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px; margin-bottom: 32px; }
+  .connect-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.2s;
+  }
+  .connect-card:hover { border-color: var(--cyan); }
+  .cc-platform { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .cc-handle { font-size: 14px; color: var(--bright); margin-bottom: 4px; font-weight: 600; }
+  .cc-url { font-size: 10px; color: var(--cyan); }
+
+  /* Section heading in guide */
+  .guide-h2 {
     font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 700;
+    font-size: clamp(20px, 3vw, 30px);
+    font-weight: 800;
     color: var(--bright);
     margin-bottom: 8px;
   }
+  .guide-h2 em { font-style: normal; color: var(--cyan); }
+  .guide-breadcrumb { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 24px; }
+  .guide-breadcrumb a { color: var(--cyan); text-decoration: none; }
+  .section-divider { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin: 28px 0 16px; display: flex; align-items: center; gap: 12px; }
+  .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); max-width: 180px; }
 
-  .project-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .project-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-  .tech-pill {
-    font-size: 10px;
-    padding: 2px 8px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--dim);
-    letter-spacing: 0.06em;
-  }
-
-  .project-links { display: flex; gap: 16px; }
-  .plink {
-    font-size: 11px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.06em;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    cursor: none;
-  }
-  .plink:hover { color: var(--cyan); }
-
-  /* CONNECTIONS */
-  #connections { position: relative; min-height: 100vh; overflow: hidden; }
-
-  .connections-canvas {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .connections-content {
-    position: relative;
-    z-index: 2;
-  }
-
-  .nodes-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .node-card {
-    position: relative;
+  /* Cert cards */
+  .cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 12px; margin-bottom: 32px; }
+  .cert-card {
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 32px;
-    text-align: center;
-    cursor: none;
-    transition: all 0.3s;
-    text-decoration: none;
-    display: block;
+    border-left: 3px solid var(--cyan);
+    border-radius: 6px;
+    padding: 16px;
   }
-  .node-card:hover {
-    border-color: var(--node-color, var(--cyan));
-    box-shadow: 0 0 30px rgba(77,217,240,0.1);
-    transform: translateY(-4px);
-  }
+  .cert-name { font-size: 12px; font-weight: 600; color: var(--bright); margin-bottom: 4px; line-height: 1.4; }
+  .cert-meta { font-size: 10px; color: var(--cyan); }
 
-  .node-icon { font-size: 36px; margin-bottom: 12px; display: block; }
-  .node-name {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 6px;
-  }
-  .node-handle {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-  }
-  .node-badge {
-    position: absolute;
-    top: 12px; right: 12px;
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 2px;
-    letter-spacing: 0.1em;
-  }
-
-  /* CONNECTION LINES SVG */
-  .connection-svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 60px;
+  /* Education box */
+  .edu-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    font-size: 11px;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .edu-degree { font-size: 15px; font-weight: 700; color: var(--bright); font-family: var(--font-display); }
+  .edu-school { font-size: 11px; color: var(--cyan); margin-top: 4px; }
+  .edu-year { font-size: 10px; color: var(--muted); }
+
+  /* Guide footer */
+  .guide-footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 32px;
+    font-size: 10px;
     color: var(--muted);
-  }
-
-  /* ANIMATIONS */
-  @keyframes blink { 50% { opacity: 0; } }
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  #strategy-guide::-webkit-scrollbar { width: 4px; }
+  #strategy-guide::-webkit-scrollbar-track { background: var(--bg); }
+  #strategy-guide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* Mobile */
-  @media (max-width: 900px) {
-    #hero { grid-template-columns: 1fr; }
-    .hero-terminal { display: none; }
-    .about-grid { grid-template-columns: 1fr; }
-    nav { padding: 16px 24px; }
-    section { padding: 100px 24px 60px; }
-    .nodes-grid { grid-template-columns: 1fr 1fr; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-    .article-item { grid-template-columns: 1fr; gap: 8px; }
-    .article-date { padding-top: 0; }
-    .article-arrow { display: none; }
-  }
-
-  /* Touch: hide custom cursor */
-  @media (hover: none) {
-    body { cursor: auto; }
-    .cursor, .cursor-ring { display: none; }
-  }
-
-  /* Nav overflow on small phones */
-  @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
-    .nav-status { display: none; }
+  @media (max-width: 600px) {
+    #guide-nav { padding: 10px 16px; gap: 8px; }
+    #guide-content { padding: 24px 16px 100px; }
+    .skill-row { grid-template-columns: auto 1fr auto; }
+    .skill-name { font-size: 9px; }
   }
 </style>
-<!-- ░░ Analytics — fill in IDs after account setup ░░ -->
-<!-- Cloudflare Web Analytics: https://dash.cloudflare.com → Analytics & Logs → Web Analytics -->
+<!-- Cloudflare Web Analytics -->
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
   data-cf-beacon='{"token":"CLOUDFLARE_TOKEN_HERE"}'></script>
-<!-- Microsoft Clarity: https://clarity.microsoft.com → New Project → Get Tracking Code -->
+<!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
     c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -634,645 +487,1386 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<!-- ══ GAME MODE ════════════════════════════════════════════ -->
+<div id="game-container">
+  <canvas id="game-canvas"></canvas>
 
-<!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo" id="navLogo"></a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="about.html">about</a></li>
-    <li><a href="articles.html">articles</a></li>
-    <li><a href="projects.html">projects</a></li>
-    <li><a href="connect.html">connect</a></li>
-  </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span id="navStatus"></span>
-  </div>
-</nav>
+  <div id="hud"></div>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-content fade-up">
-    <h1 id="heroName"></h1>
-    <p class="hero-tagline" id="heroTagline"></p>
-    <div class="hero-tags" id="heroTags"></div>
-    <div class="hero-cta">
-      <a href="#connections" class="btn btn-primary">get in touch</a>
-      <a href="#projects" class="btn btn-ghost">view projects</a>
-    </div>
+  <div id="dialog-box">
+    <div id="dialog-text"></div>
+    <div id="dialog-hint">SPACE / ENTER ▶</div>
   </div>
 
-  <div class="hero-terminal fade-up" style="transition-delay:0.2s">
-    <div class="term-bar">
-      <div class="term-dot r"></div>
-      <div class="term-dot y"></div>
-      <div class="term-dot g"></div>
-      <div class="term-title" id="termTitle"></div>
-    </div>
-    <div class="term-body" id="termBody"></div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section id="about">
-  <div class="section-label" data-n="01">about me</div>
-  <div class="about-grid">
-    <div class="about-text fade-up" id="aboutText"></div>
-    <div class="skills-grid fade-up" style="transition-delay:0.15s" id="skillsGrid"></div>
-  </div>
-</section>
-
-<!-- ARTICLES -->
-<section id="articles">
-  <div class="section-label" data-n="02">articles</div>
-  <div class="articles-list" id="articlesList"></div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-label" data-n="03">projects</div>
-  <div class="projects-grid fade-up" id="projectsGrid"></div>
-</section>
-
-<!-- CONNECTIONS -->
-<section id="connections">
-  <div class="section-label" data-n="04">connections</div>
-  <div class="connections-content">
-    <svg class="connection-svg" id="connSvg"></svg>
-
-    <div style="text-align:center; margin-bottom:48px" class="fade-up" id="centerNode">
-      <div style="
-        display:inline-block;
-        background:var(--bg2);
-        border:1px solid var(--cyan);
-        border-radius:4px;
-        padding:20px 36px;
-        box-shadow:0 0 40px rgba(77,217,240,0.15);
-      ">
-        <div style="font-size:13px;color:var(--cyan);letter-spacing:0.1em;margin-bottom:4px;">YOU ARE HERE</div>
-        <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--bright)" id="centerName"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px" id="centerEmail"></div>
+  <div id="touch-controls">
+    <div>
+      <div class="tcol">
+        <button class="touch-btn" data-key="ArrowLeft">◀</button>
+        <button class="touch-btn" data-key="ArrowRight">▶</button>
+      </div>
+      <div class="tcol">
+        <button class="touch-btn" data-key="e">ACT</button>
+        <button class="touch-btn" data-key=" ">JUMP</button>
       </div>
     </div>
-
-    <div class="nodes-grid fade-up" style="transition-delay:0.2s" id="nodesGrid"></div>
-
-    <div style="text-align:center;margin-top:60px;font-size:12px;color:var(--muted)" class="fade-up" style="transition-delay:0.3s" id="connectCta">
-      <span style="color:var(--green)"></span>
-    </div>
   </div>
-</section>
+</div>
 
-<!-- FOOTER -->
-<footer id="footer"></footer>
+<!-- ══ STRATEGY GUIDE ═══════════════════════════════════════ -->
+<div id="strategy-guide">
+  <nav id="guide-nav">
+    <span class="guide-logo">PIXEL QUEST</span>
+    <button class="guide-tab active" data-section="guide-home">HOME</button>
+    <button class="guide-tab" data-section="guide-about">ABOUT</button>
+    <button class="guide-tab" data-section="guide-projects">PROJECTS</button>
+    <button class="guide-tab" data-section="guide-articles">ARTICLES</button>
+    <button class="guide-tab" data-section="guide-connect">CONNECT</button>
+  </nav>
+
+  <div id="guide-content">
+
+    <!-- HOME -->
+    <section id="guide-home" class="guide-section active">
+      <div class="gh-hero">
+        <div class="gh-name">Roshan <em>Abraham.</em></div>
+        <div class="gh-title">AI Solutions Consultant &nbsp;·&nbsp; India | USA | UK &nbsp;·&nbsp; <span style="color:var(--green)">● Available for Work</span></div>
+        <div class="gh-tagline">AI Engineer specializing in LLMOps, Agentic Systems, MLOps, and enterprise AI solutions. Building intelligent systems that transform how organizations work.</div>
+        <div class="gh-tags">
+          <span class="gh-tag">#LLMOps</span>
+          <span class="gh-tag">#AgenticAI</span>
+          <span class="gh-tag">#MLOps</span>
+          <span class="gh-tag">#RAG</span>
+          <span class="gh-tag">#CloudAI</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:20px;">
+          Stack: <span style="color:var(--cyan)">ADK / Claude SDK · Vertex AI · FastAPI · Docker · Vector DBs · LlamaIndex</span>
+        </div>
+        <div class="gh-actions">
+          <a class="gh-btn primary" href="roshan-abraham-cv.pdf" download>Download CV</a>
+          <button class="gh-btn secondary" onclick="showGuideSection('guide-connect')">Get in Touch</button>
+          <button class="gh-btn secondary" onclick="toggleMode()">▶ Play Game</button>
+        </div>
+      </div>
+
+      <div class="section-divider" data-n="01">recent highlights</div>
+      <div class="guide-grid">
+        <div class="guide-card">
+          <div class="gc-label">Current Role</div>
+          <div class="gc-title">AI Solutions Consultant</div>
+          <div class="gc-sub">Deloitte USI · Jan 2024 — Present</div>
+          <div class="gc-desc">Agentic State Govt solutions. AI Hackathon Winner for PR Agentic platform. Enterprise LLM deployments.</div>
+        </div>
+        <div class="guide-card gc-featured">
+          <div class="gc-feat-badge">★ AI HACKATHON WINNER</div>
+          <div class="gc-title">Agentic PR Platform</div>
+          <div class="gc-sub">ADK · Gemma/Claude · Vertex AI · Firebase · MCP</div>
+          <div class="gc-desc">Multi-agent PR automation system. Featured project at Deloitte AI Hackathon.</div>
+        </div>
+        <div class="guide-card">
+          <div class="gc-label">5+ Years Experience</div>
+          <div class="gc-title">Production AI Systems</div>
+          <div class="gc-sub">LLMOps · Agentic · RAG · Medical AI</div>
+          <div class="gc-desc">End-to-end ML pipelines from training to deployment. 11 shipped projects across multiple domains.</div>
+        </div>
+      </div>
+
+      <div class="section-divider" data-n="02">skills overview</div>
+      <div class="skills-box">
+        <div class="skill-group">
+          <div class="skill-group-lbl">// ai &amp; llmops</div>
+          <div class="skill-row"><span class="skill-name">LlamaIndex / ADK</span><div class="skill-track"><div class="skill-fill cyan" style="width:95%"></div></div><span class="skill-pct">95</span></div>
+          <div class="skill-row"><span class="skill-name">Adv RAG / Vector DBs</span><div class="skill-track"><div class="skill-fill cyan" style="width:92%"></div></div><span class="skill-pct">92</span></div>
+          <div class="skill-row"><span class="skill-name">Model Steering</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-lbl">// cloud &amp; mlops</div>
+          <div class="skill-row"><span class="skill-name">GCP Vertex AI</span><div class="skill-track"><div class="skill-fill green" style="width:95%"></div></div><span class="skill-pct">95</span></div>
+          <div class="skill-row"><span class="skill-name">Docker / VM Serving</span><div class="skill-track"><div class="skill-fill green" style="width:75%"></div></div><span class="skill-pct">75</span></div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-lbl">// data &amp; backend</div>
+          <div class="skill-row"><span class="skill-name">Python / FastAPI</span><div class="skill-track"><div class="skill-fill orange" style="width:95%"></div></div><span class="skill-pct">95</span></div>
+          <div class="skill-row"><span class="skill-name">PostgreSQL / BigQuery</span><div class="skill-track"><div class="skill-fill orange" style="width:80%"></div></div><span class="skill-pct">80</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="guide-about" class="guide-section">
+      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / about</div>
+      <div class="guide-h2">About <em>Me.</em></div>
+      <p style="font-size:13px;line-height:2;color:var(--text);margin-bottom:12px;">I'm an <strong style="color:var(--cyan)">AI Solutions Consultant</strong> at Deloitte USI with 5+ years of experience building production AI systems for enterprise and government organizations.</p>
+      <p style="font-size:13px;line-height:2;color:var(--text);margin-bottom:12px;">I specialize in <strong style="color:var(--cyan)">LLMOps, Agentic Orchestration, and Advanced RAG systems</strong> — architecting end-to-end ML pipelines from training to deployment at scale.</p>
+      <p style="font-size:13px;line-height:2;color:var(--text);margin-bottom:28px;">My expertise spans <strong style="color:var(--cyan)">Medical AI infrastructure</strong>, custom LLM foundries, and building autonomous agent systems. Winner of AI Hackathon for PR Agentic solutions.</p>
+
+      <div class="section-divider">experience</div>
+      <div class="exp-list">
+        <div class="exp-item">
+          <div class="exp-header">
+            <div><div class="exp-role">AI Solutions Consultant <span class="exp-tag current">current</span></div><div class="exp-co">Deloitte USI</div></div>
+            <div class="exp-date">Jan 2024 — Present</div>
+          </div>
+          <div class="exp-desc">Handling Govt projects and transforming AI solutions for enterprise consumption. Building Agentic solutions for State Govt organizations. Winner of AI Hackathon for PR Agentic solutions. Blockchain-ready chatbot provisioning.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-header">
+            <div><div class="exp-role">AI Team Lead</div><div class="exp-co">Appsynergies</div></div>
+            <div class="exp-date">2021 — Jan 2024</div>
+          </div>
+          <div class="exp-desc">Led MLOps planning across all segments. Architected API systems for model inference at scale. Delivered optimized AI solutions leveraging custom industry expertise. Mentored junior AI engineers.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-header">
+            <div><div class="exp-role">Project Lead AI Engineer <span class="exp-tag concurrent">concurrent</span></div><div class="exp-co">MyDiGiRecords</div></div>
+            <div class="exp-date">2022 — 2023</div>
+          </div>
+          <div class="exp-desc">Preprocessed 100+ GB Doc AI model for training and fine-tuning. EPIC and Cerner medical distributor integration. Developed ABHA FHIR integration and end-to-end OCR-NER into FHIR system.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-header">
+            <div><div class="exp-role">AI Consultant <span class="exp-tag concurrent">concurrent</span></div><div class="exp-co">Tasset</div></div>
+            <div class="exp-date">Mid 2022 — 2023</div>
+          </div>
+          <div class="exp-desc">Large-scale data scraping and text dataset generation. Blockchain-ready chatbot provisioning for client needs.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-header">
+            <div><div class="exp-role">AI Engineer <span class="exp-tag foundation">foundation</span></div><div class="exp-co">Appsynergies</div></div>
+            <div class="exp-date">2019 — 2021</div>
+          </div>
+          <div class="exp-desc">Developed and integrated ML models into production pipelines. Built inference APIs and data preprocessing systems. Early MLOps foundations.</div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-header">
+            <div><div class="exp-role">Data Scientist Intern <span class="exp-tag foundation">foundation</span></div><div class="exp-co">QDgrees</div></div>
+            <div class="exp-date">2018 — 2019</div>
+          </div>
+          <div class="exp-desc">Applied ML and statistical modelling for data analysis. Built and deployed predictive models and data pipelines.</div>
+        </div>
+      </div>
+
+      <div class="section-divider">skills</div>
+      <div class="skills-box">
+        <div class="skill-group">
+          <div class="skill-group-lbl">// ai &amp; llmops</div>
+          <div class="skill-row"><span class="skill-name">LlamaIndex / ADK</span><div class="skill-track"><div class="skill-fill cyan" style="width:95%"></div></div><span class="skill-pct">95</span></div>
+          <div class="skill-row"><span class="skill-name">Adv RAG / Vector DBs</span><div class="skill-track"><div class="skill-fill cyan" style="width:92%"></div></div><span class="skill-pct">92</span></div>
+          <div class="skill-row"><span class="skill-name">Model Steering</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
+          <div class="skill-row"><span class="skill-name">LightEval / RAGAS</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
+          <div class="skill-row"><span class="skill-name">ML Feature Eng / Drift</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
+          <div class="skill-row"><span class="skill-name">LLM Serving / Fine-tuning</span><div class="skill-track"><div class="skill-fill cyan" style="width:75%"></div></div><span class="skill-pct">75</span></div>
+          <div class="skill-row"><span class="skill-name">NumPy / JAX / TF</span><div class="skill-track"><div class="skill-fill cyan" style="width:45%"></div></div><span class="skill-pct">45</span></div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-lbl">// cloud &amp; mlops</div>
+          <div class="skill-row"><span class="skill-name">GCP Vertex AI</span><div class="skill-track"><div class="skill-fill green" style="width:95%"></div></div><span class="skill-pct">95</span></div>
+          <div class="skill-row"><span class="skill-name">Docker / VM Serving</span><div class="skill-track"><div class="skill-fill green" style="width:75%"></div></div><span class="skill-pct">75</span></div>
+          <div class="skill-row"><span class="skill-name">AWS Bedrock</span><div class="skill-track"><div class="skill-fill green" style="width:65%"></div></div><span class="skill-pct">65</span></div>
+          <div class="skill-row"><span class="skill-name">OpenUI / W&amp;B</span><div class="skill-track"><div class="skill-fill green" style="width:60%"></div></div><span class="skill-pct">60</span></div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-group-lbl">// data &amp; backend</div>
+          <div class="skill-row"><span class="skill-name">Python / FastAPI</span><div class="skill-track"><div class="skill-fill orange" style="width:95%"></div></div><span class="skill-pct">95</span></div>
+          <div class="skill-row"><span class="skill-name">PostgreSQL / BigQuery</span><div class="skill-track"><div class="skill-fill orange" style="width:80%"></div></div><span class="skill-pct">80</span></div>
+          <div class="skill-row"><span class="skill-name">Claude Code</span><div class="skill-track"><div class="skill-fill orange" style="width:75%"></div></div><span class="skill-pct">75</span></div>
+          <div class="skill-row"><span class="skill-name">FHIR / Medical AI</span><div class="skill-track"><div class="skill-fill orange" style="width:60%"></div></div><span class="skill-pct">60</span></div>
+        </div>
+      </div>
+
+      <div class="section-divider">education</div>
+      <div class="edu-box">
+        <div>
+          <div class="edu-degree">B.Tech Computer Science &amp; Engineering</div>
+          <div class="edu-school">St. Aloysius Institute of Technology</div>
+        </div>
+        <div class="edu-year">2017 — 2021 (Honors)</div>
+      </div>
+
+      <div class="section-divider" style="margin-top:28px;">certifications</div>
+      <div class="cert-grid">
+        <div class="cert-card" style="border-left-color:var(--green)"><div class="cert-name">End-to-End ML with TensorFlow on GCP</div><div class="cert-meta">Google / Coursera · Aug 2020</div></div>
+        <div class="cert-card" style="border-left-color:var(--cyan)"><div class="cert-name">Reliable Google Cloud Infrastructure</div><div class="cert-meta">Google / Coursera · Jul 2020</div></div>
+        <div class="cert-card" style="border-left-color:var(--purple)"><div class="cert-name">Python Developer – MTA</div><div class="cert-meta">Microsoft · Apr 2020</div></div>
+        <div class="cert-card" style="border-left-color:var(--orange)"><div class="cert-name">Artificial Intelligence &amp; Deep Learning</div><div class="cert-meta">Online · Jan 2020</div></div>
+        <div class="cert-card" style="border-left-color:var(--cyan)"><div class="cert-name">NLP Specialization</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
+        <div class="cert-card" style="border-left-color:var(--pink)"><div class="cert-name">GANs Specialization</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
+        <div class="cert-card" style="border-left-color:var(--green)"><div class="cert-name">TensorFlow Advanced Techniques</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
+        <div class="cert-card" style="border-left-color:var(--orange)"><div class="cert-name">AI for Medicine Specialization</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="guide-projects" class="guide-section">
+      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / projects</div>
+      <div class="guide-h2">Projects <em>&amp; Work.</em></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:28px;">11 production AI systems shipped across LLMOps, Agentic AI, Medical AI, and more.</p>
+
+      <div class="guide-card gc-featured" style="margin-bottom:16px;">
+        <div class="gc-feat-badge">★ FEATURED — AI HACKATHON WINNER</div>
+        <div class="gc-title" style="font-size:18px;">Agentic PR Platform</div>
+        <div class="gc-sub">ADK · Gemma/Claude · Vertex AI · Firebase · MCP</div>
+        <div class="gc-desc">Multi-agent PR automation system. Built for and won Deloitte USI AI Hackathon. Agentic pipeline with multi-model orchestration, Firebase real-time sync, and MCP tool integration.</div>
+        <div class="gc-tags">
+          <span class="gc-tag">ADK</span><span class="gc-tag">Gemma</span><span class="gc-tag">Claude</span><span class="gc-tag">Vertex AI</span><span class="gc-tag">MCP</span><span class="gc-tag">Firebase</span>
+        </div>
+      </div>
+
+      <div class="guide-grid">
+        <div class="guide-card"><div class="gc-label">Project 2</div><div class="gc-title">Medical AI Infrastructure</div><div class="gc-sub">Document AI · FHIR · NER · GCP</div><div class="gc-desc">100+ GB Doc AI model training. EPIC/Cerner integration. ABHA FHIR OCR-NER pipeline.</div><div class="gc-tags"><span class="gc-tag">Document AI</span><span class="gc-tag">FHIR</span><span class="gc-tag">GCP</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 3</div><div class="gc-title">Advanced RAG Systems v1–v4</div><div class="gc-sub">Weaviate · Milvus · ADK · RAGAS · DSPy · Redis</div><div class="gc-desc">Four iterative RAG builds from basic to production-grade evaluation with RAGAS and DSPy optimization.</div><div class="gc-tags"><span class="gc-tag">Weaviate</span><span class="gc-tag">Milvus</span><span class="gc-tag">RAGAS</span><span class="gc-tag">DSPy</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 4</div><div class="gc-title">Custom LLM Foundry</div><div class="gc-sub">Gemma/Qwen2.5 · vLLM · W&amp;B · HuggingFace · Docker/RunPod</div><div class="gc-desc">Gemma and Qwen2.5 fine-tuning with Unsloth/vLLM. Public artifact on HuggingFace @dweebster.</div><div class="gc-tags"><span class="gc-tag">Gemma</span><span class="gc-tag">Qwen2.5</span><span class="gc-tag">vLLM</span><span class="gc-tag">HuggingFace</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 5</div><div class="gc-title">MLOps Engine</div><div class="gc-sub">BigQuery · Model Registry</div><div class="gc-desc">Dynamic trainer and evaluator. Scheduled retraining pipelines with BigQuery and model registry integration.</div><div class="gc-tags"><span class="gc-tag">BigQuery</span><span class="gc-tag">MLOps</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 6</div><div class="gc-title">Disease Detection in Cattle</div><div class="gc-sub">TFX · Serverless · Zapier · Model Registry</div><div class="gc-desc">CCTV schedule monitoring with ear tag OCR alerts. TFX pipeline with serverless inference and Zapier integration.</div><div class="gc-tags"><span class="gc-tag">TFX</span><span class="gc-tag">Serverless</span><span class="gc-tag">Zapier</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 7</div><div class="gc-title">Stable Diffusion Pipeline</div><div class="gc-sub">Stable Diffusion · ComfyUI · Python</div><div class="gc-desc">Generative AI visual content pipeline. Stable Diffusion with ComfyUI automation and Python orchestration.</div><div class="gc-tags"><span class="gc-tag">Stable Diffusion</span><span class="gc-tag">ComfyUI</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 8</div><div class="gc-title">Claude Agent Code Conversion</div><div class="gc-sub">Claude Agent SDK · Anthropic API · MCP</div><div class="gc-desc">Multi-agent code conversion with dynamic test generation and prompt caching optimization.</div><div class="gc-tags"><span class="gc-tag">Claude SDK</span><span class="gc-tag">MCP</span><span class="gc-tag">Prompt Caching</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 9</div><div class="gc-title">Education Data Pipeline</div><div class="gc-sub">ADK · LLM OpenRouter · Redis RAG</div><div class="gc-desc">WHO psych standards benchmarking for student profiles. ADK-powered adaptive content generation.</div><div class="gc-tags"><span class="gc-tag">ADK</span><span class="gc-tag">Redis</span><span class="gc-tag">OpenRouter</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 10</div><div class="gc-title">In-Store Navigation AI</div><div class="gc-sub">NetworkX · Conversational AI · Claude</div><div class="gc-desc">Graph-based store layout routing with natural language navigation. Aisle-level directions via Claude.</div><div class="gc-tags"><span class="gc-tag">NetworkX</span><span class="gc-tag">Claude</span></div></div>
+        <div class="guide-card"><div class="gc-label">Project 11</div><div class="gc-title">ChatBot Systems v1–v3</div><div class="gc-sub">LangChain · Redis · FastAPI · RASA · Ollama</div><div class="gc-desc">Three shipped chatbot generations: RASA rule-based → Dialogflow → LLM RAG with full backend.</div><div class="gc-tags"><span class="gc-tag">LangChain</span><span class="gc-tag">RASA</span><span class="gc-tag">FastAPI</span><span class="gc-tag">Redis</span></div></div>
+      </div>
+    </section>
+
+    <!-- ARTICLES -->
+    <section id="guide-articles" class="guide-section">
+      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / articles</div>
+      <div class="guide-h2">Articles <em>&amp; Writing.</em></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:28px;">Technical writing on AI, ethics, and the future of intelligent systems.</p>
+
+      <div class="article-card">
+        <div style="flex:1">
+          <div class="article-meta">Feb 2026 &nbsp;·&nbsp; 14 min read &nbsp;·&nbsp; <a href="articles.html" style="color:var(--cyan);text-decoration:none;">view on articles page ↗</a></div>
+          <div class="article-title">The End of Seeing is Believing: How to Prove Anything in the Age of Generative AI</div>
+          <div class="article-tags">
+            <span class="article-tag">Blockchain</span>
+            <span class="article-tag">AI</span>
+            <span class="article-tag">Ethics</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-card article-coming">
+        <div style="flex:1">
+          <div class="article-meta">Coming Soon &nbsp;·&nbsp; In Progress</div>
+          <div class="article-title">Building Production RAG Systems: What the Tutorials Don't Tell You</div>
+          <div class="article-tags"><span class="article-tag">LLMOps</span><span class="article-tag">RAG</span><span class="article-tag">Engineering</span></div>
+        </div>
+      </div>
+
+      <div class="article-card article-coming">
+        <div style="flex:1">
+          <div class="article-meta">Coming Soon &nbsp;·&nbsp; Drafting</div>
+          <div class="article-title">LLMOps in Enterprise: Lessons from Deloitte USI</div>
+          <div class="article-tags"><span class="article-tag">LLMOps</span><span class="article-tag">Enterprise</span><span class="article-tag">Deloitte</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONNECT -->
+    <section id="guide-connect" class="guide-section">
+      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / connect</div>
+      <div class="guide-h2">Connect <em>&amp; Reach Out.</em></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:28px;">Open to consulting engagements, full-time positions, and interesting conversations about AI.</p>
+
+      <div class="connect-grid">
+        <a class="connect-card" href="https://github.com/dweebyuserx" target="_blank" rel="noopener">
+          <div class="cc-platform">GitHub</div>
+          <div class="cc-handle">@dweebyuserx</div>
+          <div class="cc-url">github.com/dweebyuserx ↗</div>
+        </a>
+        <a class="connect-card" href="https://huggingface.co/dweebster" target="_blank" rel="noopener">
+          <div class="cc-platform">HuggingFace</div>
+          <div class="cc-handle">@dweebster</div>
+          <div class="cc-url">huggingface.co/dweebster ↗</div>
+        </a>
+        <a class="connect-card" href="https://www.linkedin.com/in/roshan-abraham-187474138/" target="_blank" rel="noopener">
+          <div class="cc-platform">LinkedIn</div>
+          <div class="cc-handle">Roshan Abraham</div>
+          <div class="cc-url">/in/roshan-abraham-187474138 ↗</div>
+        </a>
+        <a class="connect-card" href="mailto:abraham.roshan.a@gmail.com">
+          <div class="cc-platform">Email</div>
+          <div class="cc-handle">abraham.roshan.a</div>
+          <div class="cc-url">@gmail.com</div>
+        </a>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:24px;font-size:12px;color:var(--muted);line-height:1.9;">
+        <div style="color:var(--bright);font-weight:600;margin-bottom:8px;">Currently Available</div>
+        <div>Open to AI consulting engagements, full-time positions, and interesting projects. Based in India with flexibility for USA and UK engagements.</div>
+        <div style="margin-top:12px;"><a href="roshan-abraham-cv.pdf" download style="color:var(--cyan);text-decoration:none;">Download CV (PDF) ↓</a></div>
+      </div>
+    </section>
+
+  </div><!-- /guide-content -->
+
+  <div class="guide-footer">
+    <span style="color:var(--dim)">❯ built with HTML, CSS &amp; vanilla JS</span>
+    <span style="color:var(--dim)">© 2026 Roshan Abraham</span>
+    <span><span style="color:var(--green)">●</span> PIXEL QUEST v1.0</span>
+  </div>
+</div><!-- /strategy-guide -->
+
+<!-- ══ ALWAYS-VISIBLE TOGGLE ══════════════════════════════════ -->
+<button id="mode-toggle" onclick="toggleMode()">📖 STRATEGY<br>GUIDE [TAB]</button>
+
+<!-- ══ CREDITS OVERLAY ═════════════════════════════════════════ -->
+<div id="credits-overlay">
+  <button id="credits-close" onclick="closeCredits()">[ESC] CLOSE</button>
+  <div id="credits-scroll">
+    ★ ★ ★ PIXEL QUEST ★ ★ ★<br>
+    <br>
+    MADE WITH<br>
+    <br>
+    HTML<br>
+    CSS BOX-SHADOWS<br>
+    CANVAS 2D API<br>
+    WEB AUDIO API<br>
+    VANILLA JAVASCRIPT<br>
+    <br>
+    NO NPM<br>
+    NO FRAMEWORKS<br>
+    NO DEPENDENCIES<br>
+    <br>
+    ★ ★ ★<br>
+    <br>
+    BUILT BY<br>
+    ROSHAN ABRAHAM<br>
+    AI SOLUTIONS CONSULTANT<br>
+    <br>
+    INDIA | USA | UK<br>
+    <br>
+    github.com/dweebyuserx<br>
+    huggingface.co/dweebster<br>
+    <br>
+    ★ THANK YOU FOR PLAYING ★<br>
+    <br><br><br>
+  </div>
+</div>
+
+<!-- ══ TIME TRIAL RESULT ═══════════════════════════════════════ -->
+<div id="trial-result" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:700;align-items:center;justify-content:center;">
+  <div style="font-family:'Press Start 2P',monospace;font-size:clamp(8px,1.5vw,12px);text-align:center;color:#fff;line-height:2.8;">
+    <div style="color:#ffd700;font-size:clamp(12px,2.5vw,20px);margin-bottom:16px;">TIME TRIAL COMPLETE</div>
+    <div id="trial-time-display">TIME: 0:00.00</div>
+    <div id="trial-rank-display">RANK: ★★★ S</div>
+    <div style="font-size:clamp(6px,1vw,8px);color:#888;margin-top:12px;">&lt; 3:00 = S &nbsp;·&nbsp; &lt; 5:00 = A &nbsp;·&nbsp; &lt; 8:00 = B</div>
+    <div style="margin-top:20px;"><button onclick="closeTrialResult()" style="font-family:'Press Start 2P',monospace;font-size:clamp(7px,1.2vw,9px);background:transparent;border:2px solid #fff;color:#fff;padding:8px 16px;cursor:pointer;">CONTINUE</button></div>
+  </div>
+</div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════════
-// CONFIG - Edit this object with your personal data
-// ═══════════════════════════════════════════════════════════════════════════════
-const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
-const CONFIG = {
-  // Basic Info
-  name: {
-    first: "Roshan",
-    last: "Abraham"
-  },
-  handle: "roshan",
-  title: "AI Solutions Consultant",
-  location: "India | USA | UK",
-  email: _em,
-  yoe: 5,
-  status: "available for work",
-  statusMessage: "open to opportunities",
+// ══════════════════════════════════════════════════════════════
+// PIXEL QUEST — Game Engine
+// ══════════════════════════════════════════════════════════════
 
-  // Tagline shown under name
-  tagline: "AI Engineer specializing in LLMOps, Agentic Systems, MLOps, and enterprise AI solutions. Building intelligent systems that transform how organizations work.",
+// ── Constants ─────────────────────────────────────────────────
+const TILE = 32;
+const GRAVITY = 800;
+const JUMP_VEL = -420;
+const WALK_SPEED = 160;
+const TERMINAL_VEL = 600;
+const LOGICAL_W = 320;
+const LOGICAL_H = 180;
+const PLAYER_W = 10;
+const PLAYER_H = 14;
 
-  // Hero tags (skills shown as pills)
-  heroTags: ["LLMOps", "Agentic AI", "MLOps", "RAG Systems", "Cloud AI", "Python"],
-
-  // Stack shown in terminal JSON
-  stack: ["LangChain", "PyTorch", "Vertex AI", "FastAPI", "Docker", "Vector DBs"],
-
-  // About section paragraphs
-  aboutParagraphs: [
-    "I'm an <strong>AI Solutions Consultant</strong> at Deloitte USI with 5+ years of experience building production AI systems for enterprise and government organizations.",
-    "I specialize in <strong>LLMOps, Agentic Orchestration, and Advanced RAG systems</strong> — architecting end-to-end ML pipelines from training to deployment at scale.",
-    "My expertise spans <strong>Medical AI infrastructure</strong>, custom LLM foundries, and building autonomous agent systems with complex chain-of-thought reasoning.",
-    "Winner of AI Hackathon for PR Agentic solutions. I believe in building AI that solves real problems with measurable impact."
-  ],
-
-  // Skills grouped by category
-  skills: {
-    ai_ml: {
-      label: "// ai & llm",
-      color: "cyan",
-      items: [
-        { name: "LangChain / Agents", pct: 95 },
-        { name: "PyTorch / TensorFlow", pct: 90 },
-        { name: "LLM Fine-tuning", pct: 88 },
-        { name: "RAG / Vector DBs", pct: 92 }
-      ]
-    },
-    cloud: {
-      label: "// cloud & mlops",
-      color: "green",
-      items: [
-        { name: "GCP Vertex AI", pct: 90 },
-        { name: "AWS SageMaker", pct: 85 },
-        { name: "Docker / K8s", pct: 88 }
-      ]
-    },
-    infrastructure: {
-      label: "// data & infra",
-      color: "orange",
-      items: [
-        { name: "PostgreSQL / BigQuery", pct: 85 },
-        { name: "MLflow / W&B", pct: 88 },
-        { name: "FastAPI / Flask", pct: 90 }
-      ]
-    }
-  },
-
-  // Articles (most recent first)
-  articles: [
-    {
-      date: "Feb 2026",
-      title: "The End of Seeing is Believing",
-      excerpt: "A new architectural approach for truth validation — building a trusted layer between society and AI-generated content.",
-      tags: [
-        { text: "Ethics", color: "p" },
-        { text: "Blockchain", color: "c" }
-      ],
-      url: "articles.html"
-    },
-  ],
-
-  // Projects
-  projects: [
-    {
-      icon: "🤖",
-      name: "Custom LLM Foundry",
-      desc: "End-to-end LLM training pipeline with custom data collection, instruction tuning, and registry management using Docker and W&B.",
-      tech: ["LlaMA2", "vLLM", "W&B", "Docker"],
-      accent: "cyan",
-      links: [
-        { text: "HuggingFace", url: "https://huggingface.co/dweebster" },
-        { text: "All Projects", url: "projects.html" }
-      ]
-    },
-    {
-      icon: "🏥",
-      name: "Medical AI Infrastructure",
-      desc: "Document OCR engine with NER parser for medical documents. FHIR translation and LLM-powered knowledge base for healthcare.",
-      tech: ["Document AI", "FHIR", "NER", "GCP"],
-      accent: "green",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Medical AI Inquiry' }
-      ]
-    },
-    {
-      icon: "🔗",
-      name: "Agentic RAG System",
-      desc: "Multi-agent orchestration with specialized routers, chain-of-thought reasoning, and embedded knowledge indexing.",
-      tech: ["LangChain", "Pinecone", "FastAPI"],
-      accent: "purple",
-      links: [
-        { text: "All Projects", url: "projects.html" }
-      ]
-    },
-    {
-      icon: "⚡",
-      name: "MLOps Engine",
-      desc: "Dynamic model deployment pipeline with Terraform, Docker Helm, serverless and edge deployment options.",
-      tech: ["MLflow", "Terraform", "GKE", "SageMaker"],
-      accent: "orange",
-      links: [
-        { text: "All Projects", url: "projects.html" }
-      ]
-    }
-  ],
-
-  // Social connections
-  connections: [
-    {
-      name: "GitHub",
-      handle: "@dweebster",
-      url: "https://github.com/dweebyuserx",
-      icon: "git",
-      color: "--bright",
-      badge: "ACTIVE",
-      badgeBg: "rgba(200,207,232,0.08)",
-      badgeColor: "var(--bright)"
-    },
-    {
-      name: "LinkedIn",
-      handle: "/in/roshan-abraham-187474138",
-      url: "https://www.linkedin.com/in/roshan-abraham-187474138/",
-      icon: "in",
-      color: "#0a66c2",
-      badge: "NETWORK",
-      badgeBg: "rgba(10,102,194,0.15)",
-      badgeColor: "#4da3ff"
-    },
-    {
-      name: "HuggingFace",
-      handle: "@dweebster",
-      url: "https://huggingface.co/dweebster",
-      icon: "hf",
-      color: "--yellow",
-      badge: "MODELS",
-      badgeBg: "rgba(251,191,36,0.1)",
-      badgeColor: "var(--yellow)"
-    },
-    {
-      name: "Email",
-      handle: _em,
-      url: 'mailto:' + _em,
-      icon: "mail",
-      color: "--green",
-      badge: "DIRECT",
-      badgeBg: "rgba(61,255,160,0.1)",
-      badgeColor: "var(--green)"
-    },
-    {
-      name: "Resume",
-      handle: "Download PDF",
-      url: "roshan-abraham-cv.pdf",
-      download: true,
-      icon: "doc",
-      color: "--purple",
-      badge: "CV",
-      badgeBg: "rgba(167,139,250,0.1)",
-      badgeColor: "var(--purple)"
-    },
-    {
-      name: "Deloitte",
-      handle: "AI Consultant",
-      url: "https://deloitte.com",
-      icon: "work",
-      color: "--cyan",
-      badge: "CURRENT",
-      badgeBg: "rgba(77,217,240,0.1)",
-      badgeColor: "var(--cyan)"
-    }
-  ],
-
-  // Footer
-  footerCta: "open to AI consulting, enterprise solutions, and interesting collaborations",
-  copyrightYear: new Date().getFullYear(),
-  lastUpdated: "Feb 2025"
+// ── State ──────────────────────────────────────────────────────
+const GAME = {
+  mode: 'WORLD',   // WORLD | DIALOG | PAUSED
+  world: 1,
+  player: { x: 40, y: 100, vx: 0, vy: 0, onGround: false, facing: 1, frame: 0, frameTimer: 0 },
+  camera: { x: 0 },
+  score: 0,
+  collected: new Set(),
+  dialogQueue: [],
+  dialogIndex: 0,
+  dialogAction: null,
+  trialActive: false,
+  trialStart: 0,
+  trialCollected: new Set(),
+  trialGoal: 11,
 };
 
-// Icon mapping for connections
-const ICONS = {
-  git: "",
-  in: "",
-  x: "",
-  blog: "",
-  mail: "",
-  web: ""
+const keys = {};
+let lastKeyDown = '';
+let dialogKeyConsumed = false;
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Tab') { e.preventDefault(); toggleMode(); return; }
+  keys[e.key] = true;
+  handleKeyDown(e);
+});
+document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+// ── Canvas ─────────────────────────────────────────────────────
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function getScale() {
+  return Math.min(canvas.width / LOGICAL_W, canvas.height / LOGICAL_H);
+}
+
+// ── Sprite Data ────────────────────────────────────────────────
+const SC = {
+  0: null,
+  1: '#ffd5a0',  // skin
+  2: '#4a2800',  // outline/hair
+  3: '#3b82f6',  // shirt blue
+  4: '#e8eeff',  // highlight
+  5: '#8b4513',  // pants
+  6: '#e05050',  // red accent
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// RENDER FUNCTIONS - Populate HTML from CONFIG
-// ═══════════════════════════════════════════════════════════════════════════════
+const SPRITE_IDLE = [
+  [0,0,0,2,2,2,2,2,0,0],
+  [0,0,2,1,1,1,1,1,2,0],
+  [0,0,2,1,4,1,1,1,2,0],
+  [0,0,2,1,1,1,1,1,2,0],
+  [0,0,0,2,2,2,2,2,0,0],
+  [0,2,3,3,3,3,3,3,2,0],
+  [0,2,3,3,3,3,3,3,2,0],
+  [0,2,3,3,3,3,3,3,2,0],
+  [0,2,3,2,3,3,2,3,2,0],
+  [0,0,2,5,2,0,2,5,2,0],
+  [0,0,2,5,2,0,2,5,2,0],
+  [0,0,2,5,2,0,2,5,2,0],
+  [0,0,2,2,2,0,2,2,2,0],
+  [0,0,0,0,0,0,0,0,0,0],
+];
 
-function render() {
-  // Update page title
-  document.title = `~/${CONFIG.handle} — resume`;
+const SPRITE_RUN1 = [
+  [0,0,0,2,2,2,2,2,0,0],
+  [0,0,2,1,1,1,1,1,2,0],
+  [0,0,2,1,4,1,1,1,2,0],
+  [0,0,2,1,1,1,1,1,2,0],
+  [0,0,0,2,2,2,2,2,0,0],
+  [2,3,3,3,3,3,3,3,2,0],
+  [0,2,3,3,3,3,3,3,2,0],
+  [0,2,3,3,3,3,3,3,2,2],
+  [0,2,3,2,3,3,2,3,0,0],
+  [0,0,2,5,5,2,5,2,0,0],
+  [0,0,0,2,5,2,5,2,0,0],
+  [0,0,0,2,2,2,2,2,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+];
 
-  // Nav
-  document.getElementById('navLogo').innerHTML = `<span>~/</span>${CONFIG.handle}.dev`;
-  document.getElementById('navStatus').textContent = CONFIG.status;
+const SPRITE_RUN2 = [
+  [0,0,0,2,2,2,2,2,0,0],
+  [0,0,2,1,1,1,1,1,2,0],
+  [0,0,2,1,4,1,1,1,2,0],
+  [0,0,2,1,1,1,1,1,2,0],
+  [0,0,0,2,2,2,2,2,0,0],
+  [0,2,3,3,3,3,3,3,2,2],
+  [0,2,3,3,3,3,3,3,2,0],
+  [2,3,3,3,3,3,3,3,2,0],
+  [0,0,2,3,2,3,2,3,2,0],
+  [0,0,2,5,2,5,5,2,0,0],
+  [0,0,2,5,2,2,5,0,0,0],
+  [0,0,2,2,0,2,2,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+  [0,0,0,0,0,0,0,0,0,0],
+];
 
-  // Hero
-  document.getElementById('heroName').innerHTML = `${CONFIG.name.first}<br><em>${CONFIG.name.last}.</em>`;
-  document.getElementById('heroTagline').textContent = CONFIG.tagline;
+function drawSprite(spriteData, px, py, facingRight) {
+  spriteData.forEach((row, ry) => {
+    row.forEach((ci, rx) => {
+      if(!SC[ci]) return;
+      ctx.fillStyle = SC[ci];
+      const dx = facingRight ? px + rx : px + (PLAYER_W - 1 - rx);
+      ctx.fillRect(Math.floor(dx), Math.floor(py + ry), 1, 1);
+    });
+  });
+}
 
-  const heroTags = document.getElementById('heroTags');
-  heroTags.innerHTML = CONFIG.heroTags.map(t => `<span class="tag">${t}</span>`).join('');
+// ── World Definitions ──────────────────────────────────────────
+// Tilemap: each string row = one row of 32px tiles
+// World 1: 2016px wide = 63 tiles. Rows: 0=sky, 1=sky, 2=qblocks, 3=play, 4=ground
+// World 2: 2240px = 70 tiles
+// World 3: 3200px = 100 tiles
+// World 4: 1632px = 51 tiles
+// World 5: 1792px = 56 tiles
 
-  // Terminal
-  document.getElementById('termTitle').textContent = `${CONFIG.handle}@dev — ~/resume — zsh`;
-  document.getElementById('termBody').innerHTML = `
-    <div><span class="t-prompt">❯</span> <span class="t-cmd">cat profile.json</span></div>
-    <div class="t-comment">// loading...</div>
-    <br>
-    <div><span class="t-dim">{</span></div>
-    <div>&nbsp;&nbsp;<span class="t-key">"name"</span>: <span class="t-str">"${CONFIG.name.first} ${CONFIG.name.last}"</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"role"</span>: <span class="t-str">"${CONFIG.title}"</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"yoe"</span>: <span class="t-val">${CONFIG.yoe}</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"location"</span>: <span class="t-str">"${CONFIG.location}"</span>,</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"stack"</span>: [</div>
-    ${CONFIG.stack.map((s, i) => `<div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"${s}"</span>${i < CONFIG.stack.length - 1 ? ',' : ''}</div>`).join('')}
-    <div>&nbsp;&nbsp;],</div>
-    <div>&nbsp;&nbsp;<span class="t-key">"status"</span>: <span class="t-str" style="color:var(--green)">"${CONFIG.statusMessage}"</span></div>
-    <div><span class="t-dim">}</span></div>
-    <br>
-    <div><span class="t-prompt">❯</span> <span class="t-cursor"></span></div>
-  `;
+function mkrow(len, char) { return char.repeat(len); }
 
-  // About
-  document.getElementById('aboutText').innerHTML = CONFIG.aboutParagraphs.map(p => `<p>${p}</p>`).join('');
+const WORLDS = {
+  1: {
+    name: 'HOME', sky: '#5c94fc', width: 63 * TILE,
+    tiles: [
+      mkrow(63, '.'),
+      mkrow(63, '.'),
+      '...?....?....?....?....?....?.................................',
+      mkrow(63, '.'),
+      mkrow(63, 'G'),
+    ],
+    objects: [
+      { type:'qblock', tx:3,  ty:2, letter:'R', collected:false, dialog:['ROSHAN ABRAHAM','AI Solutions Consultant','5+ years in production AI','● AVAILABLE FOR WORK'] },
+      { type:'qblock', tx:8,  ty:2, letter:'O', collected:false, dialog:['Stack:','ADK / Claude SDK','Vertex AI  FastAPI  Docker','Vector DBs  LlamaIndex'] },
+      { type:'qblock', tx:13, ty:2, letter:'S', collected:false, dialog:['AI Hackathon Winner','Agentic PR Platform','Deloitte USI  State Govt','Enterprise AI Solutions'] },
+      { type:'qblock', tx:18, ty:2, letter:'H', collected:false, dialog:['Location:','India  |  USA  |  UK','Open to consulting','and full-time positions'] },
+      { type:'qblock', tx:23, ty:2, letter:'A', collected:false, dialog:['Download CV:','roshan-abraham-cv.pdf','Press SPACE to download',''] },
+      { type:'qblock', tx:28, ty:2, letter:'N', collected:false, dialog:['Contact:','@dweebyuserx on GitHub','@dweebster on HuggingFace','abraham.roshan.a@gmail.com'] },
+    ],
+    warpPipe: { tx: 58, ty: 3 },
+  },
+  2: {
+    name: 'ABOUT', sky: '#1a1a2e', width: 70 * TILE,
+    tiles: [
+      mkrow(70, '.'),
+      '....BB....BB....BB....BB....BB................................',
+      '....BB....BB....BB....BB....BB................................',
+      '....BB....BB....BB....BB....BB................................',
+      mkrow(70, 'G'),
+    ],
+    objects: [
+      { type:'building', tx:4,  ty:1, dialog:['Data Scientist Intern','QDgrees  2018-2019','Applied ML & statistical modelling','Built predictive models & pipelines'] },
+      { type:'building', tx:10, ty:1, dialog:['AI Engineer','Appsynergies  2019-2021','Integrated ML models into production','Inference APIs  data preprocessing'] },
+      { type:'building', tx:16, ty:1, dialog:['AI Engineer (promoted)','Appsynergies  2021-Jan 2024','MLOps planning all segments','Mentored junior AI engineers'] },
+      { type:'building', tx:22, ty:1, dialog:['Project Lead AI Engineer','MyDiGiRecords  2022-2023','FHIR integration  OCR-NER','100+ GB Doc AI model training'] },
+      { type:'building', tx:28, ty:1, dialog:['AI Consultant  [CONCURRENT]','Tasset  Mid 2022-2023','Large-scale data scraping','Blockchain chatbot provisioning'] },
+      { type:'building', tx:36, ty:1, dialog:['AI Solutions Consultant','Deloitte USI  Jan 2024-Present','★ AI Hackathon Winner','Agentic State Govt solutions'] },
+    ],
+    warpPipe: { tx: 65, ty: 3 },
+  },
+  3: {
+    name: 'PROJECTS', sky: '#0d1b2a', width: 100 * TILE,
+    tiles: [
+      mkrow(100, '.'),
+      mkrow(100, '.'),
+      mkrow(100, '.'),
+      '.T....T....T....T....T....T....T....T....T....T....T........',
+      mkrow(100, 'G'),
+    ],
+    objects: [
+      { type:'terminal', tx:1,  featured:true,  dialog:['[FEATURED] Agentic PR Platform','ADK  Gemma/Claude  Vertex AI','Firebase  MCP','AI Hackathon Winner @ Deloitte'] },
+      { type:'terminal', tx:6,  dialog:['Medical AI Infrastructure','Document OCR + NER  FHIR','EPIC & Cerner integration','GCP  Document AI  ML pipeline'] },
+      { type:'terminal', tx:11, dialog:['Advanced RAG System v1-v4','Weaviate  Milvus  ADK  DSPy','4 builds  increasing complexity','RAGAS production evaluation'] },
+      { type:'terminal', tx:16, dialog:['Custom LLM Foundry','Gemma/Qwen2.5 fine-tuning','vLLM  W&B  HuggingFace','Public artifact: HF @dweebster'] },
+      { type:'terminal', tx:21, dialog:['MLOps Engine','Dynamic trainer + evaluator','BigQuery  Model registry','Scheduled retraining pipelines'] },
+      { type:'terminal', tx:26, dialog:['Disease Detection: Cattle','CCTV schedule monitoring','TFX  Ear tag OCR alerts','Serverless  Zapier integration'] },
+      { type:'terminal', tx:31, dialog:['Stable Diffusion Pipeline','Generative AI visual content','Stable Diffusion  ComfyUI','Python pipeline automation'] },
+      { type:'terminal', tx:36, dialog:['Claude Agent Code Conversion','Multi-agent code conversion','Dynamic test generation','Prompt caching optimization'] },
+      { type:'terminal', tx:41, dialog:['Education Data Pipeline','WHO psych standards benchmarks','ADK  Redis RAG  openrouter','Student-profile adapted content'] },
+      { type:'terminal', tx:46, dialog:['In-Store Navigation AI','NetworkX graph store layouts','Natural language navigation','Aisle-level routing  Claude'] },
+      { type:'terminal', tx:51, dialog:['ChatBot Systems v1-v3','RASA -> Dialogflow -> LLM RAG','Three shipped chatbot systems','LangChain  Redis  FastAPI'] },
+    ],
+    warpPipe: { tx: 95, ty: 3 },
+  },
+  4: {
+    name: 'ARTICLES', sky: '#2d1b00', width: 51 * TILE,
+    tiles: [
+      mkrow(51, '.'),
+      mkrow(51, '.'),
+      '..BBB...BBB...BBB.........................................',
+      '..BBB...BBB...BBB.........................................',
+      mkrow(51, 'G'),
+    ],
+    objects: [
+      { type:'bookshelf', tx:2,  ty:2, dialog:['The End of Seeing is Believing','How to Prove Anything in the','Age of Generative AI','Feb 2026  14 min  Blockchain/AI/Ethics'] },
+      { type:'bookshelf', tx:8,  ty:2, dialog:['[COMING SOON]','Building Production RAG Systems','What the Tutorials Don\'t Tell You','Status: in progress...'] },
+      { type:'bookshelf', tx:14, ty:2, dialog:['[COMING SOON]','LLMOps in Enterprise','Lessons from Deloitte USI','Status: drafting...'] },
+    ],
+    warpPipe: { tx: 46, ty: 3 },
+  },
+  5: {
+    name: 'CONNECT', sky: '#0a0a23', width: 56 * TILE,
+    tiles: [
+      mkrow(56, '.'),
+      '......PPPP...................PPPP........................',
+      '..............PPPP..............................PPPP....',
+      mkrow(56, '.'),
+      mkrow(56, 'G'),
+    ],
+    objects: [
+      { type:'platform_terminal', tx:6,  ty:1, platform:'github',     dialog:['GitHub','@dweebyuserx','github.com/dweebyuserx','SPACE to open link ->'] },
+      { type:'platform_terminal', tx:14, ty:2, platform:'huggingface', dialog:['HuggingFace','@dweebster','huggingface.co/dweebster','SPACE to open link ->'] },
+      { type:'platform_terminal', tx:27, ty:1, platform:'linkedin',    dialog:['LinkedIn','/in/roshan-abraham-187474138','linkedin.com/in/...','SPACE to open link ->'] },
+      { type:'platform_terminal', tx:46, ty:2, platform:'email',       dialog:['Email','abraham.roshan.a@gmail.com','Press SPACE to compose',''] },
+    ],
+    tower: { tx: 35 },
+  },
+};
 
-  // Skills
-  const skillsGrid = document.getElementById('skillsGrid');
-  let skillsHtml = '';
-  for (const [key, group] of Object.entries(CONFIG.skills)) {
-    skillsHtml += `
-      <div>
-        <div class="skill-group-label">${group.label}</div>
-        <div class="skill-bars">
-          ${group.items.map(s => `
-            <div class="skill-row">
-              <span class="skill-name">${s.name}</span>
-              <div class="skill-track">
-                <div class="skill-fill ${group.color}" style="width:${s.pct}%"></div>
-              </div>
-              <span class="skill-pct">${s.pct}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
+// Link actions for platform terminals
+const PLATFORM_LINKS = {
+  github: 'https://github.com/dweebyuserx',
+  huggingface: 'https://huggingface.co/dweebster',
+  linkedin: 'https://www.linkedin.com/in/roshan-abraham-187474138/',
+  email: 'mailto:abraham.roshan.a@gmail.com',
+};
+
+// ── Collision ──────────────────────────────────────────────────
+const SOLID_TILES = new Set(['G', 'P', 'B', '?', 'T']);
+// Question blocks are solid only if collected (marked by obj.solid after hit)
+// Platforms: solid from top only
+
+function getTileAt(world, tx, ty) {
+  if(ty < 0 || ty >= world.tiles.length) return '.';
+  const row = world.tiles[ty];
+  if(tx < 0 || tx >= row.length) return '.';
+  return row[tx];
+}
+
+function isSolidAt(world, tx, ty) {
+  const ch = getTileAt(world, tx, ty);
+  if(ch === '?') {
+    // Check if already-collected qblock
+    const obj = world.objects.find(o => o.type === 'qblock' && o.tx === tx && o.ty === ty);
+    return true; // still solid after collection (shows '·')
   }
-  skillsGrid.innerHTML = skillsHtml;
-
-  // Articles
-  const articlesList = document.getElementById('articlesList');
-  articlesList.innerHTML = CONFIG.articles.map((a, i) => `
-    <a href="articles.html" class="article-item fade-up" style="transition-delay:${i * 0.05}s; text-decoration:none; color:inherit; cursor:none;">
-      <div class="article-date">${a.date}</div>
-      <div>
-        <div class="article-title">${a.title}</div>
-        <div class="article-excerpt">${a.excerpt}</div>
-        <div class="article-tags">
-          ${a.tags.map(t => `<span class="atag atag-${t.color}">${t.text}</span>`).join('')}
-        </div>
-      </div>
-      <div class="article-arrow">→</div>
-    </a>
-  `).join('');
-
-  // Projects
-  const projectsGrid = document.getElementById('projectsGrid');
-  projectsGrid.innerHTML = CONFIG.projects.map(p => `
-    <div class="project-card" style="--accent:var(--${p.accent})">
-      <span class="project-icon">${p.icon}</span>
-      <div class="project-name">${p.name}</div>
-      <div class="project-desc">${p.desc}</div>
-      <div class="project-tech">
-        ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
-      </div>
-      <div class="project-links">
-        ${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
-      </div>
-    </div>
-  `).join('');
-
-  // Connections center node
-  document.getElementById('centerName').textContent = `${CONFIG.name.first} ${CONFIG.name.last}`;
-  document.getElementById('centerEmail').textContent = CONFIG.email;
-
-  // Connection nodes
-  const nodesGrid = document.getElementById('nodesGrid');
-  nodesGrid.innerHTML = CONFIG.connections.map(c => {
-    const colorVal = c.color.startsWith('--') ? `var(${c.color})` : c.color;
-    return `
-      <a href="${c.url}" target="_blank" rel="noopener noreferrer" ${c.download ? 'download' : ''} class="node-card" style="--node-color:${colorVal}">
-        <span class="node-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
-        <span class="node-icon">${ICONS[c.icon] || '~'}</span>
-        <div class="node-name">${c.name}</div>
-        <div class="node-handle">${c.handle}</div>
-      </a>
-    `;
-  }).join('');
-
-  // Connect CTA
-  document.getElementById('connectCta').innerHTML = `<span style="color:var(--green)">❯</span> ${CONFIG.footerCta}`;
-
-  // Footer
-  document.getElementById('footer').innerHTML = `
-    <div style="color:var(--dim);font-size:11px">
-      <span style="color:var(--cyan)">❯</span> built with HTML, CSS &amp; vanilla JS — no frameworks
-    </div>
-    <div style="font-size:11px;color:var(--dim)">
-      © ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last} — <span style="color:var(--muted)">MIT License</span>
-    </div>
-    <div style="font-size:11px">
-      <span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}
-    </div>
-  `;
+  return SOLID_TILES.has(ch);
 }
 
-// Terminal streaming text
-function typeStream(el, speed) {
-  if (!el) return;
-  speed = speed || 30;
-  const finalHTML = el.innerHTML;
-  const text = el.textContent;
-  el.textContent = '';
-  let i = 0;
-  (function tick() {
-    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
-    else { el.innerHTML = finalHTML; }
-  })();
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CURSOR
-// ═══════════════════════════════════════════════════════════════════════════════
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
-
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
-function setupCursorHovers() {
-  document.querySelectorAll('a, button, .node-card, .article-item, .project-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '44px';
-      ring.style.height = '44px';
-      ring.style.borderColor = 'rgba(77,217,240,0.7)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '28px';
-      ring.style.height = '28px';
-      ring.style.borderColor = 'rgba(77,217,240,0.4)';
-    });
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// SCROLL REVEAL
-// ═══════════════════════════════════════════════════════════════════════════════
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      e.target.querySelectorAll('.skill-fill').forEach(bar => {
-        setTimeout(() => { bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`; }, 200);
-      });
+function resolveCollisionsX(p, world) {
+  const col = p.vx > 0 ? Math.floor((p.x + PLAYER_W) / TILE) : Math.floor(p.x / TILE);
+  const r0 = Math.floor(p.y / TILE);
+  const r1 = Math.floor((p.y + PLAYER_H - 1) / TILE);
+  for(let row = r0; row <= r1; row++) {
+    if(isSolidAt(world, col, row)) {
+      if(p.vx > 0) p.x = col * TILE - PLAYER_W;
+      else p.x = (col + 1) * TILE;
+      p.vx = 0;
+      return;
     }
-  });
-}, { threshold: 0.1 });
+  }
+}
 
-function setupObservers() {
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-  const aboutObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.skill-fill').forEach((bar, i) => {
-          setTimeout(() => {
-            bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`;
-          }, i * 80 + 200);
-        });
+function resolveCollisionsY(p, world) {
+  const row = p.vy > 0 ? Math.floor((p.y + PLAYER_H) / TILE) : Math.floor(p.y / TILE);
+  const c0 = Math.floor(p.x / TILE);
+  const c1 = Math.floor((p.x + PLAYER_W - 1) / TILE);
+  for(let col = c0; col <= c1; col++) {
+    const ch = getTileAt(world, col, row);
+    let solid = false;
+    if(ch === 'P') {
+      // Platform: only solid from top (landing)
+      if(p.vy > 0) solid = true;
+    } else {
+      solid = isSolidAt(world, col, row);
+    }
+    if(solid) {
+      if(p.vy > 0) { p.y = row * TILE - PLAYER_H; p.onGround = true; }
+      else {
+        // Hit from below — check qblock trigger
+        if(ch === '?') triggerQBlock(world, col, row);
+        p.y = (row + 1) * TILE;
       }
-    });
-  }, { threshold: 0.3 });
-
-  const aboutSection = document.getElementById('about');
-  if (aboutSection) aboutObs.observe(aboutSection);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CONNECTION SVG LINES
-// ═══════════════════════════════════════════════════════════════════════════════
-function drawConnections() {
-  const svg = document.getElementById('connSvg');
-  const section = document.getElementById('connections');
-  const center = document.getElementById('centerNode');
-  const grid = document.getElementById('nodesGrid');
-
-  if (!svg || !center || !grid) return;
-
-  svg.innerHTML = '';
-  const secRect = section.getBoundingClientRect();
-  const cenRect = center.getBoundingClientRect();
-
-  const cx = cenRect.left + cenRect.width/2 - secRect.left;
-  const cy = cenRect.top + cenRect.height - secRect.top + section.scrollTop;
-
-  const cards = grid.querySelectorAll('.node-card');
-  const colors = ['#c8cfe8','#4da3ff','#4dd9f0','#ff9f4a','#3dffa0','#a78bfa'];
-
-  cards.forEach((card, i) => {
-    const r = card.getBoundingClientRect();
-    const tx = r.left + r.width/2 - secRect.left;
-    const ty = r.top + r.height/2 - secRect.top + section.scrollTop;
-
-    const color = colors[i % colors.length];
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    const mx2 = (cx + tx)/2;
-    const my2 = cy + (ty-cy)*0.4;
-    const d = `M ${cx} ${cy} Q ${mx2} ${my2} ${tx} ${ty}`;
-    path.setAttribute('d', d);
-    path.setAttribute('stroke', color);
-    path.setAttribute('stroke-width', '1');
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke-dasharray', '4 6');
-    path.setAttribute('opacity', '0.3');
-
-    const len = path.getTotalLength ? path.getTotalLength() : 200;
-    path.style.strokeDashoffset = len;
-    path.style.strokeDasharray = `4 6`;
-
-    svg.appendChild(path);
-
-    setTimeout(() => {
-      path.style.transition = `stroke-dashoffset 1.2s ease ${i*0.12}s`;
-      path.style.strokeDashoffset = '0';
-      path.style.opacity = '0.4';
-    }, 500);
-
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('r', '3');
-    circle.setAttribute('fill', color);
-    circle.style.filter = `drop-shadow(0 0 4px ${color})`;
-
-    let progress = Math.random();
-    function animDot() {
-      progress = (progress + 0.003) % 1;
-      const len2 = path.getTotalLength ? path.getTotalLength() : 200;
-      const pt = path.getPointAtLength(progress * len2);
-      circle.setAttribute('cx', pt.x);
-      circle.setAttribute('cy', pt.y);
-      circle.setAttribute('opacity', Math.sin(progress * Math.PI) * 0.9);
-      requestAnimationFrame(animDot);
+      p.vy = 0;
+      return;
     }
-    svg.appendChild(circle);
-    setTimeout(() => animDot(), 1200 + i * 150);
+  }
+}
+
+function triggerQBlock(world, tx, ty) {
+  const obj = world.objects.find(o => o.type === 'qblock' && o.tx === tx && o.ty === ty);
+  if(obj && !obj.collected) {
+    obj.collected = true;
+    GAME.score += 100;
+    playSound('coin');
+    // CV download for 'A' block (tx:23, letter:A)
+    if(obj.letter === 'A') {
+      showDialog(obj.dialog, () => { window.open('roshan-abraham-cv.pdf'); });
+    } else {
+      showDialog(obj.dialog);
+    }
+  }
+}
+
+// ── Player Update ──────────────────────────────────────────────
+function updatePlayer(dt) {
+  if(GAME.mode !== 'WORLD') return;
+  const p = GAME.player;
+  const world = WORLDS[GAME.world];
+
+  if(keys['ArrowLeft'] || keys['a']) { p.vx = -WALK_SPEED; p.facing = -1; }
+  else if(keys['ArrowRight'] || keys['d']) { p.vx = WALK_SPEED; p.facing = 1; }
+  else { p.vx *= 0.65; if(Math.abs(p.vx) < 1) p.vx = 0; }
+
+  if((keys['ArrowUp'] || keys[' '] || keys['w']) && p.onGround) {
+    p.vy = JUMP_VEL; p.onGround = false; playSound('jump');
+  }
+
+  p.vy += GRAVITY * dt;
+  if(p.vy > TERMINAL_VEL) p.vy = TERMINAL_VEL;
+
+  p.x += p.vx * dt;
+  resolveCollisionsX(p, world);
+
+  p.y += p.vy * dt;
+  p.onGround = false;
+  resolveCollisionsY(p, world);
+
+  if(p.x < 0) p.x = 0;
+  if(p.x > world.width - PLAYER_W) p.x = world.width - PLAYER_W;
+
+  // Fall off bottom = respawn
+  if(p.y > LOGICAL_H + 32) { p.x = 40; p.y = 80; p.vx = 0; p.vy = 0; }
+
+  // Animate
+  p.frameTimer += dt;
+  if(p.frameTimer > 0.13) { p.frame = (p.frame + 1) % 2; p.frameTimer = 0; }
+}
+
+// ── Camera ─────────────────────────────────────────────────────
+function updateCamera() {
+  const p = GAME.player;
+  const world = WORLDS[GAME.world];
+  const target = p.x - LOGICAL_W / 3;
+  GAME.camera.x += (target - GAME.camera.x) * 0.1;
+  GAME.camera.x = Math.max(0, Math.min(GAME.camera.x, world.width - LOGICAL_W));
+}
+
+// ── Interaction Check ──────────────────────────────────────────
+let interactCooldown = 0;
+function checkInteractions() {
+  if(GAME.mode !== 'WORLD') return;
+  const p = GAME.player;
+  const world = WORLDS[GAME.world];
+  if(interactCooldown > 0) { interactCooldown--; return; }
+
+  const interactKey = keys['e'] || keys['Enter'] || keys['z'];
+
+  world.objects.forEach(obj => {
+    const objX = obj.tx * TILE;
+    const objY = (obj.ty !== undefined ? obj.ty : 3) * TILE;
+
+    switch(obj.type) {
+      case 'terminal':
+      case 'building':
+      case 'bookshelf':
+      case 'platform_terminal': {
+        const dist = Math.abs(p.x + PLAYER_W/2 - (objX + TILE));
+        if(dist < TILE * 2 && p.onGround && interactKey && !obj._triggered) {
+          obj._triggered = true;
+          interactCooldown = 20;
+          playSound('block_hit');
+          if(obj.type === 'terminal') {
+            // Time trial tracking
+            if(GAME.trialActive) {
+              const key = `${obj.tx}_${GAME.world}`;
+              if(!GAME.trialCollected.has(key)) {
+                GAME.trialCollected.add(key);
+                GAME.score += 200;
+                if(GAME.trialCollected.size >= GAME.trialGoal) {
+                  endTimeTrial();
+                  return;
+                }
+              }
+            } else {
+              GAME.score += 50;
+            }
+          }
+          const action = (obj.type === 'platform_terminal' && obj.platform)
+            ? () => { const url = PLATFORM_LINKS[obj.platform]; if(url) window.open(url, '_blank'); }
+            : null;
+          showDialog(obj.dialog, action);
+          setTimeout(() => { obj._triggered = false; }, 800);
+        }
+        if(dist >= TILE * 2) obj._triggered = false;
+        break;
+      }
+    }
+  });
+
+  // Warp pipe check
+  if(world.warpPipe && (keys['ArrowDown'] || keys['s']) && p.onGround) {
+    const pipeX = world.warpPipe.tx * TILE;
+    if(Math.abs(p.x - pipeX) < TILE * 1.5) {
+      // Warp to next world or credits
+      if(GAME.world === 3 && world.warpPipe.tx === 95) {
+        showCredits();
+      } else {
+        const nextWorld = GAME.world < 5 ? GAME.world + 1 : 1;
+        travelToWorld(nextWorld);
+      }
+    }
+  }
+}
+
+// ── Travel between worlds ──────────────────────────────────────
+function travelToWorld(n) {
+  playSound('enter_door');
+  GAME.world = n;
+  const world = WORLDS[n];
+  GAME.player.x = 40; GAME.player.y = 80; GAME.player.vx = 0; GAME.player.vy = 0;
+  GAME.camera.x = 0;
+  GAME.mode = 'WORLD';
+}
+
+// ── Render ─────────────────────────────────────────────────────
+function render() {
+  const scale = getScale();
+  const offsetX = Math.floor((canvas.width - LOGICAL_W * scale) / 2);
+  const offsetY = Math.floor((canvas.height - LOGICAL_H * scale) / 2);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.translate(offsetX, offsetY);
+  ctx.scale(scale, scale);
+
+  const world = WORLDS[GAME.world];
+
+  // Sky
+  ctx.fillStyle = world.sky;
+  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+
+  // Background parallax elements
+  drawBackground(world);
+
+  // Camera translate
+  ctx.save();
+  ctx.translate(-Math.floor(GAME.camera.x), 0);
+
+  drawTiles(world);
+  drawObjects(world);
+  drawWarpPipe(world);
+
+  // Player
+  const p = GAME.player;
+  let sprite = SPRITE_IDLE;
+  if(Math.abs(p.vx) > 8 && p.onGround) {
+    sprite = p.frame === 0 ? SPRITE_RUN1 : SPRITE_RUN2;
+  } else if(!p.onGround) {
+    sprite = SPRITE_RUN1;
+  }
+  drawSprite(sprite, p.x, p.y, p.facing === 1);
+
+  // Interaction hint
+  drawInteractHints(world);
+
+  ctx.restore();
+
+  // HUD (no camera offset)
+  drawHUD(world);
+
+  ctx.restore();
+}
+
+function drawBackground(world) {
+  // Stars for night worlds, clouds for day
+  if(world.sky === '#5c94fc') {
+    // Day: clouds
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    [[30,20,24,12],[80,30,18,9],[160,15,28,14],[240,25,20,10]].forEach(([x,y,w,h]) => {
+      ctx.beginPath();
+      ctx.ellipse(x - (GAME.camera.x * 0.2) % LOGICAL_W, y, w, h, 0, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  } else {
+    // Night: stars
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    [[20,10],[60,25],[120,8],[190,18],[260,12],[300,30],[80,5],[150,28],[230,6]].forEach(([x,y]) => {
+      ctx.fillRect((x - GAME.camera.x * 0.05 + LOGICAL_W * 2) % LOGICAL_W, y, 1, 1);
+    });
+  }
+}
+
+function drawTiles(world) {
+  const camX = GAME.camera.x;
+  const startCol = Math.max(0, Math.floor(camX / TILE) - 1);
+  const endCol = Math.min(world.tiles[0].length - 1, Math.ceil((camX + LOGICAL_W) / TILE) + 1);
+
+  world.tiles.forEach((row, ty) => {
+    for(let tx = startCol; tx <= endCol; tx++) {
+      const ch = row[tx] || '.';
+      if(ch === '.') continue;
+      const x = tx * TILE, y = ty * TILE;
+
+      switch(ch) {
+        case 'G': {
+          // Ground: top stripe lighter
+          ctx.fillStyle = '#5a3a24';
+          ctx.fillRect(x, y, TILE, 4);
+          ctx.fillStyle = '#3d2b1f';
+          ctx.fillRect(x, y + 4, TILE, TILE - 4);
+          // Grass detail
+          ctx.fillStyle = '#6b3f2a';
+          ctx.fillRect(x + 2, y, TILE - 4, 2);
+          break;
+        }
+        case 'P': {
+          ctx.fillStyle = '#7a5535';
+          ctx.fillRect(x, y, TILE, 8);
+          ctx.fillStyle = '#5a3a20';
+          ctx.fillRect(x, y + 8, TILE, 4);
+          break;
+        }
+        case 'B': {
+          ctx.fillStyle = '#1a1a3e';
+          ctx.fillRect(x, y, TILE, TILE);
+          ctx.strokeStyle = '#2a2a6a';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x + 1, y + 1, TILE - 2, TILE - 2);
+          // Window detail
+          ctx.fillStyle = '#2a3a5a';
+          ctx.fillRect(x + 6, y + 6, 8, 8);
+          ctx.fillRect(x + 18, y + 6, 8, 8);
+          ctx.fillRect(x + 6, y + 18, 8, 8);
+          ctx.fillRect(x + 18, y + 18, 8, 8);
+          break;
+        }
+        case '?': {
+          const obj = world.objects.find(o => o.type === 'qblock' && o.tx === tx && o.ty === ty);
+          const collected = obj && obj.collected;
+          ctx.fillStyle = collected ? '#444' : '#e9ad0c';
+          ctx.fillRect(x, y, TILE, TILE);
+          ctx.fillStyle = collected ? '#666' : '#ffd700';
+          ctx.fillRect(x + 2, y + 2, TILE - 4, 4);
+          ctx.fillStyle = '#000';
+          ctx.font = `bold ${TILE * 0.45}px monospace`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(collected ? '·' : (obj ? obj.letter : '?'), x + TILE / 2, y + TILE / 2);
+          break;
+        }
+        case 'T': {
+          // Terminal
+          ctx.fillStyle = '#071a0e';
+          ctx.fillRect(x, y, TILE, TILE);
+          ctx.strokeStyle = '#00cc66';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x + 2, y + 2, TILE - 4, TILE - 4);
+          // Screen glow
+          ctx.fillStyle = '#001a0a';
+          ctx.fillRect(x + 4, y + 4, TILE - 8, TILE - 8);
+          ctx.fillStyle = '#00ff88';
+          ctx.font = `bold 8px monospace`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('▣', x + TILE / 2, y + TILE / 2);
+          break;
+        }
+      }
+    }
   });
 }
 
-const connObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) setTimeout(drawConnections, 100); });
-}, { threshold: 0.2 });
+function drawObjects(world) {
+  // Extra visual decoration for buildings (signs, doors), bookshelves (books), terminals (featured star)
+  world.objects.forEach(obj => {
+    if(obj.type === 'building') {
+      const x = obj.tx * TILE, y = obj.ty * TILE;
+      // Door at bottom of building
+      const groundY = (world.tiles.length - 1) * TILE;
+      ctx.fillStyle = '#8b4513';
+      ctx.fillRect(x + 10, groundY - 18, 12, 18);
+      ctx.fillStyle = '#6b3000';
+      ctx.fillRect(x + 12, groundY - 16, 4, 10);
+      // Sign
+      ctx.fillStyle = '#222';
+      ctx.fillRect(x + 4, y + TILE + 2, TILE * 2 - 8, 10);
+      ctx.fillStyle = '#4dd9f0';
+      ctx.font = 'bold 5px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('▶ ENTER', x + TILE, y + TILE + 3);
+    }
+    if(obj.type === 'bookshelf') {
+      const x = obj.tx * TILE, y = obj.ty * TILE;
+      // Colorful book spines
+      const bookColors = ['#e05050','#50a0e0','#50e078','#e0b850','#a050e0','#e08050'];
+      for(let i = 0; i < 6; i++) {
+        ctx.fillStyle = bookColors[i % bookColors.length];
+        ctx.fillRect(x + 2 + i * 4, y + 4, 3, TILE * 2 - 8);
+      }
+      ctx.fillStyle = '#333';
+      ctx.fillRect(x, y + TILE * 2 - 4, TILE * 3, 4);
+    }
+    if(obj.type === 'terminal' && obj.featured) {
+      const x = obj.tx * TILE, y = obj.ty * TILE;
+      ctx.fillStyle = '#ffd700';
+      ctx.font = 'bold 7px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('★', x + TILE / 2, y - 2);
+    }
+    if(obj.type === 'platform_terminal') {
+      const x = obj.tx * TILE, y = obj.ty * TILE;
+      // Small terminal box on platform
+      ctx.fillStyle = '#0a0a2a';
+      ctx.fillRect(x, y + TILE / 2, TILE, TILE / 2);
+      ctx.strokeStyle = '#4dd9f0';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 1, y + TILE / 2 + 1, TILE - 2, TILE / 2 - 2);
+      ctx.fillStyle = '#4dd9f0';
+      ctx.font = '7px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const icons = { github: 'GH', huggingface: 'HF', linkedin: 'LI', email: '@' };
+      ctx.fillText(icons[obj.platform] || '?', x + TILE / 2, y + TILE * 0.75);
+    }
+  });
+}
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// PARALLAX & NAV HIGHLIGHT
-// ═══════════════════════════════════════════════════════════════════════════════
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  const hero = document.getElementById('hero');
-  if (hero) hero.style.transform = `translateY(${y * 0.04}px)`;
+function drawWarpPipe(world) {
+  if(!world.warpPipe) return;
+  const x = world.warpPipe.tx * TILE;
+  const y = (world.tiles.length - 2) * TILE;
+  // Pipe body
+  ctx.fillStyle = '#1a7a1a';
+  ctx.fillRect(x + 4, y, TILE - 8, TILE + 4);
+  // Pipe cap
+  ctx.fillStyle = '#22aa22';
+  ctx.fillRect(x, y - 6, TILE, 10);
+  ctx.fillStyle = '#33cc33';
+  ctx.fillRect(x + 2, y - 6, TILE - 4, 3);
+  // Arrow
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 8px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('▼', x + TILE / 2, y + TILE / 2);
+}
+
+function drawInteractHints(world) {
+  if(GAME.mode !== 'WORLD') return;
+  const p = GAME.player;
+  world.objects.forEach(obj => {
+    if(obj.type === 'qblock') return;
+    const objX = obj.tx * TILE;
+    const dist = Math.abs(p.x + PLAYER_W/2 - (objX + TILE));
+    if(dist < TILE * 2) {
+      const hintY = (obj.ty !== undefined ? obj.ty : 3) * TILE - 12;
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(objX - 6, hintY, 42, 10);
+      ctx.fillStyle = '#ffd700';
+      ctx.font = '4px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('[E] INTERACT', objX + TILE / 2, hintY + 2);
+    }
+  });
+  // Warp pipe hint
+  if(world.warpPipe) {
+    const pipeX = world.warpPipe.tx * TILE;
+    const dist = Math.abs(p.x - pipeX);
+    if(dist < TILE * 2) {
+      const hy = (world.tiles.length - 2) * TILE - 14;
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(pipeX - 4, hy, 44, 10);
+      ctx.fillStyle = '#3dffa0';
+      ctx.font = '4px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('[↓] WARP NEXT', pipeX + TILE / 2, hy + 2);
+    }
+  }
+}
+
+function drawHUD(world) {
+  // Score box
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  ctx.fillRect(2, 2, 98, 13);
+  ctx.fillStyle = '#fff';
+  ctx.font = '5px "Press Start 2P", monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('SCORE: ' + String(GAME.score).padStart(6, '0'), 4, 5);
+
+  // World name
+  ctx.fillStyle = 'rgba(0,0,0,0.65)';
+  const wname = 'WORLD ' + GAME.world + ' - ' + world.name;
+  const ww = wname.length * 5 + 8;
+  ctx.fillRect(LOGICAL_W / 2 - ww / 2, 2, ww, 13);
+  ctx.fillStyle = '#ffd700';
+  ctx.textAlign = 'center';
+  ctx.fillText(wname, LOGICAL_W / 2, 5);
+
+  // Tab hint
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.font = '4px monospace';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'top';
+  ctx.fillText('[TAB] GUIDE', LOGICAL_W - 2, 6);
+
+  // Time trial HUD
+  if(GAME.trialActive) {
+    const elapsed = (performance.now() - GAME.trialStart) / 1000;
+    const m = Math.floor(elapsed / 60);
+    const s = Math.floor(elapsed % 60);
+    const cs = Math.floor((elapsed % 1) * 100);
+    const tstr = `${m}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+    ctx.fillStyle = 'rgba(255,215,0,0.85)';
+    ctx.fillRect(2, LOGICAL_H - 16, 120, 13);
+    ctx.fillStyle = '#000';
+    ctx.font = '5px "Press Start 2P", monospace';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`TT: ${tstr} [${GAME.trialCollected.size}/${GAME.trialGoal}]`, 4, LOGICAL_H - 14);
+  }
+
+  // Controls hint at bottom
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.font = '3px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('ARROWS/WASD: MOVE  |  SPACE/W: JUMP  |  E: INTERACT  |  T: TIME TRIAL (WORLD 3)', LOGICAL_W / 2, LOGICAL_H - 4);
+}
+
+// ── Dialog System ──────────────────────────────────────────────
+let typewriterTimer = null;
+
+function showDialog(lines, action) {
+  GAME.mode = 'DIALOG';
+  GAME.dialogQueue = lines;
+  GAME.dialogIndex = 0;
+  GAME.dialogAction = action || null;
+  const box = document.getElementById('dialog-box');
+  box.style.display = 'block';
+  typewriterLine(lines[0]);
+}
+
+function typewriterLine(text) {
+  const el = document.getElementById('dialog-text');
+  el.textContent = '';
+  if(typewriterTimer) clearInterval(typewriterTimer);
+  let i = 0;
+  typewriterTimer = setInterval(() => {
+    el.textContent += text[i++] || '';
+    if(i >= text.length) clearInterval(typewriterTimer);
+  }, 28);
+}
+
+function advanceDialog() {
+  // Skip typewriter if still running
+  const el = document.getElementById('dialog-text');
+  const current = GAME.dialogQueue[GAME.dialogIndex];
+  if(el.textContent.length < current.length) {
+    clearInterval(typewriterTimer);
+    el.textContent = current;
+    return;
+  }
+
+  GAME.dialogIndex++;
+  if(GAME.dialogIndex >= GAME.dialogQueue.length) {
+    closeDialog();
+    if(GAME.dialogAction) { GAME.dialogAction(); GAME.dialogAction = null; }
+  } else {
+    typewriterLine(GAME.dialogQueue[GAME.dialogIndex]);
+  }
+}
+
+function closeDialog() {
+  GAME.mode = 'WORLD';
+  document.getElementById('dialog-box').style.display = 'none';
+  if(typewriterTimer) clearInterval(typewriterTimer);
+}
+
+// ── Key Handler ────────────────────────────────────────────────
+function handleKeyDown(e) {
+  if(GAME.mode === 'DIALOG') {
+    if(e.key === ' ' || e.key === 'Enter' || e.key === 'e' || e.key === 'z') {
+      e.preventDefault();
+      advanceDialog();
+    }
+    if(e.key === 'Escape') closeDialog();
+    return;
+  }
+
+  if(e.key === 't' || e.key === 'T') {
+    if(GAME.world === 3 && !GAME.trialActive) {
+      startTimeTrial();
+    }
+  }
+}
+
+// ── Game Loop ──────────────────────────────────────────────────
+let lastTime = 0;
+function gameLoop(timestamp) {
+  const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
+  lastTime = timestamp;
+
+  const gc = document.getElementById('game-container');
+  if(gc.style.display !== 'none') {
+    updatePlayer(dt);
+    updateCamera();
+    checkInteractions();
+    render();
+  }
+  requestAnimationFrame(gameLoop);
+}
+requestAnimationFrame(gameLoop);
+
+// ── Web Audio ──────────────────────────────────────────────────
+let AC = null;
+function ensureAC() {
+  if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+  if(AC.state === 'suspended') AC.resume();
+}
+document.addEventListener('keydown', () => ensureAC(), { once: true });
+document.addEventListener('touchstart', () => ensureAC(), { once: true });
+
+const SOUNDS = {
+  coin(o, g) {
+    o.type = 'sine';
+    o.frequency.setValueAtTime(988, AC.currentTime);
+    o.frequency.setValueAtTime(1319, AC.currentTime + 0.07);
+    g.gain.setValueAtTime(0.25, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.3);
+    o.start(); o.stop(AC.currentTime + 0.3);
+  },
+  jump(o, g) {
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(400, AC.currentTime);
+    o.frequency.exponentialRampToValueAtTime(800, AC.currentTime + 0.12);
+    g.gain.setValueAtTime(0.1, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.18);
+    o.start(); o.stop(AC.currentTime + 0.2);
+  },
+  block_hit(o, g) {
+    o.type = 'square';
+    o.frequency.setValueAtTime(220, AC.currentTime);
+    o.frequency.setValueAtTime(110, AC.currentTime + 0.05);
+    g.gain.setValueAtTime(0.12, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.15);
+    o.start(); o.stop(AC.currentTime + 0.15);
+  },
+  enter_door(o, g) {
+    o.type = 'sine';
+    [330, 440, 550, 660].forEach((f, i) => {
+      o.frequency.setValueAtTime(f, AC.currentTime + i * 0.08);
+    });
+    g.gain.setValueAtTime(0.18, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.5);
+    o.start(); o.stop(AC.currentTime + 0.5);
+  },
+};
+
+function playSound(type) {
+  try {
+    ensureAC();
+    const osc = AC.createOscillator();
+    const gain = AC.createGain();
+    osc.connect(gain);
+    gain.connect(AC.destination);
+    SOUNDS[type]?.(osc, gain);
+  } catch(e) {}
+}
+
+// ── Mode Toggle ────────────────────────────────────────────────
+function toggleMode() {
+  const gc = document.getElementById('game-container');
+  const guide = document.getElementById('strategy-guide');
+  const btn = document.getElementById('mode-toggle');
+  const showingGame = gc.style.display !== 'none';
+  gc.style.display = showingGame ? 'none' : 'block';
+  guide.style.display = showingGame ? 'block' : 'none';
+  btn.innerHTML = showingGame ? '▶ PLAY<br>GAME' : '📖 STRATEGY<br>GUIDE [TAB]';
+}
+
+// ── Guide Navigation ───────────────────────────────────────────
+function showGuideSection(id) {
+  document.querySelectorAll('.guide-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+  const sec = document.getElementById(id);
+  if(sec) sec.classList.add('active');
+  const tab = document.querySelector(`.guide-tab[data-section="${id}"]`);
+  if(tab) tab.classList.add('active');
+  const guide = document.getElementById('strategy-guide');
+  if(guide) guide.scrollTop = 0;
+}
+
+document.querySelectorAll('.guide-tab').forEach(btn => {
+  btn.addEventListener('click', () => showGuideSection(btn.dataset.section));
 });
 
-const sections = document.querySelectorAll('section[id]');
-const navLinks = document.querySelectorAll('.nav-links a');
-
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(sec => {
-    if (window.scrollY >= sec.offsetTop - 200) current = sec.id;
-  });
-  navLinks.forEach(a => {
-    a.style.color = a.getAttribute('href') === '#'+current ? 'var(--cyan)' : '';
-  });
+// ── Credits (Warp Easter Egg) ──────────────────────────────────
+function showCredits() {
+  const el = document.getElementById('credits-overlay');
+  el.style.display = 'block';
+  GAME.mode = 'PAUSED';
+}
+function closeCredits() {
+  document.getElementById('credits-overlay').style.display = 'none';
+  GAME.mode = 'WORLD';
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && document.getElementById('credits-overlay').style.display !== 'none') {
+    closeCredits();
+  }
 });
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════════════
-window.addEventListener('load', () => {
-  render();
-  setupCursorHovers();
-  setupObservers();
+// ── Time Trial ─────────────────────────────────────────────────
+function startTimeTrial() {
+  GAME.trialActive = true;
+  GAME.trialStart = performance.now();
+  GAME.trialCollected = new Set();
+  // Reset all terminal _triggered flags
+  WORLDS[3].objects.forEach(o => { o._triggered = false; });
+  showDialog(['TIME TRIAL STARTED!', 'Activate all 11 project terminals', 'in WORLD 3 as fast as you can!', 'GO GO GO!']);
+}
 
-  // Hero fade in immediately
-  document.querySelectorAll('#hero .fade-up').forEach((el, i) => {
-    setTimeout(() => el.classList.add('visible'), i * 200 + 100);
-  });
+function endTimeTrial() {
+  const elapsed = (performance.now() - GAME.trialStart) / 1000;
+  GAME.trialActive = false;
+  const m = Math.floor(elapsed / 60);
+  const s = Math.floor(elapsed % 60);
+  const cs = Math.floor((elapsed % 1) * 100);
+  const timeStr = `${m}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+  let rank = 'B';
+  if(elapsed < 180) rank = 'S';
+  else if(elapsed < 300) rank = 'A';
+  GAME.score += 1000;
+  playSound('enter_door');
+  document.getElementById('trial-time-display').textContent = 'TIME: ' + timeStr;
+  document.getElementById('trial-rank-display').textContent = 'RANK: ' + (rank === 'S' ? '★★★ S' : rank === 'A' ? '★★ A' : '★ B');
+  const tr = document.getElementById('trial-result');
+  tr.style.display = 'flex';
+}
 
-  typeStream(document.querySelector('.hero-content h1'));
+function closeTrialResult() {
+  document.getElementById('trial-result').style.display = 'none';
+  GAME.mode = 'WORLD';
+}
 
-  // Connection lines
-  const connSec = document.getElementById('connections');
-  if (connSec) connObs.observe(connSec);
-
-  setTimeout(drawConnections, 300);
+// ── Touch Controls ─────────────────────────────────────────────
+if(window.matchMedia('(hover: none)').matches) {
+  document.getElementById('touch-controls').style.display = 'block';
+}
+document.querySelectorAll('.touch-btn').forEach(btn => {
+  const key = btn.dataset.key;
+  btn.addEventListener('touchstart', e => { e.preventDefault(); keys[key] = true; if(GAME.mode === 'DIALOG') advanceDialog(); }, { passive: false });
+  btn.addEventListener('touchend', e => { e.preventDefault(); keys[key] = false; }, { passive: false });
 });
 
-window.addEventListener('resize', drawConnections);
+// ── Mobile default = Guide mode ────────────────────────────────
+if(window.matchMedia('(hover: none), (max-width: 768px)').matches) {
+  document.getElementById('game-container').style.display = 'none';
+  document.getElementById('strategy-guide').style.display = 'block';
+  document.getElementById('mode-toggle').innerHTML = '▶ PLAY<br>GAME';
+}
+
+// ── URL hash routing (world=N) ─────────────────────────────────
+(function() {
+  const hash = window.location.hash;
+  const m = hash.match(/world=(\d)/);
+  if(m) {
+    const n = parseInt(m[1]);
+    if(n >= 1 && n <= 5) {
+      travelToWorld(n);
+      // Ensure game mode is shown
+      document.getElementById('game-container').style.display = 'block';
+      document.getElementById('strategy-guide').style.display = 'none';
+      document.getElementById('mode-toggle').innerHTML = '📖 STRATEGY<br>GUIDE [TAB]';
+    }
+  }
+})();
+
+// ── Dialog Space/Enter advance in game ────────────────────────
+document.addEventListener('keydown', e => {
+  if(GAME.mode === 'DIALOG' && (e.key === ' ' || e.key === 'Enter')) {
+    e.preventDefault();
+  }
+});
 </script>
 </body>
 </html>
