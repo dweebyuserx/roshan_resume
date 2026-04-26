@@ -5,896 +5,245 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>~/user — projects</title>
+<title>ROSHAN ABRAHAM BBS — PROJECTS</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&display=swap');
   :root {
-    --bg: #0a0b0d;
-    --bg2: #0f1117;
-    --bg3: #141720;
-    --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
-    --cyan: #4dd9f0;
-    --green: #3dffa0;
-    --orange: #ff9f4a;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --bg:#0a0a0a; --bg2:#111111;
+    --ansi-bright-green:#33da7a; --ansi-bright-cyan:#33c7de;
+    --ansi-bright-yellow:#e9ad0c; --ansi-white:#d0cfcc;
+    --ansi-bright-white:#f5f5f0; --ansi-green:#1a8c3f;
+    --border-char:#2a3a2a;
   }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ansi-white);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;overflow-x:hidden;padding-top:68px;padding-bottom:40px;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  #ticker-bar{position:fixed;top:0;left:0;right:0;height:28px;background:#000;border-bottom:1px solid var(--ansi-bright-green);overflow:hidden;z-index:1000;display:flex;align-items:center;}
+  .ticker-inner{display:inline-block;white-space:nowrap;animation:ticker-scroll 60s linear infinite;color:var(--ansi-bright-green);font-size:12px;}
+  @keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: hidden;
-    cursor: none;
-  }
+  #nav-bar{position:fixed;top:28px;left:0;right:0;height:28px;background:var(--bg2);border-bottom:1px solid var(--border-char);display:flex;align-items:center;padding:0 12px;z-index:999;font-size:12px;}
+  .nav-item{padding:0 10px;color:var(--ansi-white);cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;text-decoration:none;line-height:28px;border-left:1px solid var(--border-char);}
+  .nav-item:first-child{border-left:none;}
+  .nav-item.active{background:var(--ansi-bright-white);color:#000;}
+  .nav-item:hover:not(.active){color:var(--ansi-bright-green);}
 
-  .cursor {
-    width: 6px; height: 6px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 12px var(--cyan);
-  }
-  .cursor-ring {
-    width: 28px; height: 28px;
-    border: 1px solid rgba(77,217,240,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
-  }
+  #status-bar{position:fixed;bottom:0;left:0;right:0;height:28px;background:#000;border-top:1px solid var(--border-char);display:flex;align-items:center;padding:0 12px;font-size:11px;color:var(--ansi-white);z-index:1000;gap:24px;}
+  .status-online{color:var(--ansi-bright-green);}
+  .status-right{margin-left:auto;color:var(--ansi-bright-cyan);}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-    pointer-events: none;
-    z-index: 1000;
-  }
+  .main{max-width:980px;margin:0 auto;padding:24px 20px;}
+  .section-header{color:var(--ansi-bright-green);margin-bottom:16px;}
+  .section-header h1{font-size:13px;font-weight:700;}
+  .prompt{color:var(--ansi-white);margin-top:4px;font-size:12px;}
 
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 40px;
-    background: rgba(10,11,13,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
+  .ls-table{width:100%;border-collapse:collapse;font-size:12px;}
+  .ls-table th{text-align:left;color:var(--ansi-bright-cyan);padding:4px 8px;border-bottom:1px solid var(--border-char);font-size:11px;}
+  .ls-row{cursor:pointer;}
+  .ls-row:hover td{background:var(--bg2);}
+  .ls-row td{padding:5px 8px;border-bottom:1px solid #161616;vertical-align:middle;}
+  .ls-row td.perms{color:#3a5a3a;font-size:11px;}
+  .ls-row td.owner{color:#4a6a4a;font-size:11px;}
+  .ls-row td.date-col{color:#4a4a4a;font-size:11px;}
+  .ls-row td.name{color:var(--ansi-bright-cyan);font-weight:600;}
+  .ls-row.featured td.name{color:var(--ansi-bright-yellow);}
+  .ls-row td.badge{color:var(--ansi-bright-yellow);font-size:11px;}
 
-  .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--cyan);
-    letter-spacing: 0.05em;
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--muted); }
+  .sub-row td{padding:3px 8px;background:#0d0d0d;font-size:11px;color:#3a5a3a;border-bottom:1px solid #111;}
+  .sub-row td.sub-name{color:var(--ansi-bright-green);padding-left:40px;}
 
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    transition: color 0.2s;
-    cursor: none;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { color: var(--bright); }
-  .nav-links a:hover::before { opacity: 1; }
-  .nav-links a.active { color: var(--cyan); }
+  .readme-panel{overflow:hidden;max-height:0;transition:max-height 0.35s ease;}
+  .readme-panel.open{max-height:600px;}
+  .readme-inner{padding:16px 20px;border:1px solid var(--border-char);border-top:none;background:var(--bg2);font-size:12px;line-height:1.8;}
+  .readme-cmd{color:var(--ansi-bright-cyan);margin-bottom:10px;font-weight:700;}
+  .readme-desc{color:var(--ansi-white);margin-bottom:12px;}
+  .tech-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+  .tech-tag{border:1px solid var(--border-char);color:var(--ansi-bright-green);padding:2px 8px;font-size:11px;}
+  .readme-meta{font-size:11px;color:#5a5a5a;margin-bottom:10px;}
+  .readme-meta span{color:var(--ansi-white);}
+  .readme-links{display:flex;gap:16px;}
+  .readme-link{color:var(--ansi-bright-cyan);text-decoration:none;}
+  .readme-link:hover{color:var(--ansi-bright-yellow);}
 
-  .nav-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  main {
-    padding: 120px 60px 80px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .page-header {
-    margin-bottom: 60px;
-  }
-
-  .page-header h1 {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 16px;
-  }
-  .page-header h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .page-header .breadcrumb {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    margin-bottom: 24px;
-  }
-  .page-header .breadcrumb a {
-    color: var(--cyan);
-    text-decoration: none;
-  }
-
-  .page-header .subtitle {
-    font-size: 14px;
-    color: var(--muted);
-    max-width: 600px;
-  }
-
-  .projects-stats {
-    display: flex;
-    gap: 48px;
-    margin: 48px 0;
-    padding: 24px 0;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .stat-item {
-    text-align: center;
-  }
-
-  .stat-value {
-    font-family: var(--font-display);
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--cyan);
-  }
-
-  .stat-label {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .section-label::before { content: attr(data-n); color: var(--cyan); }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    max-width: 200px;
-  }
-
-  .featured-project {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 48px;
-    margin-bottom: 48px;
-    position: relative;
-    overflow: hidden;
-  }
-  .featured-project::before {
-    content: 'FEATURED';
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    padding: 4px 10px;
-    background: rgba(77,217,240,0.1);
-    color: var(--cyan);
-    border-radius: 2px;
-  }
-
-  .featured-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-    margin-bottom: 24px;
-  }
-
-  .featured-icon {
-    font-size: 48px;
-    line-height: 1;
-  }
-
-  .featured-title {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-
-  .featured-tagline {
-    font-size: 13px;
-    color: var(--cyan);
-  }
-
-  .featured-desc {
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.9;
-    margin-bottom: 24px;
-    max-width: 700px;
-  }
-
-  .featured-tech {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .tech-pill {
-    font-size: 10px;
-    padding: 4px 12px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--dim);
-    letter-spacing: 0.06em;
-  }
-  .tech-pill-cyan   { border-color: rgba(77,217,240,0.35);  color: var(--cyan);   background: rgba(77,217,240,0.06); }
-  .tech-pill-green  { border-color: rgba(61,255,160,0.35);  color: var(--green);  background: rgba(61,255,160,0.06); }
-  .tech-pill-orange { border-color: rgba(255,159,74,0.35);  color: var(--orange); background: rgba(255,159,74,0.06); }
-  .tech-pill-purple { border-color: rgba(167,139,250,0.35); color: var(--purple); background: rgba(167,139,250,0.06); }
-  .tech-pill-yellow { border-color: rgba(251,191,36,0.35);  color: var(--yellow); background: rgba(251,191,36,0.06); }
-  .tech-pill-pink   { border-color: rgba(244,114,182,0.35); color: var(--pink);   background: rgba(244,114,182,0.06); }
-  .tech-pill-cyan   { border-color: rgba(77,217,240,0.35);  color: var(--cyan);   background: rgba(77,217,240,0.06); }
-  .tech-pill-green  { border-color: rgba(61,255,160,0.35);  color: var(--green);  background: rgba(61,255,160,0.06); }
-  .tech-pill-orange { border-color: rgba(255,159,74,0.35);  color: var(--orange); background: rgba(255,159,74,0.06); }
-  .tech-pill-purple { border-color: rgba(167,139,250,0.35); color: var(--purple); background: rgba(167,139,250,0.06); }
-  .tech-pill-pink   { border-color: rgba(244,114,182,0.35); color: var(--pink);   background: rgba(244,114,182,0.06); }
-  .tech-pill-yellow { border-color: rgba(251,191,36,0.35);  color: var(--yellow); background: rgba(251,191,36,0.06); }
-  .tech-pill-red    { border-color: rgba(248,113,113,0.35); color: var(--red);    background: rgba(248,113,113,0.06); }
-
-  .featured-links {
-    display: flex;
-    gap: 20px;
-  }
-
-  .plink {
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.06em;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: none;
-  }
-  .plink:hover { color: var(--cyan); }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 24px;
-  }
-
-  .project-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 28px;
-    position: relative;
-    cursor: none;
-    overflow: hidden;
-    transition: all 0.3s;
-  }
-  .project-card:hover {
-    background: var(--bg3);
-    border-color: var(--accent, var(--cyan));
-    transform: translateY(-4px);
-  }
-
-  .project-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent, var(--cyan));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-  }
-  .project-card:hover::after { transform: scaleX(1); }
-
-  .project-icon {
-    font-size: 24px;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .project-name {
-    font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-
-  .project-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .project-tech {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 20px;
-  }
-
-  .project-links {
-    display: flex;
-    gap: 16px;
-  }
-
-  .builds-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    padding: 3px 8px;
-    border-radius: 10px;
-    background: rgba(77,217,240,0.07);
-    border: 1px solid rgba(77,217,240,0.2);
-    color: var(--cyan);
-    margin-bottom: 10px;
-  }
-  .builds-badge span { color: var(--bright); font-weight: 600; }
-  .variants-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin: 8px 0 12px;
-    padding: 10px 12px;
-    background: var(--bg);
-    border-radius: 4px;
-    border-left: 2px solid var(--border);
-  }
-  .variant-row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    font-size: 10px;
-  }
-  .variant-label {
-    color: var(--dim);
-    min-width: 14px;
-    text-align: right;
-  }
-  .variant-text { color: var(--muted); line-height: 1.5; }
-  .variant-tech { color: var(--dim); font-size: 9px; }
-
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
-
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    main { padding: 100px 24px 60px; }
-    .projects-stats { flex-wrap: wrap; gap: 24px; }
-    .featured-project { padding: 24px; }
-    .featured-header { flex-direction: column; gap: 16px; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-  }
-
-  /* Active card */
-  .project-card.active {
-    border-color: var(--accent, var(--cyan));
-    box-shadow: 0 0 20px rgba(77,217,240,0.12);
-  }
-
-  /* Click-to-feature hint */
-  .swap-hint {
-    font-size: 9px;
-    color: var(--dim);
-    letter-spacing: 0.08em;
-    margin-top: 12px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .project-card:hover .swap-hint { opacity: 1; }
-
-  /* Featured panel fade transition */
-  .featured-swap { transition: opacity 0.25s; }
-  .featured-swap.fading { opacity: 0; }
-
-  /* Variant table inside featured panel */
-  .feat-variants {
-    margin: 16px 0;
-    padding: 14px 16px;
-    background: var(--bg);
-    border-radius: 4px;
-    border-left: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .feat-variant-row { display: flex; align-items: baseline; gap: 10px; font-size: 11px; }
-  .feat-variant-label { color: var(--dim); min-width: 20px; text-align: right; flex-shrink: 0; }
-  .feat-variant-text { color: var(--muted); line-height: 1.5; }
-  .feat-variant-tech { color: var(--dim); font-size: 10px; }
-
-  /* Touch: hide custom cursor */
-  @media (hover: none) {
-    body { cursor: auto; }
-    .cursor, .cursor-ring { display: none; }
-  }
-
-  /* 1-col grid on small phones */
-  @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
-
-  /* Nav overflow on small phones */
-  @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
-    .nav-status { display: none; }
+  @media(max-width:600px){
+    .ls-table th:nth-child(1),.ls-row td:nth-child(1),
+    .ls-table th:nth-child(2),.ls-row td:nth-child(2),
+    .ls-table th:nth-child(3),.ls-row td:nth-child(3),
+    .ls-table th:nth-child(4),.ls-row td:nth-child(4){display:none;}
   }
 </style>
-<!-- ░░ Analytics — fill in IDs after account setup ░░ -->
-<!-- Cloudflare Web Analytics: https://dash.cloudflare.com → Analytics & Logs → Web Analytics -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+</head>
+<body>
+
+<div id="ticker-bar"><div class="ticker-inner" id="ticker-text"></div></div>
+
+<div id="nav-bar">
+  <a class="nav-item" href="index.html">[1] HOME</a>
+  <a class="nav-item" href="about.html">[2] ABOUT</a>
+  <a class="nav-item active" href="projects.html">[3] PROJECTS</a>
+  <a class="nav-item" href="articles.html">[4] ARTICLES</a>
+  <a class="nav-item" href="connect.html">[5] CONNECT</a>
+</div>
+
+<div id="status-bar">
+  <span class="status-online">● ONLINE</span>
+  <span id="clock">00:00:00</span>
+  <span class="status-right">roshan.dev BBS</span>
+</div>
+
+<div class="main">
+  <div class="section-header">
+    <h1>┌──[ ~/projects/ ]─────────────────────────────────────────────────┐</h1>
+    <div class="prompt">$ ls -la ~/projects/&nbsp;&nbsp;&nbsp;# 11 entries — click any row to cat README.md</div>
+  </div>
+
+  <table class="ls-table">
+    <thead>
+      <tr>
+        <th>PERMISSIONS</th>
+        <th>OWNER</th>
+        <th>GROUP</th>
+        <th>DATE</th>
+        <th>NAME</th>
+        <th>NOTE</th>
+      </tr>
+    </thead>
+    <tbody id="ls-body"></tbody>
+  </table>
+</div>
+
+<script>
+const TICKER_MSGS=['★ ROSHAN ABRAHAM BBS v2.6 — WELCOME, USER','★ AI SOLUTIONS CONSULTANT @ DELOITTE USI','★ AI HACKATHON WINNER — AGENTIC PR PLATFORM','★ AVAILABLE FOR WORK — CONSULTING & FULL-TIME','★ 5+ YEARS BUILDING PRODUCTION AI SYSTEMS','★ PRESS ESC×3 FOR SNAKE.EXE'];
+const tEl=document.getElementById('ticker-text');
+const full=TICKER_MSGS.join('          ');
+tEl.textContent=full+'          '+full;
+
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString();},1000);
+
+document.addEventListener('keydown',e=>{
+  const pages=['index.html','about.html','projects.html','articles.html','connect.html'];
+  const n=parseInt(e.key);
+  if(n>=1&&n<=5)window.location.href=pages[n-1];
+});
+
+const PROJECTS=[
+  {id:'agentic-pr-platform',name:'agentic-pr-platform/',date:'2025-01',group:'deloitte',featured:true,badge:'★ AI HACKATHON WINNER',
+   title:'Agentic PR Platform',desc:'Multi-agent orchestration platform with specialized routers, chain-of-thought reasoning, and tool integration for enterprise State Govt deployments at Deloitte USI.',
+   tech:['ADK','Gemma/Claude','Vertex AI','Firebase','MCP'],meta:'STATUS: PRODUCTION  |  EMPLOYER: Deloitte USI  |  AWARD: AI Hackathon Winner',
+   link:'https://github.com/dweebyuserx'},
+  {id:'medical-ai',name:'medical-ai-infrastructure/',date:'2023-06',group:'mydigirecords',
+   title:'Medical AI Infrastructure',desc:'Document OCR engine with NER parser for medical documents. FHIR translation and LLM-powered knowledge base. EPIC and Cerner integration.',
+   tech:['Document AI','FHIR','NER','GCP','ML pipeline'],meta:'STATUS: PRODUCTION  |  EMPLOYER: MyDiGiRecords',
+   link:'https://github.com/dweebyuserx'},
+  {id:'rag-systems',name:'rag-systems/',date:'2024-01',group:'appsynergy',multi:true,badge:'[v1 v2 v3 v4]',
+   title:'Advanced RAG Systems',desc:'Four RAG builds of increasing caliber. From basic retrieval to multi-agent orchestration with specialized routers, hybrid search with re-ranking, and full RAGAS evaluation.',
+   tech:['Weaviate','Milvus','ADK','RAGAS','DSPy','Redis'],
+   variants:['v1-basic-retrieval/','v2-hybrid-search/','v3-multi-agent/','v4-production-ragas/'],
+   meta:'STATUS: MULTIPLE BUILDS  |  COUNT: v1–v4',link:'https://github.com/dweebyuserx'},
+  {id:'custom-llm-foundry',name:'custom-llm-foundry/',date:'2024-03',group:'personal',
+   title:'Custom LLM Foundry',desc:'LLM fine-tuning pipeline with custom data collection, instruction tuning, and registry management. W&B evaluation and benchmarking. Public artifact on HuggingFace @dweebster.',
+   tech:['Gemma/Qwen2.5','vLLM/Unsloth','W&B/HF','Docker/RunPod','DSPy'],
+   meta:'STATUS: PUBLIC  |  HF: huggingface.co/dweebster',link:'https://huggingface.co/dweebster'},
+  {id:'mlops-engine',name:'mlops-engine/',date:'2023-08',group:'appsynergy',
+   title:'MLOps Engine',desc:'Dynamic model trainer and evaluator using BigQuery. Scheduled model comparison and retraining pipeline for classification and regression models.',
+   tech:['BigQuery','Model registry'],meta:'STATUS: PRODUCTION',link:'https://github.com/dweebyuserx'},
+  {id:'disease-detection',name:'disease-detection-cattle/',date:'2022-11',group:'appsynergy',
+   title:'Disease Detection in Cattle',desc:'Schedule-driven CCTV cattle monitoring. TFX serving endpoints for seasonal disease classification. Ear tag OCR + Zapier alerts sent to rancher.',
+   tech:['TFX','Serverless','Zapier','Model registry'],meta:'STATUS: DEPLOYED',link:'https://github.com/dweebyuserx'},
+  {id:'stable-diffusion',name:'stable-diffusion-pipeline/',date:'2023-03',group:'personal',
+   title:'Stable Diffusion Pipeline',desc:'Generative AI pipeline for visual content creation with custom workflow automation and ComfyUI integration.',
+   tech:['Stable Diffusion','Python','ComfyUI'],meta:'STATUS: PERSONAL',link:'https://github.com/dweebyuserx'},
+  {id:'claude-agent-code',name:'claude-agent-code-conversion/',date:'2024-09',group:'personal',
+   title:'Claude Agent Code Conversion',desc:'Multi-agent system for automated code conversion, dynamic test generation, and structured reporting. Engineered for minimal token consumption via aggressive prompt caching.',
+   tech:['Claude Agent SDK','Anthropic API','MCP','prompt caching'],meta:'STATUS: ACTIVE',link:'https://github.com/dweebyuserx'},
+  {id:'education-pipeline',name:'education-data-pipeline/',date:'2024-06',group:'personal',
+   title:'Education Data Pipeline',desc:'Transforms raw educational content into student-profile-adapted learning material. KT reports benchmarked against WHO psychological development standards.',
+   tech:['ADK','LLM openrouter','Redis RAG','WHO standards'],meta:'STATUS: ACTIVE',link:'https://github.com/dweebyuserx'},
+  {id:'instore-nav',name:'in-store-navigation-ai/',date:'2023-11',group:'appsynergy',
+   title:'In-Store Navigation AI',desc:'Conversational AI for physical store layouts modeled as graphs using NetworkX. Natural-language navigation, aisle-level routing, contextual product discovery.',
+   tech:['NetworkX','conversational AI','graph traversal','Claude'],meta:'STATUS: PROTOTYPE',link:'https://github.com/dweebyuserx'},
+  {id:'chatbot-systems',name:'chatbot-systems/',date:'2021-01',group:'appsynergy',multi:true,badge:'[v1 v2 v3]',
+   title:'ChatBot Systems',desc:'Three chatbot applications shipped: RASA (rule-based) → Dialogflow (intent-based) → LLM-backed RAG (production-grade).',
+   tech:['LangChain','Redis','FastAPI','Docker','RASA','Ollama'],
+   variants:['v1-rasa/','v2-dialogflow/','v3-llm-rag/'],
+   meta:'STATUS: MULTIPLE BUILDS  |  COUNT: v1–v3',link:'https://github.com/dweebyuserx'},
+];
+
+const tbody=document.getElementById('ls-body');
+let openId=null;
+
+PROJECTS.forEach(p=>{
+  // Main row
+  const row=document.createElement('tr');
+  row.className='ls-row'+(p.featured?' featured':'');
+  row.innerHTML=`<td class="perms">drwxr-xr-x</td><td class="owner">roshan</td><td class="owner">${p.group}</td><td class="date-col">${p.date}</td><td class="name">${p.name}</td><td class="badge">${p.badge||''}</td>`;
+  tbody.appendChild(row);
+
+  // Sub-entries for multi-variant projects
+  if(p.variants){
+    p.variants.forEach((v,i)=>{
+      const sub=document.createElement('tr');
+      sub.className='sub-row';
+      sub.style.display='none';
+      sub.dataset.parent=p.id;
+      const prefix=i<p.variants.length-1?'├──':'└──';
+      sub.innerHTML=`<td></td><td></td><td></td><td></td><td class="sub-name">${prefix} ${v}</td><td></td>`;
+      tbody.appendChild(sub);
+    });
+  }
+
+  // README panel row
+  const panelRow=document.createElement('tr');
+  const panelCell=document.createElement('td');
+  panelCell.colSpan=6;
+  panelCell.style.padding='0';
+  const panel=document.createElement('div');
+  panel.className='readme-panel';
+  panel.id='readme-'+p.id;
+  panel.innerHTML=`<div class="readme-inner">
+    <div class="readme-cmd">$ cat ${p.name}README.md</div>
+    <div class="readme-desc">${p.desc}</div>
+    <div class="tech-row">${p.tech.map(t=>`<span class="tech-tag">${t}</span>`).join('')}</div>
+    <div class="readme-meta">${p.meta}</div>
+    <div class="readme-links">
+      <a class="readme-link" href="${p.link}" target="_blank">[→ github.com/dweebyuserx]</a>
+      <a class="readme-link" href="connect.html">[→ CONTACT FOR DEMO]</a>
+    </div>
+  </div>`;
+  panelCell.appendChild(panel);
+  panelRow.appendChild(panelCell);
+  tbody.appendChild(panelRow);
+
+  row.addEventListener('click',()=>{
+    const wasOpen=openId===p.id;
+    // Close all
+    document.querySelectorAll('.readme-panel').forEach(pp=>pp.classList.remove('open'));
+    document.querySelectorAll('.sub-row').forEach(sr=>sr.style.display='none');
+    openId=null;
+    if(!wasOpen){
+      panel.classList.add('open');
+      openId=p.id;
+      if(p.variants){
+        document.querySelectorAll('.sub-row[data-parent="'+p.id+'"]').forEach(sr=>sr.style.display='');
+      }
+    }
+  });
+});
+</script>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
   data-cf-beacon='{"token":"CLOUDFLARE_TOKEN_HERE"}'></script>
-<!-- Microsoft Clarity: https://clarity.microsoft.com → New Project → Get Tracking Code -->
+<!-- End Cloudflare Web Analytics -->
+
+<!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
     c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
     t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window,document,"clarity","script","CLARITY_ID_HERE");
-</script>
-</head>
-<body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<nav>
-  <a href="index.html" class="nav-logo"><span>~/</span><span id="navHandle"></span>.dev</a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="about.html">about</a></li>
-    <li><a href="articles.html">articles</a></li>
-    <li><a href="projects.html" class="active">projects</a></li>
-    <li><a href="connect.html">connect</a></li>
-  </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span id="navStatus"></span>
-  </div>
-</nav>
-
-<main>
-  <div class="page-header fade-up">
-    <div class="breadcrumb"><a href="index.html">~</a> / projects</div>
-    <h1>Projects & <em>Work.</em></h1>
-    <p class="subtitle">AI systems and tools I've built — from LLM foundries to enterprise agentic platforms.</p>
-  </div>
-
-  <div class="projects-stats fade-up" style="transition-delay:0.1s" id="statsSection"></div>
-
-  <div class="section-label fade-up" style="transition-delay:0.15s" data-n="01">featured</div>
-  <div id="featuredProject" class="fade-up" style="transition-delay:0.2s"></div>
-
-  <div class="section-label fade-up" style="transition-delay:0.25s" data-n="02">all projects</div>
-  <div class="projects-grid fade-up" style="transition-delay:0.3s" id="projectsGrid"></div>
-</main>
-
-<footer id="footer"></footer>
-
-<script>
-const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
-const CONFIG = {
-  name: { first: "Roshan", last: "Abraham" },
-  handle: "roshan",
-  status: "available for work",
-
-  stats: {
-    projects: "18+",
-    deployments: "40+",
-    award: "AI Hackathon Winner"
-  },
-
-  featuredProject: {
-    icon: "🤖",
-    name: "Agentic PR Platform",
-    tagline: "AI Hackathon Winner · Deloitte USI, 2025",
-    desc: "Production multi-agent orchestration platform built for State Government PR workflows. Specialized prompt routers, chain-of-thought reasoning, tool integrations via MCP, and Firebase-backed state management. Powered by Gemma/Claude on GCP with ADK orchestration.",
-    tech: ["ADK", "Gemma / Claude", "FastAPI", "GCP", "Firebase", "MCP"],
-    links: [
-      { text: "Contact for Demo", url: 'mailto:' + _em }
-    ]
-  },
-
-  projects: [
-    {
-      icon: "🏥",
-      name: "Medical AI Infrastructure",
-      desc: "Document OCR engine with NER parser for medical documents. FHIR translation layer, LLM-powered knowledge base. EPIC and Cerner distributor integration. ABHA-compliant end-to-end OCR→NER→FHIR pipeline.",
-      tech: ["Document AI", "FHIR", "NER", "GCP", "ML Pipeline"],
-      accent: "green",
-      links: [
-        { text: "Discuss Project", url: 'mailto:' + _em + '?subject=Medical AI Infrastructure Inquiry' }
-      ]
-    },
-    {
-      icon: "⚡",
-      name: "Custom LLM Foundry",
-      desc: "End-to-end fine-tuning pipeline with injection-based dataset generation, instruction tuning, HuggingFace transformers for eval/benchmarking, and model registry. Optimized for low-VRAM deployment via unsloth.",
-      tech: ["Gemma / Qwen2.5", "vLLM / unsloth", "W&B / HF", "Docker / RunPod"],
-      accent: "cyan",
-      links: [
-        { text: "HuggingFace Profile", url: "https://huggingface.co/dweebster" },
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=LLM Foundry Inquiry' }
-      ]
-    },
-    {
-      icon: "🔗",
-      name: "RAG Systems",
-      desc: "Built across multiple scales and use cases — from enterprise multi-agent retrieval to lightweight hybrid search pipelines.",
-      tech: ["Weaviate", "Milvus", "Pinecone", "Redis", "ADK", "RAGAS"],
-      accent: "purple",
-      builds: 4,
-      variants: [
-        { label: "v1", text: "Hybrid search + re-ranking with Pinecone", tech: "LangChain · Pinecone · FastAPI" },
-        { label: "v2", text: "Multi-agent router with embedded knowledge indexing + prompt caching", tech: "ADK · Milvus · Redis" },
-        { label: "v3", text: "Specialised chunking strategy + eval testing with RAGAS", tech: "LlamaIndex · RAGAS · Weaviate" },
-        { label: "v4", text: "Agentic RAG with tool use for Govt document retrieval", tech: "ADK · Vertex AI · GCP" }
-      ],
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=RAG System Inquiry' }
-      ]
-    },
-    {
-      icon: "🔄",
-      name: "MLOps Engine",
-      desc: "Dynamic model trainer and evaluator using BigQuery. Scheduled model compare-and-retrain pipeline for classification and regression models with automatic registry promotion.",
-      tech: ["BigQuery", "Model Registry", "TFX", "GCP Scheduler"],
-      accent: "orange",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=MLOps Engine Inquiry' }
-      ]
-    },
-    {
-      icon: "🐄",
-      name: "Disease Detection in Cattle",
-      desc: "Schedule-driven cattle monitoring via CCTV. Frames churned through TFX serving endpoints, classifying against a seasonal disease model. On positive detection, ear tag OCR'd and alert dispatched to rancher.",
-      tech: ["TFX", "Serverless", "Zapier", "OCR", "Model Registry"],
-      accent: "yellow",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Cattle Detection Project Inquiry' }
-      ]
-    },
-    {
-      icon: "🌿",
-      name: "IoT Garden",
-      desc: "Plant-trained YOLO model regulating life support systems on a Raspberry Pi. Real-time sensor data streamed over WiFi to a mobile app. Edge inference at sub-200ms.",
-      tech: ["Raspberry Pi", "Python", "YOLOv5", "CV"],
-      accent: "green",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=IoT Garden Inquiry' }
-      ]
-    },
-    {
-      icon: "🎨",
-      name: "Stable Diffusion Pipeline",
-      desc: "Custom fine-tuning pipeline with DreamBooth + LoRA adapters. ControlNet for conditioning, automated dataset curation, and text-to-image/QR generation.",
-      tech: ["Diffusers", "ControlNet", "LoRA", "DreamBooth", "HuggingFace"],
-      accent: "pink",
-      links: [
-        { text: "HuggingFace", url: "https://huggingface.co/dweebster" }
-      ]
-    },
-    {
-      icon: "🔁",
-      name: "Claude Agent Code Conversion & Testing Workflow",
-      desc: "Multi-agent system for automated code conversion, dynamic test generation, and structured reporting. Engineered for record-minimal token consumption via aggressive prompt caching, context pruning, and optimised tool-use patterns.",
-      tech: ["Claude Agent SDK", "Anthropic API", "MCP", "Prompt Caching", "Dynamic Test Harness"],
-      accent: "cyan",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Code Conversion Agent Inquiry' }
-      ]
-    },
-    {
-      icon: "🎓",
-      name: "Education Data Transformation Pipeline",
-      desc: "Intelligent pipeline that ingests raw educational source content and transforms it into student-profile-adapted learning material. Generates personalised KT reports and feedback metrics benchmarked against WHO psychological development standards.",
-      tech: ["LLM Pipelines", "RAG", "Student Profile Modeling", "WHO Psych Standards", "Data Transformation"],
-      accent: "green",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Education Pipeline Inquiry' }
-      ]
-    },
-    {
-      icon: "🗺️",
-      name: "In-Store Navigation AI Agent",
-      desc: "Conversational AI agent that understands physical store layouts modeled as graphs using NetworkX. Enables natural-language navigation assistance, aisle-level routing, and contextual product discovery in retail environments.",
-      tech: ["NetworkX", "Conversational AI", "Graph Traversal", "Spatial Reasoning", "Claude"],
-      accent: "purple",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Navigation Agent Inquiry' }
-      ]
-    },
-    {
-      icon: "💬",
-      name: "ChatBot Systems",
-      desc: "Multiple chatbot applications designed and shipped across the stack — from intent-based RASA flows to full LLM-backed RAG bots.",
-      tech: ["LangChain", "RASA", "Dialogflow", "Redis", "FastAPI", "Ollama"],
-      accent: "yellow",
-      builds: 3,
-      variants: [
-        { label: "v1", text: "RASA intent + entity NLU with custom actions and webhook integrations", tech: "RASA · Sanic · PostgreSQL" },
-        { label: "v2", text: "Dialogflow CX for enterprise multichannel deployment", tech: "Dialogflow · GCP · Firebase" },
-        { label: "v3", text: "LLM-backed RAG chatbot with contextual memory and Ollama local serving", tech: "LangChain · Ollama · Redis · FastAPI" }
-      ],
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=ChatBot Systems Inquiry' }
-      ]
-    }
-  ],
-
-  copyrightYear: new Date().getFullYear(),
-  lastUpdated: "Feb 2025"
-};
-
-function render() {
-  document.title = `~/${CONFIG.handle} — projects`;
-  document.getElementById('navHandle').textContent = CONFIG.handle;
-  document.getElementById('navStatus').textContent = CONFIG.status;
-
-  document.getElementById('statsSection').innerHTML = `
-    <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.projects}</div>
-      <div class="stat-label">Projects</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.deployments}</div>
-      <div class="stat-label">Deployments</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-value">${CONFIG.stats.award}</div>
-      <div class="stat-label">Recognition</div>
-    </div>
-  `;
-
-  const fp = CONFIG.featuredProject;
-  document.getElementById('featuredProject').innerHTML = `
-    <div class="featured-project">
-      <div class="featured-swap" id="featuredSwap">
-        <div class="featured-header">
-          <span class="featured-icon">${fp.icon}</span>
-          <div>
-            <div class="featured-title" id="featTitle">${fp.name}</div>
-            <div class="featured-tagline">${fp.tagline}</div>
-          </div>
-        </div>
-        <div class="featured-desc">${fp.desc}</div>
-        <div class="featured-tech">
-          ${fp.tech.map(t => `<span class="tech-pill tech-pill-cyan">${t}</span>`).join('')}
-        </div>
-        <div class="featured-links">
-          ${fp.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.getElementById('projectsGrid').innerHTML = CONFIG.projects.map((p, i) => {
-    const buildsBadge = p.builds ? `<div class="builds-badge">× <span>${p.builds}</span> builds &nbsp;·&nbsp; multiple calibrations</div>` : '';
-    const variantsList = p.variants ? `
-      <div class="variants-list">
-        ${p.variants.map(v => `
-          <div class="variant-row">
-            <span class="variant-label">${v.label}</span>
-            <span class="variant-text">${v.text} <span class="variant-tech">· ${v.tech}</span></span>
-          </div>`).join('')}
-      </div>` : '';
-    const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
-    return `
-      <div class="project-card${i === 0 ? ' active' : ''}" style="--accent:var(--${p.accent})" data-idx="${i}" onclick="setFeatured(+this.dataset.idx)">
-        <span class="project-icon">${p.icon}</span>
-        <div class="project-name">${p.name}</div>
-        ${buildsBadge}
-        <div class="project-desc">${p.desc}</div>
-        ${variantsList}
-        <div class="project-tech">
-          ${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}
-        </div>
-        ${links}
-        <div class="swap-hint">↑ set as featured</div>
-      </div>`;
-  }).join('');
-
-  document.getElementById('footer').innerHTML = `
-    <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
-    <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
-    <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
-  `;
-}
-
-// Terminal streaming text
-function typeStream(el, speed) {
-  if (!el) return;
-  speed = speed || 30;
-  const finalHTML = el.innerHTML;
-  const text = el.textContent;
-  el.textContent = '';
-  let i = 0;
-  (function tick() {
-    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
-    else { el.innerHTML = finalHTML; }
-  })();
-}
-
-// Swap featured project
-function setFeatured(idx) {
-  const swap = document.getElementById('featuredSwap');
-  if (!swap) return;
-  swap.classList.add('fading');
-  setTimeout(() => {
-    const p = CONFIG.projects[idx];
-    const tagline = p.tagline || '';
-    const variantsHtml = p.variants ? `
-      <div class="feat-variants">
-        ${p.variants.map(v => `
-          <div class="feat-variant-row">
-            <span class="feat-variant-label">${v.label}</span>
-            <span class="feat-variant-text">${v.text} <span class="feat-variant-tech">· ${v.tech}</span></span>
-          </div>`).join('')}
-      </div>` : '';
-    swap.innerHTML = `
-      <div class="featured-header">
-        <span class="featured-icon">${p.icon}</span>
-        <div>
-          <div class="featured-title" id="featTitle">${p.name}</div>
-          ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
-        </div>
-      </div>
-      <div class="featured-desc">${p.desc}</div>
-      ${variantsHtml}
-      <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}</div>
-      <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
-    `;
-    swap.classList.remove('fading');
-    typeStream(document.getElementById('featTitle'), 22);
-    document.querySelectorAll('.project-card').forEach((card, i) => {
-      card.classList.toggle('active', i === idx);
-    });
-  }, 220);
-}
-
-// Cursor
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
-
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
-function setupHovers() {
-  document.querySelectorAll('a, button, .project-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '44px';
-      ring.style.height = '44px';
-      ring.style.borderColor = 'rgba(77,217,240,0.7)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '28px';
-      ring.style.height = '28px';
-      ring.style.borderColor = 'rgba(77,217,240,0.4)';
-    });
-  });
-}
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-
-window.addEventListener('load', () => {
-  render();
-  setupHovers();
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  typeStream(document.querySelector('.page-header h1'));
-});
 </script>
 </body>
 </html>

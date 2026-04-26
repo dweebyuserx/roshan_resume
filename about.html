@@ -5,28 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>~/user — about</title>
+<title>ROSHAN ABRAHAM BBS — ABOUT</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&display=swap');
 
   :root {
-    --bg: #0a0b0d;
-    --bg2: #0f1117;
-    --bg3: #141720;
-    --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
-    --cyan: #4dd9f0;
-    --green: #3dffa0;
-    --orange: #ff9f4a;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --ansi-bright-green: #33da7a;
+    --ansi-bright-cyan: #33c7de;
+    --ansi-bright-yellow: #e9ad0c;
+    --ansi-white: #d0cfcc;
+    --ansi-bright-white: #f5f5f0;
+    --ansi-green: #1a8c3f;
+    --border-char: #2a3a2a;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,1098 +26,554 @@
 
   body {
     background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
+    color: var(--ansi-white);
+    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
-    line-height: 1.8;
+    line-height: 1.6;
     overflow-x: hidden;
-    cursor: none;
+    padding-top: 68px;
+    padding-bottom: 40px;
   }
 
-  .cursor {
-    width: 6px; height: 6px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 12px var(--cyan);
-  }
-  .cursor-ring {
-    width: 28px; height: 28px;
-    border: 1px solid rgba(77,217,240,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-    pointer-events: none;
-    z-index: 1000;
-  }
-
-  nav {
+  #ticker-bar {
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 100;
+    height: 28px;
+    background: #000;
+    border-bottom: 1px solid var(--ansi-bright-green);
+    overflow: hidden;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+  }
+  .ticker-inner {
+    display: inline-block;
+    white-space: nowrap;
+    animation: ticker-scroll 60s linear infinite;
+    color: var(--ansi-bright-green);
+    font-size: 12px;
+  }
+  @keyframes ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  #nav-bar {
+    position: fixed;
+    top: 28px; left: 0; right: 0;
+    height: 28px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border-char);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    z-index: 999;
+    font-size: 12px;
+  }
+  .nav-item {
+    padding: 0 10px;
+    color: var(--ansi-white);
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 28px;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--ansi-bright-green); }
+  .nav-item.active { background: var(--ansi-bright-green); color: #000; }
+  .nav-sep { color: var(--border-char); padding: 0 2px; }
+
+  #status-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 28px;
+    background: #000;
+    border-top: 1px solid var(--border-char);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 40px;
-    background: rgba(10,11,13,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    font-size: 12px;
+    z-index: 1000;
+    color: var(--ansi-white);
+  }
+  .status-online { color: var(--ansi-bright-green); }
+  .status-domain { color: var(--ansi-bright-cyan); }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px;
   }
 
-  .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--cyan);
-    letter-spacing: 0.05em;
-    text-decoration: none;
+  .panel {
+    border: 1px solid var(--border-char);
+    background: var(--bg2);
+    margin-bottom: 20px;
   }
-  .nav-logo span { color: var(--muted); }
+  .panel-header {
+    background: var(--ansi-bright-green);
+    color: #000;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .panel-body { padding: 12px 16px; }
 
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
+  /* ── SKILL BARS ── */
+  .skill-section-title {
+    color: var(--ansi-bright-yellow);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    margin-top: 12px;
   }
-  .nav-links a {
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    transition: color 0.2s;
-    cursor: none;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { color: var(--bright); }
-  .nav-links a:hover::before { opacity: 1; }
-  .nav-links a.active { color: var(--cyan); }
-
-  .nav-status {
+  .skill-section-title:first-child { margin-top: 0; }
+  .skill-row {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  main {
-    padding: 120px 60px 80px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  .page-header {
-    margin-bottom: 60px;
-  }
-
-  .page-header h1 {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 16px;
-  }
-  .page-header h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .page-header .breadcrumb {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    margin-bottom: 24px;
-  }
-  .page-header .breadcrumb a {
-    color: var(--cyan);
-    text-decoration: none;
-  }
-
-  .section-label {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .section-label::before { content: attr(data-n); color: var(--cyan); }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    max-width: 200px;
-  }
-
-  .about-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-  }
-
-  .bio-section p {
-    font-size: 14px;
-    line-height: 2;
-    color: var(--text);
-    margin-bottom: 24px;
-  }
-  .bio-section p strong { color: var(--cyan); font-weight: 400; }
-
-  .experience-section {
-    margin-top: 60px;
-  }
-
-  .experience-item {
-    padding: 24px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .experience-item:first-child {
-    border-top: 1px solid var(--border);
-  }
-
-  .exp-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-  }
-
-  .exp-title {
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--bright);
-  }
-
-  .exp-company {
-    font-size: 13px;
-    color: var(--cyan);
-    margin-top: 4px;
-  }
-
-  .exp-date {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-
-  .exp-desc {
+    margin-bottom: 5px;
     font-size: 12px;
-    color: var(--muted);
+    white-space: nowrap;
+    flex-wrap: wrap;
+  }
+  .skill-name {
+    min-width: 200px;
+    color: var(--ansi-bright-cyan);
+  }
+  .skill-bar {
+    color: var(--ansi-bright-green);
+    letter-spacing: 1px;
+  }
+  .skill-bar .empty { color: #2a3a2a; }
+  .skill-pct {
+    color: var(--ansi-bright-yellow);
+    min-width: 36px;
+  }
+
+  /* ── TIMELINE CANVAS ── */
+  #timeline-wrap {
+    position: relative;
+    margin-bottom: 4px;
+  }
+  #timeline-canvas {
+    display: block;
+    width: 100%;
+    cursor: crosshair;
+  }
+  #timeline-tooltip {
+    position: fixed;
+    background: #111;
+    border: 1px solid var(--ansi-bright-green);
+    color: var(--ansi-bright-white);
+    padding: 6px 10px;
+    font-size: 11px;
+    pointer-events: none;
+    display: none;
+    z-index: 5000;
+    max-width: 280px;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+
+  /* ── CERTS TABLE ── */
+  .certs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .certs-table th {
+    background: var(--ansi-bright-green);
+    color: #000;
+    padding: 4px 10px;
+    text-align: left;
+    font-weight: 700;
+  }
+  .certs-table td {
+    border: 1px solid var(--border-char);
+    padding: 4px 10px;
+    color: var(--ansi-white);
+  }
+  .certs-table tr:nth-child(even) td { background: #0d0d0d; }
+
+  /* ── LS HOBBIES ── */
+  .ls-listing {
+    font-size: 12px;
     line-height: 1.8;
   }
-
-  .exp-tag {
-    font-size: 8px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 2px 6px;
-    border-radius: 3px;
-    margin-left: 8px;
-    vertical-align: middle;
-  }
-  .exp-tag.current  { background: rgba(61,255,160,0.12);  color: var(--green);  border: 1px solid rgba(61,255,160,0.3); }
-  .exp-tag.promoted { background: rgba(77,217,240,0.1);   color: var(--cyan);   border: 1px solid rgba(77,217,240,0.3); }
-  .exp-tag.concurrent{ background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
-  .exp-tag.foundation{ background: rgba(255,159,74,0.1);  color: var(--orange); border: 1px solid rgba(255,159,74,0.3); }
-  .exp-progression {
-    font-size: 10px;
-    color: var(--dim);
-    margin-top: 4px;
-    letter-spacing: 0.05em;
-  }
-
-  .skills-section {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 32px;
-  }
-
-  .skill-group {
-    margin-bottom: 32px;
-  }
-  .skill-group:last-child { margin-bottom: 0; }
-
-  .skill-group-label {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-
-  .skill-bars { display: grid; gap: 12px; }
-
-  .skill-row {
-    display: grid;
-    grid-template-columns: 140px 1fr 30px;
-    align-items: center;
-    gap: 16px;
-  }
-  .skill-name { font-size: 11px; color: var(--text); }
-  .skill-track {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .skill-fill {
-    height: 100%;
-    border-radius: 2px;
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: transform 1s cubic-bezier(0.4,0,0.2,1);
-  }
-  .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
-  .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
-  .skill-fill.orange { background: linear-gradient(90deg, var(--orange), var(--pink)); }
-  .skill-pct { font-size: 10px; color: var(--muted); text-align: right; }
-
-  .education-section {
-    margin-top: 48px;
-    padding: 24px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-  }
-
-  .edu-item {
+  .ls-row {
     display: flex;
-    justify-content: space-between;
+    gap: 12px;
     align-items: center;
   }
+  .ls-perms { color: #555; }
+  .ls-owner { color: var(--ansi-bright-cyan); }
+  .ls-size  { color: var(--ansi-bright-yellow); min-width: 40px; text-align: right; }
+  .ls-name  { color: var(--ansi-bright-green); }
 
-  .edu-degree {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--bright);
-  }
-
-  .edu-school {
-    font-size: 12px;
-    color: var(--cyan);
-    margin-top: 4px;
-  }
-
-  .edu-year {
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
-
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    main { padding: 100px 24px 60px; }
-    .about-content { grid-template-columns: 1fr; gap: 48px; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-  }
-
-  /* ─── TIMELINE ──────────────────────────────────────────── */
-  .timeline-section { margin-top: 80px; width: 100%; }
-  .tl-ruler {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    margin-bottom: 8px;
-    padding: 0 2px;
-  }
-  .tl-ruler-year {
-    font-size: 10px;
-    color: var(--dim);
-    letter-spacing: 0.05em;
-    position: relative;
-  }
-  .tl-ruler-year::before {
-    content: '';
-    position: absolute;
-    top: -6px; left: 0;
-    width: 1px; height: 5px;
-    background: var(--border);
-  }
-  .tl-tracks { position: relative; padding: 8px 0; }
-  .tl-track { position: relative; height: 48px; margin-bottom: 6px; }
-  .tl-bar {
-    position: absolute;
-    top: 6px; height: 32px;
-    border-radius: 16px;
-    display: flex; align-items: center;
-    padding: 0 14px;
-    overflow: hidden;
-    cursor: default;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.8s cubic-bezier(0.4,0,0.2,1);
-    white-space: nowrap;
-  }
-  .tl-bar.animate { transform: scaleX(1); }
-  .tl-bar-label { font-size: 11px; font-weight: 600; color: var(--bright); letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; }
-  .tl-bar-role { font-size: 10px; color: rgba(200,207,232,0.55); margin-left: 8px; overflow: hidden; text-overflow: ellipsis; }
-  .tl-pulse {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--bright); margin-left: 8px; flex-shrink: 0;
-    animation: tlpulse 1.5s infinite;
-  }
-  @keyframes tlpulse {
-    0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-    50% { opacity: 0.6; box-shadow: 0 0 0 5px rgba(255,255,255,0); }
-  }
-  .tl-tooltip {
+  /* ── INFERENCE LOG ── */
+  #inference-log {
+    position: fixed;
+    bottom: 36px;
+    right: 16px;
+    width: 360px;
+    height: 280px;
+    background: #0a0a0a;
+    border: 1px solid var(--ansi-bright-green);
+    z-index: 2000;
     display: none;
-    position: absolute;
-    top: 46px; left: 0;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px 14px;
-    font-size: 11px; color: var(--text);
-    z-index: 10; min-width: 260px; max-width: 380px;
-    line-height: 1.7;
-    pointer-events: none;
+    flex-direction: column;
+    font-size: 11px;
+    box-shadow: 0 0 20px rgba(51,218,122,0.15);
   }
-  .tl-track:hover .tl-tooltip { display: block; }
-
-  /* ─── CERTIFICATIONS ─────────────────────────────────────── */
-  .cert-section { margin-top: 80px; width: 100%; }
-  .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .cert-card {
-    background: var(--bg2);
-    border: 1px solid var(--border); border-left-width: 3px;
-    border-radius: 6px;
-    padding: 18px 20px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .cert-top { display: flex; align-items: flex-start; gap: 12px; }
-  .cert-badge {
-    font-size: 9px; font-weight: 700; letter-spacing: 0.1em;
-    padding: 3px 7px; border-radius: 4px;
-    background: var(--bg3); border: 1px solid var(--border);
-    flex-shrink: 0; margin-top: 2px;
-  }
-  .cert-info { flex: 1; }
-  .cert-name { font-size: 13px; font-weight: 600; color: var(--bright); line-height: 1.4; }
-  .cert-meta { font-size: 11px; color: var(--cyan); margin-top: 3px; }
-  .cert-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .cert-tag {
-    font-size: 9px; letter-spacing: 0.08em;
-    padding: 2px 7px; border-radius: 10px;
-    background: var(--bg3); color: var(--muted); border: 1px solid var(--border);
-  }
-  .cert-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .cert-courses-toggle {
-    font-size: 10px; color: var(--muted); cursor: pointer;
-    background: none; border: none; font-family: var(--font-mono); padding: 0;
-    transition: color 0.2s;
-  }
-  .cert-courses-toggle:hover { color: var(--cyan); }
-  .cert-courses-list { display: none; flex-direction: column; gap: 3px; padding: 4px 0 0 10px; font-size: 10px; color: var(--muted); list-style: none; }
-  .cert-courses-list.open { display: flex; }
-  .cert-courses-list li::before { content: '↳ '; color: var(--dim); }
-  .cert-verify { font-size: 10px; color: var(--green); text-decoration: none; letter-spacing: 0.05em; white-space: nowrap; }
-  .cert-verify:hover { text-decoration: underline; }
-
-  /* ─── SKILL TREE ─────────────────────────────────────────── */
-  .tree-section { margin-top: 80px; width: 100%; }
-  .tree-container { width: 100%; max-width: 900px; margin: 0 auto; }
-  #skillTreeSvg { width: 100%; height: auto; display: block; }
-  .tree-line { stroke-linecap: round; fill: none; opacity: 0.35; transition: opacity 0.3s, stroke 0.3s; }
-  .tree-line.hl { opacity: 1; }
-  .tree-line.dim { opacity: 0.06; }
-  .leaf-group { transition: opacity 0.3s; }
-  .leaf-group.dim { opacity: 0.1; }
-  .domain-group { cursor: pointer; }
-  .domain-group.dim circle { opacity: 0.12; }
-  .tree-fallback { display: none; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .tree-branch-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
-  .tree-branch-title { font-size: 12px; font-weight: 600; color: var(--bright); margin-bottom: 10px; }
-  .tree-leaf-list { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tree-leaf-pill { font-size: 9px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
-
-  @media (max-width: 900px) {
-    .cert-grid { grid-template-columns: 1fr; }
-    .tl-bar-role { display: none; }
-    .timeline-section, .cert-section, .tree-section { margin-top: 60px; }
-  }
-  @media (max-width: 600px) {
-    .tree-container { display: none; }
-    .tree-fallback { display: grid; }
-    .skill-row { grid-template-columns: auto 1fr auto; }
-    .skill-name { font-size: 10px; }
-  }
-
-  /* ─── HOBBIES ─────────────────────────────────────────────── */
-  .hobbies-section { margin-top: 80px; width: 100%; }
-  .hobby-grid { display: flex; flex-wrap: wrap; gap: 16px; }
-  .hobby-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 16px 20px;
+  #inference-log.visible { display: flex; }
+  .log-header {
+    background: var(--ansi-bright-green);
+    color: #000;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 700;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 14px;
-    flex: 1 1 180px;
   }
-  .hobby-icon { font-size: 28px; line-height: 1; }
-  .hobby-label { font-size: 12px; font-weight: 600; color: var(--bright); }
-  .hobby-desc { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 2px; }
-
-  /* Touch: hide custom cursor */
-  @media (hover: none) {
-    body { cursor: auto; }
-    .cursor, .cursor-ring { display: none; }
+  .log-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 8px;
   }
-
-  /* Nav overflow on small phones */
-  @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
-    .nav-status { display: none; }
-  }
+  .log-entry { color: var(--ansi-bright-green); margin-bottom: 3px; }
+  .log-entry.warn { color: var(--ansi-bright-yellow); }
+  .log-entry.info { color: var(--ansi-bright-cyan); }
 </style>
-<!-- ░░ Analytics — fill in IDs after account setup ░░ -->
-<!-- Cloudflare Web Analytics: https://dash.cloudflare.com → Analytics & Logs → Web Analytics -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+</head>
+<body>
+
+<div id="ticker-bar">
+  <div class="ticker-inner" id="ticker-content"></div>
+</div>
+
+<nav id="nav-bar">
+  <a class="nav-item" href="_hyperterm_index.html">[1] HOME</a>
+  <span class="nav-sep">│</span>
+  <a class="nav-item active" href="_hyperterm_about.html">[2] ABOUT</a>
+  <span class="nav-sep">│</span>
+  <a class="nav-item" href="_hyperterm_projects.html">[3] PROJECTS</a>
+  <span class="nav-sep">│</span>
+  <a class="nav-item" href="_hyperterm_articles.html">[4] ARTICLES</a>
+  <span class="nav-sep">│</span>
+  <a class="nav-item" href="_hyperterm_connect.html">[5] CONNECT</a>
+</nav>
+
+<div class="container">
+
+  <!-- Skills -->
+  <div class="panel">
+    <div class="panel-header">$ skills --verbose</div>
+    <div class="panel-body">
+
+      <div class="skill-section-title">AI &amp; LLMOps</div>
+      <div id="skills-ai"></div>
+
+      <div class="skill-section-title">Cloud &amp; MLOps</div>
+      <div id="skills-cloud"></div>
+
+      <div class="skill-section-title">Data &amp; Backend</div>
+      <div id="skills-data"></div>
+    </div>
+  </div>
+
+  <!-- Experience Timeline -->
+  <div class="panel">
+    <div class="panel-header">$ git log --oneline --graph  # career timeline</div>
+    <div class="panel-body" style="padding:12px 16px 8px;">
+      <div id="timeline-wrap">
+        <canvas id="timeline-canvas" height="120"></canvas>
+      </div>
+      <div style="font-size:11px;color:#555;margin-top:4px;">Mouseover milestones for details</div>
+    </div>
+  </div>
+
+  <!-- Certifications -->
+  <div class="panel">
+    <div class="panel-header">$ ls ~/certs/</div>
+    <div class="panel-body">
+      <table class="certs-table">
+        <thead>
+          <tr>
+            <th>CERT / AWARD</th>
+            <th>ISSUER</th>
+            <th>YEAR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>AI Hackathon Winner — Agentic PR Platform</td><td>Deloitte</td><td>2024</td></tr>
+          <tr><td>Google Cloud Professional ML Engineer</td><td>Google Cloud</td><td>2023</td></tr>
+          <tr><td>TensorFlow Developer Certificate</td><td>Google</td><td>2022</td></tr>
+          <tr><td>AWS Certified ML Specialty</td><td>Amazon</td><td>2022</td></tr>
+          <tr><td>FHIR R4 Implementation</td><td>HL7</td><td>2023</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Hobbies -->
+  <div class="panel">
+    <div class="panel-header">$ ls -la ~/hobbies/</div>
+    <div class="panel-body">
+      <div class="ls-listing">
+        <div class="ls-row">
+          <span class="ls-perms">drwxr-xr-x</span>
+          <span class="ls-owner">roshan</span>
+          <span class="ls-size">4.0K</span>
+          <span style="color:#555">2025-11</span>
+          <span class="ls-name">open-source-contributions/</span>
+        </div>
+        <div class="ls-row">
+          <span class="ls-perms">drwxr-xr-x</span>
+          <span class="ls-owner">roshan</span>
+          <span class="ls-size">4.0K</span>
+          <span style="color:#555">2025-08</span>
+          <span class="ls-name">retro-computing/</span>
+        </div>
+        <div class="ls-row">
+          <span class="ls-perms">-rw-r--r--</span>
+          <span class="ls-owner">roshan</span>
+          <span class="ls-size">2.1K</span>
+          <span style="color:#555">2026-02</span>
+          <span class="ls-name">writing-and-blogging.md</span>
+        </div>
+        <div class="ls-row">
+          <span class="ls-perms">-rw-r--r--</span>
+          <span class="ls-owner">roshan</span>
+          <span class="ls-size">512</span>
+          <span style="color:#555">2025-12</span>
+          <span class="ls-name">mechanical-keyboards.cfg</span>
+        </div>
+        <div class="ls-row">
+          <span class="ls-perms">drwxr-xr-x</span>
+          <span class="ls-owner">roshan</span>
+          <span class="ls-size">4.0K</span>
+          <span style="color:#555">2026-01</span>
+          <span class="ls-name">blockchain-experiments/</span>
+        </div>
+        <div class="ls-row">
+          <span class="ls-perms">-rwxr-xr-x</span>
+          <span class="ls-owner">roshan</span>
+          <span class="ls-size">8.3K</span>
+          <span style="color:#555">2025-09</span>
+          <span class="ls-name">snake.exe</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="status-bar">
+  <span><span class="status-online">● ONLINE</span></span>
+  <span id="clock"></span>
+  <span class="status-domain">roshan.dev BBS</span>
+</div>
+
+<div id="timeline-tooltip"></div>
+
+<div id="inference-log">
+  <div class="log-header">
+    <span>■ INFERENCE LOG — SHIFT+L TO TOGGLE</span>
+    <span style="cursor:pointer" onclick="toggleLog()">✕</span>
+  </div>
+  <div class="log-body" id="log-body"></div>
+</div>
+
+<script>
+// TICKER
+const TICKER_MSGS = ["★ ROSHAN ABRAHAM BBS v2.6 — WELCOME, USER","★ AI SOLUTIONS CONSULTANT @ DELOITTE USI","★ AI HACKATHON WINNER — AGENTIC PR PLATFORM","★ AVAILABLE FOR WORK","★ 5+ YEARS BUILDING PRODUCTION AI SYSTEMS","★ PRESS ESC×3 FOR SNAKE.EXE"];
+const tickerStr = TICKER_MSGS.join("     ") + "     ";
+document.getElementById("ticker-content").textContent = tickerStr + tickerStr;
+
+// CLOCK
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent = [now.getHours(),now.getMinutes(),now.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':');
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// KEYBOARD NAV
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  const map={'1':'_hyperterm_index.html','2':'_hyperterm_about.html','3':'_hyperterm_projects.html','4':'_hyperterm_articles.html','5':'_hyperterm_connect.html'};
+  if (map[e.key]) window.location.href=map[e.key];
+  if (e.shiftKey && e.key==='L') toggleLog();
+});
+
+// SKILL BARS
+const SKILL_GROUPS = {
+  'skills-ai': [
+    {name:'LlamaIndex/ADK',pct:95},
+    {name:'Adv RAG/VectorDBs',pct:92},
+    {name:'Model Steering',pct:88},
+    {name:'LightEval/RAGAS',pct:88},
+    {name:'ML Feature Eng',pct:88},
+    {name:'LLM Serving',pct:75},
+    {name:'NumPy/JAX/TF',pct:45},
+  ],
+  'skills-cloud': [
+    {name:'GCP Vertex AI',pct:95},
+    {name:'Docker/VM',pct:75},
+    {name:'AWS Bedrock',pct:65},
+    {name:'OpenUI/W&B',pct:60},
+  ],
+  'skills-data': [
+    {name:'Python/FastAPI',pct:95},
+    {name:'PostgreSQL/BigQuery',pct:80},
+    {name:'Claude Code',pct:75},
+    {name:'FHIR',pct:60},
+  ]
+};
+
+Object.entries(SKILL_GROUPS).forEach(([id, skills]) => {
+  const container = document.getElementById(id);
+  skills.forEach(({name, pct}) => {
+    const filled = Math.floor(pct / 4);
+    const empty = 25 - filled;
+    const bar = '█'.repeat(filled) + '░'.repeat(empty);
+    const row = document.createElement('div');
+    row.className = 'skill-row';
+    row.innerHTML = `<span class="skill-name">├── ${name.padEnd(20,' ')}</span><span class="skill-bar"> [<span style="color:var(--ansi-bright-green)">${'█'.repeat(filled)}</span><span style="color:#2a3a2a">${'░'.repeat(empty)}</span>]</span><span class="skill-pct"> ${pct}%</span>`;
+    container.appendChild(row);
+  });
+});
+
+// TIMELINE CANVAS
+const JOBS = [
+  {label:'QDgrees\nIntern', years:'2018–2019', x:0.04, desc:'QDgrees — Data Scientist Intern\n2018–2019\nML, predictive models'},
+  {label:'Appsynergies\nAI Eng', years:'2019–2021', x:0.18, desc:'Appsynergies — AI Engineer\n2019–2021\nML pipelines, inference APIs'},
+  {label:'Appsynergies\nAI Lead', years:'2021–2024', x:0.38, desc:'Appsynergies — AI Team Lead\n2021–Jan 2024\nMLOps, API systems, mentoring'},
+  {label:'MyDiGiRecords\nProject Lead', years:'2022–2023', x:0.52, desc:'MyDiGiRecords — Project Lead AI Engineer\n2022–2023 (concurrent)\n100GB+ Doc AI, FHIR, OCR NER'},
+  {label:'Tasset\nConsultant', years:'2022–2023', x:0.64, desc:'Tasset — AI Consultant\n2022–2023 (concurrent)\nData scraping, blockchain chatbots'},
+  {label:'Deloitte USI\nAI Consultant', years:'2024–Present', x:0.88, desc:'Deloitte USI — AI Solutions Consultant\nJan 2024–Present\nAgentic State Govt solutions\nAI Hackathon Winner ★'},
+];
+
+const canvas = document.getElementById('timeline-canvas');
+const tooltip = document.getElementById('timeline-tooltip');
+
+function drawTimeline() {
+  const W = canvas.offsetWidth || 860;
+  canvas.width = W;
+  const H = 120;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  const railY = 60;
+  // Rail line
+  ctx.strokeStyle = '#2a3a2a';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(20, railY);
+  ctx.lineTo(W-20, railY);
+  ctx.stroke();
+
+  JOBS.forEach((job, i) => {
+    const x = 20 + job.x * (W - 40);
+    // milestone dot
+    ctx.fillStyle = i === JOBS.length - 1 ? '#33da7a' : '#1a8c3f';
+    ctx.beginPath();
+    ctx.arc(x, railY, 6, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#33da7a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Label above/below alternating
+    ctx.fillStyle = '#d0cfcc';
+    ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'center';
+    const lines = job.label.split('\n');
+    if (i % 2 === 0) {
+      lines.forEach((line, li) => ctx.fillText(line, x, railY - 20 - (lines.length - 1 - li) * 13));
+      ctx.fillStyle = '#555';
+      ctx.font = '9px JetBrains Mono';
+      ctx.fillText(job.years, x, railY - 8);
+    } else {
+      ctx.fillStyle = '#555';
+      ctx.font = '9px JetBrains Mono';
+      ctx.fillText(job.years, x, railY + 14);
+      ctx.fillStyle = '#d0cfcc';
+      ctx.font = '10px JetBrains Mono';
+      lines.forEach((line, li) => ctx.fillText(line, x, railY + 24 + li * 13));
+    }
+  });
+}
+
+drawTimeline();
+window.addEventListener('resize', drawTimeline);
+
+canvas.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const W = canvas.width;
+  const railY = 60;
+  let found = null;
+  JOBS.forEach(job => {
+    const x = 20 + job.x * (W - 40);
+    if (Math.abs(mx - x) < 12 && Math.abs(my - railY) < 12) found = job;
+  });
+  if (found) {
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 12) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.textContent = found.desc;
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+
+// INFERENCE LOG
+const LOG_POOL = ["[AGENT-01] Dispatching to LangChain router...","[VECTOR-DB] Weaviate: similarity=0.923","[AGENT-02] Tool call: search_documents(query='agentic AI')","[LLM] claude-sonnet-4: tokens_in=1024 tokens_out=512","[RETRIEVER] Retrieved 8 chunks from pgvector","[AGENT-01] Routing to ReAct executor...","[RERANKER] Cohere rerank: top-3 selected","[EMBED] text-embedding-3-large: batch=32","[CACHE] Redis HIT: key=profile:roshan:001","[AGENT-03] Starting tool: web_search","[VECTOR-DB] Qdrant: similarity=0.887, id=doc_4821","[LLM] gemini-1.5-pro: latency=1240ms","[PIPELINE] RAG v4: recall@5=0.94","[AGENT-01] Memory write: episodic_store","[TOOL] execute_python: status=success","[LLM] claude-opus-4: thinking=enabled","[RETRIEVER] Hybrid search: bm25 + dense","[AGENT-02] Orchestrator: spawning sub-agent","[EVAL] RAGAS faithfulness=0.91","[VECTOR-DB] Pinecone upsert: 256 vectors","[LLM] tokens_remaining=48000","[CACHE] Redis MISS: key=query:hash:a7f2","[AGENT-03] Tool call: get_profile(user='roshan')","[PIPELINE] LlamaIndex: index_type=VectorStore","[LLM] stream_start: model=claude-haiku","[EVAL] LightEval score=0.88","[AGENT-01] Planning phase complete","[RERANKER] Cross-encoder score: 0.962","[TOOL] call_api: FastAPI /v1/generate","[VECTOR-DB] ChromaDB: collection=resume_chunks","[AGENT-02] Reflection: revising plan...","[LLM] claude-sonnet-4: cache_read_tokens=8192","[EMBED] voyage-3: dim=1024 batch=64","[PIPELINE] Document ingested: 47 chunks","[AGENT-03] Goal achieved: score=0.97","[RETRIEVER] MMR diversity=0.4 lambda","[EVAL] RAGAS answer_relevancy=0.93","[AGENT-01] Tool: structured_output → JSON","[VECTOR-DB] Weaviate HNSW: ef=128 M=16","[LLM] vertex-ai: quota remaining=98%"];
+let logVisible=false, logInterval=null;
+function toggleLog(){
+  logVisible=!logVisible;
+  const p=document.getElementById('inference-log');
+  if(logVisible){p.classList.add('visible');startLogStream();}
+  else{p.classList.remove('visible');if(logInterval){clearTimeout(logInterval);logInterval=null;}}
+}
+function startLogStream(){
+  function append(){
+    const body=document.getElementById('log-body');
+    const e2=document.createElement('div');
+    e2.className='log-entry';
+    const msg=LOG_POOL[Math.floor(Math.random()*LOG_POOL.length)];
+    const ts=new Date().toISOString().slice(11,23);
+    if(msg.includes('MISS')||msg.includes('ERROR'))e2.classList.add('warn');
+    else if(msg.includes('EVAL')||msg.includes('HIT'))e2.classList.add('info');
+    e2.textContent=ts+' '+msg;
+    body.appendChild(e2);
+    body.scrollTop=body.scrollHeight;
+    while(body.children.length>80)body.removeChild(body.firstChild);
+    logInterval=setTimeout(append,600+Math.random()*600);
+  }
+  append();
+}
+</script>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
   data-cf-beacon='{"token":"CLOUDFLARE_TOKEN_HERE"}'></script>
-<!-- Microsoft Clarity: https://clarity.microsoft.com → New Project → Get Tracking Code -->
+<!-- End Cloudflare Web Analytics -->
+
+<!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
     c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
     t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window,document,"clarity","script","CLARITY_ID_HERE");
-</script>
-</head>
-<body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<nav>
-  <a href="index.html" class="nav-logo"><span>~/</span><span id="navHandle"></span>.dev</a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="about.html" class="active">about</a></li>
-    <li><a href="articles.html">articles</a></li>
-    <li><a href="projects.html">projects</a></li>
-    <li><a href="connect.html">connect</a></li>
-  </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span id="navStatus"></span>
-  </div>
-</nav>
-
-<main>
-  <div class="page-header fade-up">
-    <div class="breadcrumb"><a href="index.html">~</a> / about</div>
-    <h1>About <em>Me.</em></h1>
-  </div>
-
-  <div class="about-content">
-    <div class="bio-section fade-up" style="transition-delay:0.1s">
-      <div class="section-label" data-n="01">background</div>
-      <div id="bioContent"></div>
-
-      <div class="experience-section">
-        <div class="section-label" data-n="02">experience</div>
-        <div id="experienceList"></div>
-      </div>
-    </div>
-
-    <div class="skills-column fade-up" style="transition-delay:0.2s">
-      <div class="section-label" data-n="03">skills</div>
-      <div class="skills-section" id="skillsSection"></div>
-
-      <div class="education-section">
-        <div class="section-label" data-n="04" style="margin-bottom:16px">education</div>
-        <div id="educationContent"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Timeline -->
-  <section class="timeline-section fade-up" style="transition-delay:0.15s">
-    <div class="section-label" data-n="05">parallel work timeline</div>
-    <div class="tl-ruler" id="tlRuler"></div>
-    <div class="tl-tracks" id="tlTracks"></div>
-  </section>
-
-  <!-- Certifications -->
-  <section class="cert-section fade-up" style="transition-delay:0.15s">
-    <div class="section-label" data-n="06">certifications</div>
-    <div class="cert-grid" id="certCards"></div>
-  </section>
-
-  <!-- Skill Tree -->
-  <section class="tree-section fade-up" style="transition-delay:0.15s">
-    <div class="section-label" data-n="07">ai discipline skill tree</div>
-    <div class="tree-container">
-      <svg id="skillTreeSvg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg"></svg>
-    </div>
-    <div class="tree-fallback" id="treeFallback"></div>
-  </section>
-
-  <!-- Hobbies & Interests -->
-  <section class="hobbies-section fade-up" style="transition-delay:0.15s">
-    <div class="section-label" data-n="08">hobbies & interests</div>
-    <div class="hobby-grid" id="hobbiesGrid"></div>
-  </section>
-</main>
-
-<footer id="footer"></footer>
-
-<script>
-const CONFIG = {
-  name: { first: "Roshan", last: "Abraham" },
-  handle: "roshan",
-  status: "available for work",
-
-  aboutParagraphs: [
-    "I'm an <strong>AI Solutions Consultant</strong> at Deloitte USI with 5+ years of experience building production AI systems for enterprise and government organizations.",
-    "I specialize in <strong>LLMOps, Agentic Orchestration, and Advanced RAG systems</strong> — architecting end-to-end ML pipelines from training to deployment at scale.",
-    "My expertise spans <strong>Medical AI infrastructure</strong>, custom LLM foundries, and building autonomous agent systems with complex chain-of-thought reasoning.",
-    "I excel at crafting advanced AI algorithms, machine learning models, and deep learning architectures. With innovative thinking, I conquer challenges and deliver real-world optimized AI solutions."
-  ],
-
-  experience: [
-    {
-      title: "AI Solutions Consultant",
-      company: "Deloitte USI",
-      date: "Jan 2024 — Present",
-      description: "Handling Govt projects and transforming AI solutions for enterprise consumption. Building Agentic solutions for State Govt organizations. Winner of AI Hackathon for PR Agentic solutions. Blockchain-ready chatbot provisioning.",
-      tag: "current"
-    },
-    {
-      title: "AI Team Lead",
-      company: "Appsynergies",
-      date: "2021 — Jan 2024",
-      description: "Led MLOps planning across all segments. Architected API systems for model inference at scale. Delivered optimized AI solutions leveraging custom industry expertise. Mentored junior AI engineers.",
-      tag: "promoted"
-    },
-    {
-      title: "Project Lead AI Engineer",
-      company: "MyDiGiRecords",
-      date: "2022 — 2023",
-      description: "Preprocessed 100+ GB Doc AI model for training and fine-tuning. EPIC and Cerner medical distributor integration. Developed ABHA FHIR integration and end-to-end OCR-NER into FHIR system.",
-      tag: "concurrent"
-    },
-    {
-      title: "AI Consultant",
-      company: "Tasset",
-      date: "Mid 2022 — 2023",
-      description: "Large-scale data scraping and text dataset generation. Blockchain-ready chatbot provisioning for client needs.",
-      tag: "concurrent"
-    },
-    {
-      title: "AI Engineer",
-      company: "Appsynergies",
-      date: "2019 — 2021",
-      description: "Developed and integrated ML models into production pipelines. Built inference APIs and data preprocessing systems. Contributed to early MLOps foundations for the team.",
-      tag: "foundation"
-    },
-    {
-      title: "Data Scientist Intern",
-      company: "QDgrees",
-      date: "2018 — 2019",
-      description: "Applied ML and statistical modelling for data analysis. Built and deployed predictive models and data pipelines.",
-      tag: "foundation"
-    }
-  ],
-
-  skills: {
-    ai_llm: {
-      label: "// ai & llmops",
-      color: "cyan",
-      items: [
-        { name: "LlamaIndex / ADK", pct: 95 },
-        { name: "Advance RAG / Vector DBs", pct: 92 },
-        { name: "Model Steering / Aligning", pct: 88 },
-        { name: "LightEval / RAGAS", pct: 88 },
-        { name: "ML Feature Engg / Drift", pct: 88 },
-        { name: "LLM Serving / Fine-tuning", pct: 75 },
-        { name: "NumPy / JAX / TensorFlow", pct: 45 }
-      ]
-    },
-    cloud: {
-      label: "// cloud & mlops",
-      color: "green",
-      items: [
-        { name: "GCP Vertex AI", pct: 95 },
-        { name: "Docker / VM Serving", pct: 75 },
-        { name: "AWS Bedrock / Textract", pct: 65 },
-        { name: "OpenUI / W&B", pct: 60 }
-      ]
-    },
-    infrastructure: {
-      label: "// data & backend",
-      color: "orange",
-      items: [
-        { name: "Python / FastAPI", pct: 95 },
-        { name: "PostgreSQL / BigQuery", pct: 80 },
-        { name: "FHIR / Medical AI", pct: 60 }
-      ]
-    }
-  },
-
-  education: {
-    degree: "B.Tech Computer Science & Engineering",
-    school: "St. Aloysius Institute of Technology",
-    year: "2017 — 2021 (Honors)"
-  },
-
-  timeline: [
-    { company: "QDgrees",        role: "Data Scientist Intern",   start: 2018.0,  end: 2019.0,  color: "--yellow", desc: "First role — applied ML and statistical modelling, built predictive models and data pipelines." },
-    { company: "Appsynergies",   role: "AI Engineer",             start: 2019.0,  end: 2021.0,  color: "--green",  desc: "Built inference APIs, ML model integration, and data preprocessing systems. Early MLOps foundations." },
-    { company: "Appsynergies",   role: "AI Team Lead",            start: 2021.0,  end: 2024.0,  color: "--green",  desc: "Promoted to Team Lead — MLOps planning, mentoring engineers, architecting production AI systems. Ended Jan 2024." },
-    { company: "MyDiGiRecords",  role: "Project Lead AI Eng.",    start: 2022.0,  end: 2023.0,  color: "--orange", desc: "100+ GB Doc AI training, EPIC/Cerner integration, ABHA FHIR OCR-NER pipeline." },
-    { company: "Tasset",         role: "AI Consultant",           start: 2022.5,  end: 2023.0,  color: "--purple", desc: "Large-scale data scraping, text dataset generation, blockchain chatbot provisioning." },
-    { company: "Deloitte USI",   role: "AI Solutions Consultant", start: 2024.0,  end: 2025.25, color: "--cyan",   desc: "Govt Agentic AI, AI Hackathon winner (PR Agentic), enterprise LLM solutions.", current: true }
-  ],
-
-  certifications: [
-    { name: "End-to-End ML with TensorFlow on GCP",  issuer: "Google / Coursera",  badge: "GCP",  date: "Aug 2020", color: "--green",  url: "https://coursera.org/verify/7BM64VLTXCGH", tags: ["TensorFlow","GCP","MLOps"] },
-    { name: "Reliable Google Cloud Infrastructure",   issuer: "Google / Coursera",  badge: "GCP",  date: "Jul 2020", color: "--cyan",   url: "https://coursera.org/verify/JXTJTFR4WC2N", tags: ["GCP","Architecture"] },
-    { name: "Python Developer – MTA",                 issuer: "Microsoft",          badge: "MSFT", date: "Apr 2020", color: "--purple", url: null, tags: ["Python","Microsoft"] },
-    { name: "Artificial Intelligence & Deep Learning",issuer: "Online",             badge: "AI",   date: "Jan 2020", color: "--orange", url: null, tags: ["AI","Deep Learning"] },
-    { name: "NLP Specialization",                     issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--cyan",   url: null, tags: ["NLP","Transformers","Attention"], courses: ["Classification & Vector Spaces","Probabilistic Models","Sequence Models","Attention Models"] },
-    { name: "GANs Specialization",                    issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--pink",   url: null, tags: ["GANs","Generative AI"], courses: ["Build Basic GANs","Build Better GANs","Apply GAN Deployments"] },
-    { name: "TensorFlow Advanced Techniques",         issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--green",  url: null, tags: ["TensorFlow","Custom Models","CV"], courses: ["Custom Models & Layers","Distributed Training","Advanced CV","Generative Deep Learning"] },
-    { name: "AI for Medicine Specialization",         issuer: "DeepLearning.AI",   badge: "DLAI", date: "2021",     color: "--orange", url: null, tags: ["Medical AI","Healthcare"], courses: ["Medical Diagnosis","Medical Prognosis","Medical Treatment"] }
-  ],
-
-  skillTree: [
-    { id: "genai",   label: "Generative AI",   color: "--cyan",   icon: "⬡", leaves: ["LangChain","AutoGen","RAG","vLLM","LlaMA","GPT APIs","LangSmith","Agents"] },
-    { id: "tradml",  label: "Traditional ML",  color: "--green",  icon: "◈", leaves: ["PyTorch","TensorFlow","Scikit-learn","ONNX","TFX","XGBoost"] },
-    { id: "cv",      label: "Computer Vision", color: "--orange", icon: "◉", leaves: ["OpenCV","YOLOv5","Stable Diffusion","ControlNet","SAM","Document AI","DeepLab"] },
-    { id: "nlp",     label: "NLP",             color: "--purple", icon: "✦", leaves: ["HuggingFace","Transformers","NER","BERT","Rasa","Sentence-T"] },
-    { id: "mlops",   label: "MLOps",           color: "--yellow", icon: "⬢", leaves: ["MLflow","W&B","Docker","Kubernetes","Airflow","Terraform","Databricks"] },
-    { id: "cloudai", label: "Cloud AI",        color: "--pink",   icon: "◆", leaves: ["Vertex AI","GCP","SageMaker","VisionAI","DialogFlow","RunPod","HF Spaces"] },
-    { id: "medai",   label: "Medical AI",      color: "--red",    icon: "▸", leaves: ["FHIR","Epic/Cerner","ABHA","OCR-NER","FHIRstore","PyHealth"] }
-  ],
-
-  hobbies: [
-    { icon: "🏄", label: "Surfing",    desc: "Chasing swells, reading ocean patterns." },
-    { icon: "🎸", label: "Music",      desc: "Guitar, sound design, endless playlists." },
-    { icon: "🎬", label: "Cinephile",  desc: "Arthouse, sci-fi, anything with vision." },
-    { icon: "📖", label: "Reading",    desc: "Research papers, philosophy, spec fiction." },
-    { icon: "🔧", label: "Tinkering",  desc: "IoT, embedded hardware, building for fun." }
-  ],
-
-  copyrightYear: new Date().getFullYear(),
-  lastUpdated: "Feb 2025"
-};
-
-function render() {
-  document.title = `~/${CONFIG.handle} — about`;
-  document.getElementById('navHandle').textContent = CONFIG.handle;
-  document.getElementById('navStatus').textContent = CONFIG.status;
-
-  document.getElementById('bioContent').innerHTML = CONFIG.aboutParagraphs.map(p => `<p>${p}</p>`).join('');
-
-  document.getElementById('experienceList').innerHTML = CONFIG.experience.map(e => {
-    const tag = e.tag ? `<span class="exp-tag ${e.tag}">${e.tag === 'promoted' ? '↑ promoted' : e.tag}</span>` : '';
-    const prog = (e.company === 'Appsynergies' && e.tag === 'foundation')
-      ? `<div class="exp-progression">↑ promoted to AI Team Lead · 2021</div>` : '';
-    return `
-      <div class="experience-item">
-        <div class="exp-header">
-          <div>
-            <div class="exp-title">${e.title}${tag}</div>
-            <div class="exp-company">${e.company}</div>
-            ${prog}
-          </div>
-          <div class="exp-date">${e.date}</div>
-        </div>
-        <div class="exp-desc">${e.description}</div>
-      </div>`;
-  }).join('');
-
-  let skillsHtml = '';
-  for (const [key, group] of Object.entries(CONFIG.skills)) {
-    skillsHtml += `
-      <div class="skill-group">
-        <div class="skill-group-label">${group.label}</div>
-        <div class="skill-bars">
-          ${group.items.map(s => `
-            <div class="skill-row">
-              <span class="skill-name">${s.name}</span>
-              <div class="skill-track">
-                <div class="skill-fill ${group.color}" style="width:${s.pct}%"></div>
-              </div>
-              <span class="skill-pct">${s.pct}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }
-  document.getElementById('skillsSection').innerHTML = skillsHtml;
-
-  document.getElementById('educationContent').innerHTML = `
-    <div class="edu-item">
-      <div>
-        <div class="edu-degree">${CONFIG.education.degree}</div>
-        <div class="edu-school">${CONFIG.education.school}</div>
-      </div>
-      <div class="edu-year">${CONFIG.education.year}</div>
-    </div>
-  `;
-
-  document.getElementById('footer').innerHTML = `
-    <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
-    <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
-    <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
-  `;
-
-  renderTimeline();
-  renderCerts();
-  renderSkillTree();
-  renderHobbies();
-}
-
-// ── Timeline ────────────────────────────────────────────────
-function renderTimeline() {
-  const YEAR_START = 2019, YEAR_END = 2026, SPAN = YEAR_END - YEAR_START;
-  const pct = y => ((y - YEAR_START) / SPAN * 100).toFixed(3);
-
-  // Ruler
-  const ruler = document.getElementById('tlRuler');
-  let rulerHtml = '';
-  for (let y = YEAR_START; y <= YEAR_END; y++) {
-    rulerHtml += `<div class="tl-ruler-year">${y}</div>`;
-  }
-  ruler.innerHTML = rulerHtml;
-
-  // Tracks
-  const tracks = document.getElementById('tlTracks');
-  const colorMap = {
-    '--green':  { bg: 'rgba(61,255,160,0.12)',  border: 'rgba(61,255,160,0.7)'  },
-    '--orange': { bg: 'rgba(255,159,74,0.12)',  border: 'rgba(255,159,74,0.7)'  },
-    '--purple': { bg: 'rgba(167,139,250,0.12)', border: 'rgba(167,139,250,0.7)' },
-    '--cyan':   { bg: 'rgba(77,217,240,0.12)',  border: 'rgba(77,217,240,0.7)'  },
-    '--yellow': { bg: 'rgba(251,191,36,0.12)',  border: 'rgba(251,191,36,0.7)'  },
-    '--red':    { bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.7)' }
-  };
-  tracks.innerHTML = CONFIG.timeline.map((job, i) => {
-    const l = pct(job.start), w = pct(job.end) - pct(job.start);
-    const c = colorMap[job.color] || colorMap['--cyan'];
-    const pulse = job.current ? `<span class="tl-pulse"></span>` : '';
-    return `
-      <div class="tl-track" style="transition-delay:${i*0.15}s">
-        <div class="tl-bar" style="left:${l}%;width:${w}%;background:${c.bg};border-left:3px solid ${c.border}">
-          <span class="tl-bar-label">${job.company}</span>
-          <span class="tl-bar-role">${job.role}</span>
-          ${pulse}
-        </div>
-        <div class="tl-tooltip"><strong style="color:var(${job.color})">${job.company}</strong> · ${job.role}<br>${job.desc}</div>
-      </div>`;
-  }).join('');
-
-  // Animate bars on scroll
-  const tlObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.tl-bar').forEach((bar, i) => {
-          setTimeout(() => bar.classList.add('animate'), i * 150);
-        });
-        tlObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.2 });
-  tlObs.observe(tracks);
-}
-
-// ── Certifications ───────────────────────────────────────────
-function renderCerts() {
-  const grid = document.getElementById('certCards');
-  grid.innerHTML = CONFIG.certifications.map((c, idx) => {
-    const tags = c.tags.map(t => `<span class="cert-tag">${t}</span>`).join('');
-    const courseBlock = c.courses ? `
-      <div>
-        <button class="cert-courses-toggle" onclick="toggleCourses(this)">▸ ${c.courses.length} courses</button>
-        <ul class="cert-courses-list">${c.courses.map(course => `<li>${course}</li>`).join('')}</ul>
-      </div>` : '<div></div>';
-    const verify = c.url ? `<a class="cert-verify" href="${c.url}" target="_blank" rel="noopener noreferrer">verify ↗</a>` : '';
-    return `
-      <div class="cert-card" style="border-left-color:var(${c.color})">
-        <div class="cert-top">
-          <span class="cert-badge" style="color:var(${c.color})">${c.badge}</span>
-          <div class="cert-info">
-            <div class="cert-name">${c.name}</div>
-            <div class="cert-meta">${c.issuer} · ${c.date}</div>
-          </div>
-        </div>
-        <div class="cert-tags">${tags}</div>
-        <div class="cert-footer">
-          ${courseBlock}
-          ${verify}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function toggleCourses(btn) {
-  const list = btn.nextElementSibling;
-  const open = list.classList.toggle('open');
-  btn.textContent = (open ? '▾ ' : '▸ ') + btn.textContent.slice(2);
-}
-
-// ── Skill Tree ───────────────────────────────────────────────
-function polar(cx, cy, r, angleDeg) {
-  const rad = (angleDeg - 90) * Math.PI / 180;
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-}
-
-function renderSkillTree() {
-  const svg = document.getElementById('skillTreeSvg');
-  const CX = 450, CY = 450, R1 = 185, R2 = 340;
-  const domains = CONFIG.skillTree;
-  const N = domains.length;
-  const angleStep = 360 / N;
-
-  // Resolve CSS var colors to actual hex values for SVG
-  const colorValues = {
-    '--cyan':   '#4dd9f0', '--green':  '#3dffa0', '--orange': '#ff9f4a',
-    '--purple': '#a78bfa', '--yellow': '#fbbf24', '--pink':   '#f472b6',
-    '--red':    '#f87171'
-  };
-
-  let linesHtml = '', domainsHtml = '', leavesHtml = '';
-
-  domains.forEach((dom, di) => {
-    const domAngle = di * angleStep;
-    const dp = polar(CX, CY, R1, domAngle);
-    const col = colorValues[dom.color] || '#4dd9f0';
-    const domId = `dom-${dom.id}`;
-
-    // Center → domain line
-    linesHtml += `<line class="tree-line" data-dom="${dom.id}" x1="${CX}" y1="${CY}" x2="${dp.x.toFixed(1)}" y2="${dp.y.toFixed(1)}" stroke="${col}" stroke-width="1.5"/>`;
-
-    // Domain node
-    domainsHtml += `
-      <g class="domain-group" id="${domId}" data-dom="${dom.id}"
-         onmouseenter="hlDomain('${dom.id}')" onmouseleave="hlReset()">
-        <circle cx="${dp.x.toFixed(1)}" cy="${dp.y.toFixed(1)}" r="28"
-          fill="${col}22" stroke="${col}" stroke-width="1.5"
-          style="filter:drop-shadow(0 0 6px ${col}55)"/>
-        <text x="${dp.x.toFixed(1)}" y="${(dp.y - 4).toFixed(1)}" text-anchor="middle"
-          font-size="9" font-family="JetBrains Mono,monospace" fill="${col}" font-weight="600">${dom.icon}</text>
-        <text x="${dp.x.toFixed(1)}" y="${(dp.y + 8).toFixed(1)}" text-anchor="middle"
-          font-size="8.5" font-family="JetBrains Mono,monospace" fill="${col}">${dom.label}</text>
-      </g>`;
-
-    // Leaves
-    const leaves = dom.leaves;
-    const leafCount = leaves.length;
-    const spread = Math.min(40, 80 / leafCount);
-    leaves.forEach((leaf, li) => {
-      const offset = (li - (leafCount - 1) / 2) * spread;
-      const leafAngle = domAngle + offset;
-      const lp = polar(CX, CY, R2, leafAngle);
-
-      const lw = Math.max(56, leaf.length * 6.5);
-      const lh = 20;
-
-      // Domain → leaf line
-      linesHtml += `<line class="tree-line" data-dom="${dom.id}" x1="${dp.x.toFixed(1)}" y1="${dp.y.toFixed(1)}" x2="${lp.x.toFixed(1)}" y2="${lp.y.toFixed(1)}" stroke="${col}" stroke-width="1"/>`;
-
-      leavesHtml += `
-        <g class="leaf-group" data-dom="${dom.id}">
-          <rect x="${(lp.x - lw/2).toFixed(1)}" y="${(lp.y - lh/2).toFixed(1)}"
-            width="${lw}" height="${lh}" rx="10"
-            fill="#0f1117" stroke="${col}" stroke-width="1" opacity="0.85"/>
-          <text x="${lp.x.toFixed(1)}" y="${(lp.y + 4).toFixed(1)}" text-anchor="middle"
-            font-size="8" font-family="JetBrains Mono,monospace" fill="${col}">${leaf}</text>
-        </g>`;
-    });
-  });
-
-  // Center node
-  const centerHtml = `
-    <g>
-      <circle cx="${CX}" cy="${CY}" r="38" fill="#141720" stroke="#4dd9f0" stroke-width="2"
-        style="filter:drop-shadow(0 0 14px #4dd9f040)"/>
-      <text x="${CX}" y="${CY - 6}" text-anchor="middle"
-        font-size="9" font-family="JetBrains Mono,monospace" fill="#4dd9f0" font-weight="700">AI</text>
-      <text x="${CX}" y="${CY + 7}" text-anchor="middle"
-        font-size="8" font-family="JetBrains Mono,monospace" fill="#5a6380">roshan</text>
-    </g>`;
-
-  svg.innerHTML = linesHtml + centerHtml + domainsHtml + leavesHtml;
-
-  // Animate lines on scroll
-  svg.querySelectorAll('.tree-line').forEach(line => {
-    const len = Math.hypot(
-      line.x2.baseVal.value - line.x1.baseVal.value,
-      line.y2.baseVal.value - line.y1.baseVal.value
-    );
-    line.style.strokeDasharray = len;
-    line.style.strokeDashoffset = len;
-    line.style.transition = 'stroke-dashoffset 0.8s ease, opacity 0.3s';
-  });
-
-  const treeObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.tree-line').forEach((line, i) => {
-          setTimeout(() => { line.style.strokeDashoffset = '0'; }, i * 30);
-        });
-        treeObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.15 });
-  treeObs.observe(svg);
-
-  // Fallback for mobile
-  const fallback = document.getElementById('treeFallback');
-  fallback.innerHTML = CONFIG.skillTree.map(dom => {
-    const col = colorValues[dom.color] || '#4dd9f0';
-    return `
-      <div class="tree-branch-card" style="border-left:3px solid ${col}">
-        <div class="tree-branch-title" style="color:${col}">${dom.icon} ${dom.label}</div>
-        <div class="tree-leaf-list">${dom.leaves.map(l => `<span class="tree-leaf-pill" style="border-color:${col}44;color:${col}">${l}</span>`).join('')}</div>
-      </div>`;
-  }).join('');
-}
-
-// ── Hobbies ──────────────────────────────────────────────────
-function renderHobbies() {
-  const grid = document.getElementById('hobbiesGrid');
-  if (!grid) return;
-  grid.innerHTML = CONFIG.hobbies.map(h => `
-    <div class="hobby-card">
-      <span class="hobby-icon">${h.icon}</span>
-      <div>
-        <div class="hobby-label">${h.label}</div>
-        <div class="hobby-desc">${h.desc}</div>
-      </div>
-    </div>`).join('');
-}
-
-// Terminal streaming text
-function typeStream(el, speed) {
-  if (!el) return;
-  speed = speed || 30;
-  const finalHTML = el.innerHTML;
-  const text = el.textContent;
-  el.textContent = '';
-  let i = 0;
-  (function tick() {
-    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
-    else { el.innerHTML = finalHTML; }
-  })();
-}
-
-function hlDomain(id) {
-  document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('dim', l.dataset.dom !== id));
-  document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('hl', l.dataset.dom === id));
-  document.querySelectorAll('.leaf-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
-  document.querySelectorAll('.domain-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
-}
-function hlReset() {
-  document.querySelectorAll('.tree-line, .leaf-group, .domain-group').forEach(el => el.classList.remove('dim','hl'));
-}
-
-// Cursor
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
-
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
-// Fade in
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      e.target.querySelectorAll('.skill-fill').forEach((bar, i) => {
-        setTimeout(() => {
-          bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`;
-        }, i * 80 + 200);
-      });
-    }
-  });
-}, { threshold: 0.1 });
-
-window.addEventListener('load', () => {
-  render();
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  // Re-bind cursor hover for dynamically added buttons/links
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => { ring.style.width='44px'; ring.style.height='44px'; ring.style.borderColor='rgba(77,217,240,0.7)'; });
-    el.addEventListener('mouseleave', () => { ring.style.width='28px'; ring.style.height='28px'; ring.style.borderColor='rgba(77,217,240,0.4)'; });
-  });
-  typeStream(document.querySelector('.page-header h1'));
-});
 </script>
 </body>
 </html>

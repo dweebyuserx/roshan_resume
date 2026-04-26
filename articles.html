@@ -5,625 +5,209 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>~/user — articles</title>
+<title>ROSHAN ABRAHAM BBS — ARTICLES</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&display=swap');
   :root {
-    --bg: #0a0b0d;
-    --bg2: #0f1117;
-    --bg3: #141720;
-    --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
-    --cyan: #4dd9f0;
-    --green: #3dffa0;
-    --orange: #ff9f4a;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --bg:#0a0a0a; --bg2:#111111;
+    --ansi-bright-green:#33da7a; --ansi-bright-cyan:#33c7de;
+    --ansi-bright-yellow:#e9ad0c; --ansi-white:#d0cfcc;
+    --ansi-bright-white:#f5f5f0; --ansi-green:#1a8c3f;
+    --border-char:#2a3a2a;
   }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ansi-white);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;overflow-x:hidden;padding-top:68px;padding-bottom:40px;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  #ticker-bar{position:fixed;top:0;left:0;right:0;height:28px;background:#000;border-bottom:1px solid var(--ansi-bright-green);overflow:hidden;z-index:1000;display:flex;align-items:center;}
+  .ticker-inner{display:inline-block;white-space:nowrap;animation:ticker-scroll 60s linear infinite;color:var(--ansi-bright-green);font-size:12px;}
+  @keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: hidden;
-    cursor: none;
-  }
+  #nav-bar{position:fixed;top:28px;left:0;right:0;height:28px;background:var(--bg2);border-bottom:1px solid var(--border-char);display:flex;align-items:center;padding:0 12px;z-index:999;font-size:12px;}
+  .nav-item{padding:0 10px;color:var(--ansi-white);cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;text-decoration:none;line-height:28px;border-left:1px solid var(--border-char);}
+  .nav-item:first-child{border-left:none;}
+  .nav-item.active{background:var(--ansi-bright-white);color:#000;}
+  .nav-item:hover:not(.active){color:var(--ansi-bright-green);}
 
-  .cursor {
-    width: 6px; height: 6px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 12px var(--cyan);
-  }
-  .cursor-ring {
-    width: 28px; height: 28px;
-    border: 1px solid rgba(77,217,240,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
-  }
+  #status-bar{position:fixed;bottom:0;left:0;right:0;height:28px;background:#000;border-top:1px solid var(--border-char);display:flex;align-items:center;padding:0 12px;font-size:11px;color:var(--ansi-white);z-index:1000;gap:24px;}
+  .status-online{color:var(--ansi-bright-green);}
+  .status-right{margin-left:auto;color:var(--ansi-bright-cyan);}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-    pointer-events: none;
-    z-index: 1000;
-  }
+  /* Reading progress bar */
+  #progress-bar{position:fixed;right:10px;top:50%;transform:translateY(-50%);width:8px;height:200px;background:var(--border-char);z-index:500;display:flex;flex-direction:column;justify-content:flex-end;}
+  #progress-fill{background:var(--ansi-bright-green);width:100%;height:0%;transition:height 0.1s;}
 
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 40px;
-    background: rgba(10,11,13,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
+  .main{max-width:760px;margin:0 auto;padding:24px 40px 24px 20px;}
 
-  .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--cyan);
-    letter-spacing: 0.05em;
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--muted); }
+  /* Man page header */
+  .man-header{display:flex;justify-content:space-between;align-items:center;color:var(--ansi-bright-white);font-weight:700;margin-bottom:24px;font-size:12px;border-bottom:1px solid var(--border-char);padding-bottom:8px;}
 
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    transition: color 0.2s;
-    cursor: none;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { color: var(--bright); }
-  .nav-links a:hover::before { opacity: 1; }
-  .nav-links a.active { color: var(--cyan); }
+  /* Section labels */
+  .man-section{color:var(--ansi-bright-white);font-weight:700;font-size:12px;margin:28px 0 12px 0;letter-spacing:0.05em;}
 
-  .nav-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
+  /* Filter input */
+  .filter-row{display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:12px;}
+  .filter-label{color:var(--ansi-bright-cyan);}
+  .filter-input{background:transparent;border:none;border-bottom:1px solid var(--border-char);color:var(--ansi-white);font-family:'JetBrains Mono',monospace;font-size:12px;width:200px;outline:none;padding:2px 4px;}
+  .filter-input:focus{border-bottom-color:var(--ansi-bright-green);}
 
-  main {
-    padding: 120px 60px 80px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
+  /* Article entry */
+  .article-entry{border-left:2px solid var(--border-char);padding:12px 0 12px 20px;margin-bottom:16px;transition:border-color 0.2s;}
+  .article-entry.visible{border-left-color:var(--ansi-bright-green);}
+  .article-entry.coming-soon{border-left-color:var(--border-char);opacity:0.5;}
+  .article-name{color:var(--ansi-bright-cyan);font-weight:700;font-size:13px;margin-bottom:4px;}
+  .article-name .section-ref{color:var(--ansi-bright-yellow);font-size:11px;margin-left:6px;}
+  .article-meta{color:#4a6a4a;font-size:11px;margin-bottom:8px;}
+  .article-desc{color:var(--ansi-white);font-size:12px;line-height:1.8;margin-bottom:8px;}
+  .article-tags{display:flex;gap:8px;flex-wrap:wrap;}
+  .tag{border:1px solid var(--border-char);color:var(--ansi-bright-green);padding:1px 8px;font-size:11px;cursor:pointer;}
+  .tag.active,.tag:hover{border-color:var(--ansi-bright-green);background:rgba(51,218,122,0.08);}
+  .coming-soon-badge{display:inline-block;color:var(--ansi-bright-yellow);font-size:11px;border:1px solid var(--ansi-bright-yellow);padding:1px 8px;margin-bottom:6px;}
 
-  .page-header {
-    margin-bottom: 60px;
-  }
+  /* see-also */
+  .see-also{font-size:12px;color:#4a6a4a;}
+  .see-also a{color:var(--ansi-bright-cyan);text-decoration:none;}
+  .see-also a:hover{color:var(--ansi-bright-yellow);}
 
-  .page-header h1 {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 16px;
-  }
-  .page-header h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .page-header .breadcrumb {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    margin-bottom: 24px;
-  }
-  .page-header .breadcrumb a {
-    color: var(--cyan);
-    text-decoration: none;
-  }
-
-  .page-header .subtitle {
-    font-size: 14px;
-    color: var(--muted);
-    max-width: 500px;
-  }
-
-  .filter-bar {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 48px;
-    flex-wrap: wrap;
-  }
-
-  .filter-btn {
-    padding: 6px 16px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--muted);
-    cursor: none;
-    transition: all 0.2s;
-  }
-  .filter-btn:hover, .filter-btn.active {
-    border-color: var(--cyan);
-    color: var(--cyan);
-    background: rgba(77,217,240,0.05);
-  }
-
-  .articles-list { display: grid; gap: 1px; }
-
-  .article-card {
-    display: block;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 32px;
-    margin-bottom: 24px;
-    cursor: none;
-    text-decoration: none;
-    transition: all 0.3s;
-    position: relative;
-  }
-  .article-card:hover {
-    border-color: var(--cyan);
-    transform: translateX(8px);
-  }
-  .article-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--cyan);
-    transform: scaleY(0);
-    transition: transform 0.3s;
-  }
-  .article-card:hover::before {
-    transform: scaleY(1);
-  }
-
-  .article-meta {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .article-date {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-
-  .article-read-time {
-    font-size: 10px;
-    color: var(--dim);
-    padding: 2px 8px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-  }
-
-  .article-title {
-    font-family: var(--font-display);
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 12px;
-    transition: color 0.2s;
-  }
-  .article-card:hover .article-title { color: var(--cyan); }
-
-  .article-excerpt {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.8;
-    margin-bottom: 20px;
-  }
-
-  .article-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-  .atag {
-    font-size: 10px;
-    padding: 3px 10px;
-    border-radius: 2px;
-    letter-spacing: 0.06em;
-  }
-  .atag-c { background: rgba(77,217,240,0.1); color: var(--cyan); }
-  .atag-g { background: rgba(61,255,160,0.1); color: var(--green); }
-  .atag-o { background: rgba(255,159,74,0.1); color: var(--orange); }
-  .atag-p { background: rgba(167,139,250,0.1); color: var(--purple); }
-
-  .article-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-  }
-
-  .read-more {
-    font-size: 11px;
-    color: var(--cyan);
-    letter-spacing: 0.08em;
-  }
-
-  .article-arrow {
-    font-size: 18px;
-    color: var(--border);
-    transition: all 0.2s;
-  }
-  .article-card:hover .article-arrow {
-    color: var(--cyan);
-    transform: translateX(4px);
-  }
-
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
-
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    main { padding: 100px 24px 60px; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-  }
-
-  /* Touch: hide custom cursor */
-  @media (hover: none) {
-    body { cursor: auto; }
-    .cursor, .cursor-ring { display: none; }
-  }
-
-  /* Nav overflow on small phones */
-  @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
-    .nav-status { display: none; }
-  }
-
-  /* Expanded article body */
-  .article-body {
-    display: none;
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-  }
-  .article-body.open { display: block; }
-  .article-body p {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.95;
-    margin-bottom: 18px;
-  }
-  .article-body p strong { color: var(--cyan); font-weight: 400; }
-  .article-body p code {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    padding: 1px 5px;
-    border-radius: 3px;
-    color: var(--orange);
-  }
-  .article-body img {
-    width: 100%;
-    max-width: 680px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    margin: 20px 0;
-    display: block;
-    opacity: 0.92;
-  }
-  .article-body .img-caption {
-    font-size: 10px;
-    color: var(--dim);
-    letter-spacing: 0.06em;
-    margin-top: -14px;
-    margin-bottom: 18px;
-  }
-  .article-close-btn {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    cursor: pointer;
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 4px 12px;
-    font-family: var(--font-mono);
-    transition: all 0.2s;
-    margin-top: 8px;
-  }
-  .article-close-btn:hover { border-color: var(--cyan); color: var(--cyan); }
-  .article-card.expanded { border-color: var(--cyan); }
-  .article-card.expanded::before { transform: scaleY(1); }
-  .article-card { cursor: pointer; }
-  .article-card.hidden { display: none; }
+  .synopsis-block{background:var(--bg2);border:1px solid var(--border-char);padding:12px 16px;font-size:12px;margin-bottom:20px;color:var(--ansi-white);}
+  .synopsis-block .cmd{color:var(--ansi-bright-green);}
 </style>
-<!-- ░░ Analytics — fill in IDs after account setup ░░ -->
-<!-- Cloudflare Web Analytics: https://dash.cloudflare.com → Analytics & Logs → Web Analytics -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+</head>
+<body>
+
+<div id="ticker-bar"><div class="ticker-inner" id="ticker-text"></div></div>
+
+<div id="nav-bar">
+  <a class="nav-item" href="index.html">[1] HOME</a>
+  <a class="nav-item" href="about.html">[2] ABOUT</a>
+  <a class="nav-item" href="projects.html">[3] PROJECTS</a>
+  <a class="nav-item active" href="articles.html">[4] ARTICLES</a>
+  <a class="nav-item" href="connect.html">[5] CONNECT</a>
+</div>
+
+<div id="status-bar">
+  <span class="status-online">● ONLINE</span>
+  <span id="clock">00:00:00</span>
+  <span class="status-right">roshan.dev BBS</span>
+</div>
+
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<div class="main">
+  <div class="man-header">
+    <span>ROSHAN-ABRAHAM(1)</span>
+    <span>USER COMMANDS</span>
+    <span>ROSHAN-ABRAHAM(1)</span>
+  </div>
+
+  <div class="man-section">NAME</div>
+  <p style="padding-left:20px;font-size:12px;margin-bottom:20px;">roshan-abraham - AI Solutions Consultant, Writer, Builder</p>
+
+  <div class="man-section">SYNOPSIS</div>
+  <div class="synopsis-block">
+    <span class="cmd">roshan-abraham</span> [--read <em>article</em>] [--filter <em>tag</em>]<br>
+    <span style="color:#4a4a4a">man -k: </span><input class="filter-input" id="filter-input" type="text" placeholder='type tag to filter...' autocomplete="off">
+  </div>
+
+  <div class="man-section">ARTICLES</div>
+
+  <div class="article-entry visible" data-tags="blockchain,ai,ethics" id="article-verity">
+    <div class="article-name">
+      THE END OF SEEING IS BELIEVING(7)
+      <span class="section-ref">§ BLOCKCHAIN · AI · ETHICS</span>
+    </div>
+    <div class="article-meta">Published: February 2026&nbsp;&nbsp;·&nbsp;&nbsp;Read time: 14 minutes&nbsp;&nbsp;·&nbsp;&nbsp;Status: PUBLISHED</div>
+    <div class="article-desc">
+      A new architectural approach for truth validation — building trusted systems between society in the age of generative AI. Proposes the VeriStasis protocol: a hybrid blockchain + AI verification layer for media provenance.
+    </div>
+    <div class="article-tags">
+      <span class="tag" data-tag="blockchain">Blockchain</span>
+      <span class="tag" data-tag="ai">AI</span>
+      <span class="tag" data-tag="ethics">Ethics</span>
+    </div>
+    <div style="margin-top:10px;" class="see-also">
+      SEE ALSO: <a href="#">blockchain(7)</a>, <a href="#">llm-verification(7)</a>, <a href="#">veristasis-protocol(7)</a>
+    </div>
+  </div>
+
+  <div class="man-section">COMING SOON</div>
+
+  <div class="article-entry coming-soon" data-tags="rag,llmops,engineering" id="article-rag">
+    <div class="coming-soon-badge">IN PROGRESS</div>
+    <div class="article-name">BUILDING PRODUCTION RAG SYSTEMS(7)</div>
+    <div class="article-meta">Status: drafting&nbsp;&nbsp;·&nbsp;&nbsp;Est. read time: ~18 minutes</div>
+    <div class="article-desc">What the tutorials don't tell you. Lessons from building four RAG systems across enterprise and research contexts — chunking strategies, eval frameworks, and the reranking decisions that actually matter.</div>
+    <div class="article-tags">
+      <span class="tag" data-tag="rag">RAG</span>
+      <span class="tag" data-tag="llmops">LLMOps</span>
+      <span class="tag" data-tag="engineering">Engineering</span>
+    </div>
+  </div>
+
+  <div class="article-entry coming-soon" data-tags="llmops,enterprise,deloitte" id="article-enterprise">
+    <div class="coming-soon-badge">IN PROGRESS</div>
+    <div class="article-name">LLMOPS IN ENTERPRISE(7)</div>
+    <div class="article-meta">Status: drafting&nbsp;&nbsp;·&nbsp;&nbsp;Est. read time: ~20 minutes</div>
+    <div class="article-desc">Lessons from Deloitte USI — what changes when AI systems must meet government-grade reliability, auditability, and compliance requirements. The gap between research LLMOps and production LLMOps.</div>
+    <div class="article-tags">
+      <span class="tag" data-tag="llmops">LLMOps</span>
+      <span class="tag" data-tag="enterprise">Enterprise</span>
+      <span class="tag" data-tag="deloitte">Deloitte</span>
+    </div>
+  </div>
+
+  <div class="man-section" style="margin-top:32px;">SEE ALSO</div>
+  <p style="padding-left:20px;font-size:12px;" class="see-also">
+    <a href="projects.html">projects(1)</a>, <a href="about.html">about(1)</a>, <a href="connect.html">connect(1)</a>,
+    <a href="https://github.com/dweebyuserx" target="_blank">github(7)</a>
+  </p>
+</div>
+
+<script>
+const TICKER_MSGS=['★ ROSHAN ABRAHAM BBS v2.6 — WELCOME, USER','★ AI SOLUTIONS CONSULTANT @ DELOITTE USI','★ AI HACKATHON WINNER — AGENTIC PR PLATFORM','★ AVAILABLE FOR WORK — CONSULTING & FULL-TIME','★ 5+ YEARS BUILDING PRODUCTION AI SYSTEMS','★ PRESS ESC×3 FOR SNAKE.EXE'];
+const tEl=document.getElementById('ticker-text');
+const full=TICKER_MSGS.join('          ');
+tEl.textContent=full+'          '+full;
+
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString();},1000);
+
+document.addEventListener('keydown',e=>{
+  const pages=['index.html','about.html','projects.html','articles.html','connect.html'];
+  const n=parseInt(e.key);
+  if(n>=1&&n<=5)window.location.href=pages[n-1];
+});
+
+// Reading progress
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progress-fill').style.height=Math.min(100,pct)+'%';
+});
+
+// Tag filter
+const filterInput=document.getElementById('filter-input');
+filterInput.addEventListener('input',()=>{
+  const q=filterInput.value.toLowerCase().trim();
+  document.querySelectorAll('.article-entry').forEach(entry=>{
+    if(!q){entry.style.display='';return;}
+    const tags=(entry.dataset.tags||'').toLowerCase();
+    const name=entry.querySelector('.article-name').textContent.toLowerCase();
+    entry.style.display=(tags.includes(q)||name.includes(q))?'':'none';
+  });
+});
+</script>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
   data-cf-beacon='{"token":"CLOUDFLARE_TOKEN_HERE"}'></script>
-<!-- Microsoft Clarity: https://clarity.microsoft.com → New Project → Get Tracking Code -->
+<!-- End Cloudflare Web Analytics -->
+
+<!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
     c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
     t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window,document,"clarity","script","CLARITY_ID_HERE");
-</script>
-</head>
-<body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<nav>
-  <a href="index.html" class="nav-logo"><span>~/</span><span id="navHandle"></span>.dev</a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="about.html">about</a></li>
-    <li><a href="articles.html" class="active">articles</a></li>
-    <li><a href="projects.html">projects</a></li>
-    <li><a href="connect.html">connect</a></li>
-  </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span id="navStatus"></span>
-  </div>
-</nav>
-
-<main>
-  <div class="page-header fade-up">
-    <div class="breadcrumb"><a href="index.html">~</a> / articles</div>
-    <h1>Articles & <em>Writing.</em></h1>
-    <p class="subtitle">Thoughts on AI engineering, LLMOps, agentic systems, and building intelligent applications.</p>
-  </div>
-
-  <div class="filter-bar fade-up" style="transition-delay:0.1s" id="filterBar">
-    <button class="filter-btn active" data-filter="all">All</button>
-    <button class="filter-btn" data-filter="Ethics">Ethics</button>
-    <button class="filter-btn" data-filter="AI Security">AI Security</button>
-  </div>
-
-  <div class="articles-list" id="articlesList"></div>
-</main>
-
-<footer id="footer"></footer>
-
-<script>
-const CONFIG = {
-  name: { first: "Roshan", last: "Abraham" },
-  handle: "roshan",
-  status: "available for work",
-
-  articles: [
-    {
-      date: "Feb 2026",
-      readTime: "14 min read",
-      title: "The End of Seeing is Believing: How to Prove Anything in the Age of Generative AI",
-      excerpt: "A new architectural approach for truth validation — building a trusted layer between society and AI-generated content via blockchain-anchored provenance.",
-      categories: ["Ethics", "AI Security"],
-      tags: [{ text: "Blockchain", color: "c" }, { text: "Ethics", color: "p" }, { text: "GenAI", color: "o" }, { text: "Deepfakes", color: "g" }],
-      body: `<p><em style="color:var(--muted)">"In an age where anyone can fake anything, how do we know what's real anymore? The answer might be simpler than you think — and it's already being built."</em></p><p><strong>The Day Reality Broke.</strong> In January 2026, civil rights attorney Nekima Levy Armstrong was arrested at a Minnesota protest. Original photos captured her looking perfectly calm. Shortly after, an altered deepfake surfaced — digitally contorting her face into hysterical tears. The forgery was so convincing that an official White House social media account shared it before anyone spotted the manipulation. The fabricated image went viral instantly. By the time forensic analysts debunked it, the lie had already outpaced the truth. The reputational damage was permanent.</p><p>A majority of people surveyed now report they can no longer reliably tell the difference between real and AI-generated content. <strong>The burden of proof has shifted: you're fake until proven real.</strong> This is unsustainable. This is dangerous. This is where we are.</p><p><strong>A Brief History of Fakery.</strong> Faking reality is nothing new — Stalin airbrushed enemies from photographs in the 1930s. But those forgeries required skill and left telltale signs. The Photoshop era raised the bar but forensic tools evolved to match. Then generative AI changed everything. In 2023, tools like Midjourney and DALL-E went mainstream. By 2025, anyone with a smartphone could generate photorealistic images indistinguishable from reality. The barrier to creating fakes collapsed. The barrier to detecting them skyrocketed. Deepfake fraud incidents grew <strong>900% annually</strong> — reaching 8 million files shared online by 2025.</p><p><strong>Why current solutions fail.</strong> Fact-checkers are overwhelmed — for every fake they debunk, a thousand more spread. Content moderation can't keep up with the volume; AI-generated fakes vastly outnumber human moderators. Digital watermarks (C2PA/Content Credentials) can be stripped — metadata doesn't survive a screenshot. And radical skepticism — "trust nothing" — leads to epistemic nihilism. Cynicism is not a solution. It's surrender.</p><figure style="margin:20px 0;border:1px solid var(--border);border-radius:4px;overflow:hidden"><img src="assets/verity-doc-correction.png" alt="Timeline of a document correction via Verity Protocol — showing IPFS version chain and blockchain anchoring" style="width:100%;display:block"></figure><p><strong>The VeriStasis Protocol.</strong> What if, from the moment a photo is taken or a document is created, we could establish an immutable, cryptographically verifiable record that proves <strong>when</strong> it was created, <strong>where</strong>, <strong>who</strong> created it, <strong>what</strong> device was used, <strong>every version</strong> forever, and <strong>why</strong> any changes were made? That infrastructure is being built right now.</p><p>The architecture chains five layers: <strong>(1) Origin capture</strong> — metadata (GPS, timestamp, device/session ID) is cryptographically bound to the content at creation. <strong>(2) IPFS storage</strong> — content is addressed by its hash (CID); change even one pixel and the CID changes completely, with no single point of failure across thousands of global nodes. <strong>(3) IPNS + Blockchain anchoring</strong> — a stable address pointer tracks all versions while the blockchain creates an immutable, timestamped lineage. <strong>(4) AI Validation Suite</strong> — deepfake detector, manipulation detector, AI-generation estimator, and session signature validator combine into a multi-dimensional authenticity score (not a binary "real/fake"). <strong>(5) Vector DB caching layer</strong> — distributed fast-query layer with self-healing: hash mismatches auto-trigger a source-of-truth check against the blockchain.</p><img src="assets/verity-selfheal-diagram.png" alt="The Self-Healing Vector Database Cluster — Step 3.5 Validation Flow"/><div class="img-caption">FIG. 1 — The self-healing VDB cluster: hash mismatches auto-trigger source-of-truth checks against the blockchain, restoring corrupted nodes automatically.</div><p><strong>Screenshots don't break the chain.</strong> A screenshot generates a new CID with its own metadata trail — device, session, timestamp. It cannot impersonate the original authenticated file. The system records the act of capture, not just the content.</p><figure style="margin:20px 0;border:1px solid var(--border);border-radius:4px;overflow:hidden"><img src="assets/verity-vdb-cluster.png" alt="The Self-Healing Vector Database Cluster — hash mismatch detection and auto-healing flow" style="width:100%;display:block"></figure><p><strong>Real-world use cases: Journalism</strong> — a photojournalist can prove her war-zone image was taken on her authenticated device, at that GPS location, before the article published, with only documented cropping. <strong>Legal evidence</strong> — police body cam footage has an ironclad chain of custody from capture to courtroom; neither side can claim tampering without breaking the cryptographic record. <strong>Healthcare</strong> — MRI machines certify device serial number, calibration status, and operator credentials alongside each scan. <strong>Government</strong> — official policy documents registered with timestamped digital signatures; any amendment is tracked with an explanation, publicly verifiable.</p><p><strong>Trust is maintained through transparency, not deletion.</strong> When you correct a typo in a caption, a new CID is generated, the old version stays in IPFS forever, and a ChainComment explains what changed and why. Both versions remain accessible. History cannot be rewritten.</p><img src="assets/verity-protocol-diagram.png" alt="Timeline of a Document Correction via Verity Protocol"/><div class="img-caption">FIG. 2 — Document correction timeline: original and corrected versions both preserved with immutable blockchain records and a permanent IPNS address pointer.</div><p><strong>The bigger picture.</strong> We are at a crossroads. Path 1: epistemic collapse — nothing is verifiable, truth becomes subjective, democracies and courts cease to function. Path 2: centralised truth arbiters — governments or mega-corporations become gatekeepers; history shows this always becomes propaganda. Path 3: <strong>decentralised verification</strong> — anyone can verify without a central authority, transparency without censorship, privacy without opacity. Trust built through cryptography, not institutional permission. This is the path forward.</p><p style="color:var(--cyan);font-size:12px">Read the full article on <a href="https://medium.com/ai-security-hub/the-end-of-seeing-is-believing-how-to-prove-anything-in-the-age-of-generative-ai-aca1a537aea6" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">Medium →</a></p><button class="article-close-btn" onclick="toggleArticle(event, this)">CLOSE ↑</button>`
-    },
-  ],
-
-  copyrightYear: new Date().getFullYear(),
-  lastUpdated: "Feb 2025"
-};
-
-function render() {
-  document.title = `~/${CONFIG.handle} — articles`;
-  document.getElementById('navHandle').textContent = CONFIG.handle;
-  document.getElementById('navStatus').textContent = CONFIG.status;
-
-  document.getElementById('articlesList').innerHTML = CONFIG.articles.map((a, i) => `
-    <div class="article-card fade-up" data-categories="${(a.categories||[]).join(',')}"
-         style="transition-delay:${0.15 + i * 0.05}s"
-         onclick="toggleArticle(event, null, ${i})">
-      <div class="article-meta">
-        <div class="article-date">${a.date}</div>
-        <div class="article-read-time">${a.readTime}</div>
-      </div>
-      <div class="article-title">${a.title}</div>
-      <div class="article-excerpt">${a.excerpt}</div>
-      <div class="article-tags">
-        ${a.tags.map(t => `<span class="atag atag-${t.color}">${t.text}</span>`).join('')}
-      </div>
-      <div class="article-footer">
-        <span class="read-more">READ ARTICLE</span>
-        <span class="article-arrow">→</span>
-      </div>
-      <div class="article-body">${a.body}</div>
-    </div>
-  `).join('');
-
-  document.getElementById('footer').innerHTML = `
-    <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
-    <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
-    <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
-  `;
-
-  // Re-observe new elements
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-}
-
-function toggleArticle(e, closeBtn, idx) {
-  // If triggered by close button inside card, don't re-toggle
-  if (closeBtn) {
-    e.stopPropagation();
-    const card = closeBtn.closest('.article-card');
-    card.querySelector('.article-body').classList.remove('open');
-    card.classList.remove('expanded');
-    return;
-  }
-  // Don't toggle if clicking on a tag or button
-  if (e.target.closest('.atag') || e.target.closest('button')) return;
-  const card = e.currentTarget;
-  const body = card.querySelector('.article-body');
-  const isOpen = body.classList.contains('open');
-  // Close all others
-  document.querySelectorAll('.article-card.expanded').forEach(c => {
-    c.querySelector('.article-body').classList.remove('open');
-    c.classList.remove('expanded');
-  });
-  if (!isOpen) {
-    body.classList.add('open');
-    card.classList.add('expanded');
-    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-  }
-}
-
-// Filter logic
-document.getElementById('filterBar').addEventListener('click', e => {
-  const btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const filter = btn.dataset.filter;
-  document.querySelectorAll('.article-card').forEach(card => {
-    if (filter === 'all') {
-      card.classList.remove('hidden');
-    } else {
-      const cats = card.dataset.categories || '';
-      card.classList.toggle('hidden', !cats.split(',').includes(filter));
-    }
-  });
-});
-
-// Terminal streaming text
-function typeStream(el, speed) {
-  if (!el) return;
-  speed = speed || 30;
-  const finalHTML = el.innerHTML;
-  const text = el.textContent;
-  el.textContent = '';
-  let i = 0;
-  (function tick() {
-    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
-    else { el.innerHTML = finalHTML; }
-  })();
-}
-
-// Cursor
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
-
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
-function setupHovers() {
-  document.querySelectorAll('a, button, .article-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '44px';
-      ring.style.height = '44px';
-      ring.style.borderColor = 'rgba(77,217,240,0.7)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '28px';
-      ring.style.height = '28px';
-      ring.style.borderColor = 'rgba(77,217,240,0.4)';
-    });
-  });
-}
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-
-window.addEventListener('load', () => {
-  render();
-  setupHovers();
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  typeStream(document.querySelector('.page-header h1'));
-});
 </script>
 </body>
 </html>

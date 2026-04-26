@@ -5,717 +5,205 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<title>~/user — connect</title>
+<title>ROSHAN ABRAHAM BBS — CONNECT</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&display=swap');
   :root {
-    --bg: #0a0b0d;
-    --bg2: #0f1117;
-    --bg3: #141720;
-    --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
-    --cyan: #4dd9f0;
-    --green: #3dffa0;
-    --orange: #ff9f4a;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --bg:#0a0a0a; --bg2:#111111;
+    --ansi-bright-green:#33da7a; --ansi-bright-cyan:#33c7de;
+    --ansi-bright-yellow:#e9ad0c; --ansi-white:#d0cfcc;
+    --ansi-bright-white:#f5f5f0; --ansi-green:#1a8c3f;
+    --border-char:#2a3a2a;
   }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ansi-white);font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;overflow-x:hidden;padding-top:68px;padding-bottom:40px;}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  #ticker-bar{position:fixed;top:0;left:0;right:0;height:28px;background:#000;border-bottom:1px solid var(--ansi-bright-green);overflow:hidden;z-index:1000;display:flex;align-items:center;}
+  .ticker-inner{display:inline-block;white-space:nowrap;animation:ticker-scroll 60s linear infinite;color:var(--ansi-bright-green);font-size:12px;}
+  @keyframes ticker-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: hidden;
-    cursor: none;
-  }
+  #nav-bar{position:fixed;top:28px;left:0;right:0;height:28px;background:var(--bg2);border-bottom:1px solid var(--border-char);display:flex;align-items:center;padding:0 12px;z-index:999;font-size:12px;}
+  .nav-item{padding:0 10px;color:var(--ansi-white);cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;text-decoration:none;line-height:28px;border-left:1px solid var(--border-char);}
+  .nav-item:first-child{border-left:none;}
+  .nav-item.active{background:var(--ansi-bright-white);color:#000;}
+  .nav-item:hover:not(.active){color:var(--ansi-bright-green);}
 
-  .cursor {
-    width: 6px; height: 6px;
-    background: var(--cyan);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 12px var(--cyan);
-  }
-  .cursor-ring {
-    width: 28px; height: 28px;
-    border: 1px solid rgba(77,217,240,0.4);
-    border-radius: 50%;
-    position: fixed;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease;
-  }
+  #status-bar{position:fixed;bottom:0;left:0;right:0;height:28px;background:#000;border-top:1px solid var(--border-char);display:flex;align-items:center;padding:0 12px;font-size:11px;color:var(--ansi-white);z-index:1000;gap:24px;}
+  .status-online{color:var(--ansi-bright-green);}
+  .status-right{margin-left:auto;color:var(--ansi-bright-cyan);}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-    pointer-events: none;
-    z-index: 1000;
-  }
+  .main{max-width:760px;margin:0 auto;padding:24px 20px;}
 
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 40px;
-    background: rgba(10,11,13,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
+  .section-header{color:var(--ansi-bright-green);margin-bottom:20px;}
+  .section-header h1{font-size:13px;font-weight:700;}
+  .prompt-line{font-size:12px;color:var(--ansi-white);margin-top:4px;}
 
-  .nav-logo {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--cyan);
-    letter-spacing: 0.05em;
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--muted); }
+  /* finger output block */
+  .finger-block{background:var(--bg2);border:1px solid var(--border-char);padding:16px 20px;margin-bottom:24px;font-size:12px;line-height:2;}
+  .finger-line{display:flex;gap:0;}
+  .finger-key{color:var(--ansi-bright-cyan);min-width:160px;}
+  .finger-val{color:var(--ansi-white);}
+  .finger-status{color:var(--ansi-bright-green);}
+  @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.3}}
+  .pulse{display:inline-block;animation:pulse-dot 2s ease-in-out infinite;}
 
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    transition: color 0.2s;
-    cursor: none;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--green);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { color: var(--bright); }
-  .nav-links a:hover::before { opacity: 1; }
-  .nav-links a.active { color: var(--cyan); }
+  /* Connections table */
+  .connections-box{border:1px solid var(--border-char);margin-bottom:24px;}
+  .connections-header{background:var(--bg2);border-bottom:1px solid var(--border-char);padding:6px 16px;font-size:11px;color:var(--ansi-bright-cyan);font-weight:700;}
+  .conn-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid #161616;gap:12px;text-decoration:none;cursor:pointer;}
+  .conn-row:last-child{border-bottom:none;}
+  .conn-row:hover{background:var(--bg2);}
+  .badge-type{font-size:10px;border:1px solid;padding:1px 6px;min-width:70px;text-align:center;}
+  .badge-network{color:var(--ansi-bright-cyan);border-color:var(--ansi-bright-cyan);}
+  .badge-direct{color:var(--ansi-bright-yellow);border-color:var(--ansi-bright-yellow);}
+  .badge-file{color:var(--ansi-bright-green);border-color:var(--ansi-bright-green);}
+  .conn-platform{color:var(--ansi-bright-white);min-width:100px;font-size:12px;}
+  .conn-handle{color:var(--ansi-bright-green);font-size:12px;flex:1;}
+  .conn-url{color:#4a6a4a;font-size:11px;margin-left:auto;}
+  .conn-row:hover .conn-url{color:var(--ansi-bright-cyan);}
 
-  .nav-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .status-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  main {
-    padding: 120px 60px 80px;
-    max-width: 1000px;
-    margin: 0 auto;
-    min-height: calc(100vh - 100px);
-  }
-
-  .page-header {
-    margin-bottom: 60px;
-    text-align: center;
-  }
-
-  .page-header h1 {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 5vw, 56px);
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 16px;
-  }
-  .page-header h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .page-header .breadcrumb {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    margin-bottom: 24px;
-  }
-  .page-header .breadcrumb a {
-    color: var(--cyan);
-    text-decoration: none;
-  }
-
-  .page-header .subtitle {
-    font-size: 14px;
-    color: var(--muted);
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .center-card {
-    background: var(--bg2);
-    border: 1px solid var(--cyan);
-    border-radius: 6px;
-    padding: 32px 48px;
-    text-align: center;
-    margin: 48px auto;
-    max-width: 400px;
-    box-shadow: 0 0 60px rgba(77,217,240,0.1);
-  }
-
-  .center-label {
-    font-size: 11px;
-    color: var(--cyan);
-    letter-spacing: 0.15em;
-    margin-bottom: 8px;
-  }
-
-  .center-name {
-    font-family: var(--font-display);
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-
-  .center-email {
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .center-email a {
-    color: var(--cyan);
-    text-decoration: none;
-  }
-  .center-email a:hover {
-    text-decoration: underline;
-  }
-
-  .connection-svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  .connections-wrapper {
-    position: relative;
-  }
-
-  .nodes-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-top: 48px;
-  }
-
-  .node-card {
-    position: relative;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 28px;
-    text-align: center;
-    cursor: none;
-    transition: all 0.3s;
-    text-decoration: none;
-    display: block;
-  }
-  .node-card:hover {
-    border-color: var(--node-color, var(--cyan));
-    box-shadow: 0 0 30px rgba(77,217,240,0.1);
-    transform: translateY(-4px);
-  }
-
-  .node-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-    display: block;
-  }
-
-  .node-name {
-    font-family: var(--font-display);
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 6px;
-  }
-
-  .node-handle {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-  }
-
-  .node-badge {
-    position: absolute;
-    top: 12px; right: 12px;
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 2px;
-    letter-spacing: 0.1em;
-  }
-
-  .node-desc {
-    font-size: 11px;
-    color: var(--dim);
-    margin-top: 12px;
-    line-height: 1.6;
-  }
-
-  .cta-section {
-    text-align: center;
-    margin-top: 80px;
-    padding: 48px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-  }
-
-  .cta-title {
-    font-family: var(--font-display);
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 16px;
-  }
-
-  .cta-text {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 24px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-  }
-
-  .btn {
-    padding: 12px 28px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    border: none;
-    border-radius: 3px;
-    cursor: none;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-  .btn-primary {
-    background: var(--cyan);
-    color: var(--bg);
-    font-weight: 700;
-  }
-  .btn-primary:hover { background: #7be8fa; transform: translateY(-2px); }
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
-
-  .availability {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 24px;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.08em;
-  }
-
-  .availability-dot {
-    width: 8px; height: 8px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
-
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
-  }
-
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
-
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
-    main { padding: 100px 24px 60px; }
-    .nodes-grid { grid-template-columns: 1fr 1fr; }
-    .cta-buttons { flex-direction: column; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-  }
-
-  @media (max-width: 600px) {
-    .nodes-grid { grid-template-columns: 1fr; }
-  }
-
-  @media (hover: none) {
-    body { cursor: auto; }
-    .cursor, .cursor-ring { display: none; }
-  }
-
-  @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
-    .nav-status { display: none; }
-  }
+  /* Compose area */
+  .compose-box{border:1px solid var(--border-char);padding:16px 20px;}
+  .compose-title{color:var(--ansi-bright-cyan);font-size:12px;font-weight:700;margin-bottom:12px;}
+  .compose-btns{display:flex;gap:12px;flex-wrap:wrap;}
+  .compose-btn{display:inline-block;border:1px solid var(--border-char);color:var(--ansi-bright-green);padding:6px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;text-decoration:none;background:transparent;cursor:pointer;}
+  .compose-btn:hover{background:var(--ansi-bright-green);color:#000;}
 </style>
-<!-- ░░ Analytics — fill in IDs after account setup ░░ -->
-<!-- Cloudflare Web Analytics: https://dash.cloudflare.com → Analytics & Logs → Web Analytics -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+</head>
+<body>
+
+<div id="ticker-bar"><div class="ticker-inner" id="ticker-text"></div></div>
+
+<div id="nav-bar">
+  <a class="nav-item" href="index.html">[1] HOME</a>
+  <a class="nav-item" href="about.html">[2] ABOUT</a>
+  <a class="nav-item" href="projects.html">[3] PROJECTS</a>
+  <a class="nav-item" href="articles.html">[4] ARTICLES</a>
+  <a class="nav-item active" href="connect.html">[5] CONNECT</a>
+</div>
+
+<div id="status-bar">
+  <span class="status-online">● ONLINE</span>
+  <span id="clock">00:00:00</span>
+  <span class="status-right">roshan.dev BBS</span>
+</div>
+
+<div class="main">
+  <div class="section-header">
+    <h1>┌──[ CONNECT ]─────────────────────────────────────────────────┐</h1>
+    <div class="prompt-line">$ finger roshan@roshan.dev</div>
+  </div>
+
+  <div class="finger-block">
+    <div class="finger-line">
+      <span class="finger-key">Login:</span><span class="finger-val">roshan</span>
+      <span class="finger-key" style="margin-left:40px;">Name:</span><span class="finger-val">Roshan Abraham</span>
+    </div>
+    <div class="finger-line">
+      <span class="finger-key">Shell:</span><span class="finger-val">/bin/ai-console</span>
+      <span class="finger-key" style="margin-left:40px;">Role:</span><span class="finger-val">AI Solutions Consultant</span>
+    </div>
+    <div class="finger-line">
+      <span class="finger-key">Office:</span><span class="finger-val">Deloitte USI</span>
+      <span class="finger-key" style="margin-left:40px;">Location:</span><span class="finger-val">India | USA | UK</span>
+    </div>
+    <div class="finger-line">
+      <span class="finger-key">Status:</span>
+      <span class="finger-status"><span class="pulse">●</span> ACTIVE — AVAILABLE FOR WORK</span>
+    </div>
+    <div class="finger-line">
+      <span class="finger-key">Last login:</span><span class="finger-val" id="last-login">Today</span>
+    </div>
+  </div>
+
+  <div class="connections-box">
+    <div class="connections-header">CONNECTIONS:</div>
+
+    <a class="conn-row" href="https://github.com/dweebyuserx" target="_blank">
+      <span class="badge-type badge-network">[NETWORK]</span>
+      <span class="conn-platform">GitHub</span>
+      <span class="conn-handle">@dweebyuserx</span>
+      <span class="conn-url">github.com/dweebyuserx →</span>
+    </a>
+
+    <a class="conn-row" href="https://www.linkedin.com/in/roshan-abraham-187474138/" target="_blank">
+      <span class="badge-type badge-network">[NETWORK]</span>
+      <span class="conn-platform">LinkedIn</span>
+      <span class="conn-handle">/in/roshan-abraham</span>
+      <span class="conn-url">linkedin.com/in/roshan-... →</span>
+    </a>
+
+    <a class="conn-row" href="https://huggingface.co/dweebster" target="_blank">
+      <span class="badge-type badge-network">[COMPUTE]</span>
+      <span class="conn-platform">HuggingFace</span>
+      <span class="conn-handle">@dweebster</span>
+      <span class="conn-url">huggingface.co/dweebster →</span>
+    </a>
+
+    <a class="conn-row" id="email-row" href="#" onclick="revealEmail(event)">
+      <span class="badge-type badge-direct">[DIRECT]</span>
+      <span class="conn-platform">Email</span>
+      <span class="conn-handle" id="email-display">click to reveal</span>
+      <span class="conn-url">→</span>
+    </a>
+
+    <a class="conn-row" href="roshan-abraham-cv.pdf" download>
+      <span class="badge-type badge-file">[FILE]</span>
+      <span class="conn-platform">Resume</span>
+      <span class="conn-handle">roshan-abraham-cv.pdf</span>
+      <span class="conn-url">[DOWNLOAD] →</span>
+    </a>
+  </div>
+
+  <div class="compose-box">
+    <div class="compose-title">COMPOSE MESSAGE:</div>
+    <div class="compose-btns">
+      <a class="compose-btn" id="email-btn" href="#">[→ Send via Email]</a>
+      <a class="compose-btn" href="https://www.linkedin.com/in/roshan-abraham-187474138/" target="_blank">[→ LinkedIn Connect]</a>
+      <a class="compose-btn" href="https://github.com/dweebyuserx" target="_blank">[→ GitHub Follow]</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const TICKER_MSGS=['★ ROSHAN ABRAHAM BBS v2.6 — WELCOME, USER','★ AI SOLUTIONS CONSULTANT @ DELOITTE USI','★ AI HACKATHON WINNER — AGENTIC PR PLATFORM','★ AVAILABLE FOR WORK — CONSULTING & FULL-TIME','★ 5+ YEARS BUILDING PRODUCTION AI SYSTEMS','★ PRESS ESC×3 FOR SNAKE.EXE'];
+const tEl=document.getElementById('ticker-text');
+const full=TICKER_MSGS.join('          ');
+tEl.textContent=full+'          '+full;
+
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString();},1000);
+
+document.getElementById('last-login').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+document.addEventListener('keydown',e=>{
+  const pages=['index.html','about.html','projects.html','articles.html','connect.html'];
+  const n=parseInt(e.key);
+  if(n>=1&&n<=5)window.location.href=pages[n-1];
+});
+
+// Reveal email on click (base64 decoded)
+function revealEmail(e){
+  e.preventDefault();
+  const addr=atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
+  document.getElementById('email-display').textContent=addr;
+  document.getElementById('email-row').href='mailto:'+addr;
+  document.getElementById('email-btn').href='mailto:'+addr;
+}
+</script>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
   data-cf-beacon='{"token":"CLOUDFLARE_TOKEN_HERE"}'></script>
-<!-- Microsoft Clarity: https://clarity.microsoft.com → New Project → Get Tracking Code -->
+<!-- End Cloudflare Web Analytics -->
+
+<!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
     c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
     t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window,document,"clarity","script","CLARITY_ID_HERE");
-</script>
-</head>
-<body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<nav>
-  <a href="index.html" class="nav-logo"><span>~/</span><span id="navHandle"></span>.dev</a>
-  <ul class="nav-links">
-    <li><a href="index.html">home</a></li>
-    <li><a href="about.html">about</a></li>
-    <li><a href="articles.html">articles</a></li>
-    <li><a href="projects.html">projects</a></li>
-    <li><a href="connect.html" class="active">connect</a></li>
-  </ul>
-  <div class="nav-status">
-    <div class="status-dot"></div>
-    <span id="navStatus"></span>
-  </div>
-</nav>
-
-<main>
-  <div class="page-header fade-up">
-    <div class="breadcrumb"><a href="index.html">~</a> / connect</div>
-    <h1>Let's <em>Connect.</em></h1>
-    <p class="subtitle">I'm always open to interesting conversations and new opportunities.</p>
-  </div>
-
-  <div class="connections-wrapper">
-    <svg class="connection-svg" id="connSvg"></svg>
-
-    <div class="center-card fade-up" style="transition-delay:0.1s" id="centerCard">
-      <div class="center-label">YOU ARE HERE</div>
-      <div class="center-name" id="centerName"></div>
-      <div class="center-email" id="centerEmail"></div>
-    </div>
-
-    <div class="nodes-grid fade-up" style="transition-delay:0.2s" id="nodesGrid"></div>
-  </div>
-
-  <div class="cta-section fade-up" style="transition-delay:0.3s">
-    <div class="cta-title">Work Together?</div>
-    <div class="cta-text" id="ctaText"></div>
-    <div class="cta-buttons">
-      <a href="#" class="btn btn-primary" id="emailBtn">Send an Email</a>
-      <a href="#" class="btn btn-ghost" id="linkedinBtn">Connect on LinkedIn</a>
-    </div>
-    <div class="availability">
-      <span class="availability-dot"></span>
-      <span id="availabilityText"></span>
-    </div>
-  </div>
-</main>
-
-<footer id="footer"></footer>
-
-<script>
-const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
-const CONFIG = {
-  name: { first: "Roshan", last: "Abraham" },
-  handle: "roshan",
-  email: _em,
-  status: "open to opportunities",
-
-  ctaText: "I'm currently open to AI consulting, full-time positions, and interesting collaborations in LLMOps, Agentic AI, and MLOps.",
-  availabilityText: "Available for new opportunities",
-
-  connections: [
-    {
-      name: "GitHub",
-      handle: "@dweebyuserx",
-      url: "https://github.com/dweebyuserx",
-      icon: "⌥",
-      color: "--bright",
-      badge: "ACTIVE",
-      badgeBg: "rgba(200,207,232,0.08)",
-      badgeColor: "var(--bright)",
-      desc: "Open source AI projects and contributions"
-    },
-    {
-      name: "LinkedIn",
-      handle: "/in/roshan-abraham-187474138",
-      url: "https://www.linkedin.com/in/roshan-abraham-187474138/",
-      icon: "◈",
-      color: "#0a66c2",
-      badge: "NETWORK",
-      badgeBg: "rgba(10,102,194,0.15)",
-      badgeColor: "#4da3ff",
-      desc: "Professional network and experience"
-    },
-    {
-      name: "Hugging Face",
-      handle: "@dweebster",
-      url: "https://huggingface.co/dweebster",
-      icon: "✦",
-      color: "--cyan",
-      badge: "AI/ML",
-      badgeBg: "rgba(77,217,240,0.1)",
-      badgeColor: "var(--cyan)",
-      desc: "Models, datasets, and AI experiments"
-    },
-    {
-      name: "Email",
-      handle: _em,
-      url: 'mailto:' + _em,
-      icon: "◉",
-      color: "--green",
-      badge: "DIRECT",
-      badgeBg: "rgba(61,255,160,0.1)",
-      badgeColor: "var(--green)",
-      desc: "Best way to reach me directly"
-    },
-    {
-      name: "Portfolio",
-      handle: "roshan.dev",
-      url: "index.html",
-      icon: "▸",
-      color: "--orange",
-      badge: "HOME",
-      badgeBg: "rgba(255,159,74,0.1)",
-      badgeColor: "var(--orange)",
-      desc: "Full portfolio and project showcase"
-    },
-    {
-      name: "Resume",
-      handle: "Download PDF",
-      url: "roshan-abraham-cv.pdf",
-      download: true,
-      icon: "◆",
-      color: "--purple",
-      badge: "DOCUMENT",
-      badgeBg: "rgba(167,139,250,0.1)",
-      badgeColor: "var(--purple)",
-      desc: "Full resume and work history"
-    }
-  ],
-
-  linkedinUrl: "https://www.linkedin.com/in/roshan-abraham-187474138/",
-  copyrightYear: new Date().getFullYear(),
-  lastUpdated: "Feb 2025"
-};
-
-function render() {
-  document.title = `~/${CONFIG.handle} — connect`;
-  document.getElementById('navHandle').textContent = CONFIG.handle;
-  document.getElementById('navStatus').textContent = CONFIG.status;
-
-  document.getElementById('centerName').textContent = `${CONFIG.name.first} ${CONFIG.name.last}`;
-  document.getElementById('centerEmail').innerHTML = `<a href="mailto:${CONFIG.email}">${CONFIG.email}</a>`;
-
-  document.getElementById('nodesGrid').innerHTML = CONFIG.connections.map(c => {
-    const colorVal = c.color.startsWith('--') ? `var(${c.color})` : c.color;
-    return `
-      <a href="${c.url}" target="_blank" rel="noopener noreferrer" ${c.download ? 'download' : ''} class="node-card" style="--node-color:${colorVal}">
-        <span class="node-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
-        <span class="node-icon">${c.icon}</span>
-        <div class="node-name">${c.name}</div>
-        <div class="node-handle">${c.handle}</div>
-        <div class="node-desc">${c.desc}</div>
-      </a>
-    `;
-  }).join('');
-
-  document.getElementById('ctaText').textContent = CONFIG.ctaText;
-  document.getElementById('emailBtn').href = `mailto:${CONFIG.email}`;
-  document.getElementById('linkedinBtn').href = CONFIG.linkedinUrl;
-  document.getElementById('availabilityText').textContent = CONFIG.availabilityText;
-
-  document.getElementById('footer').innerHTML = `
-    <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
-    <div style="color:var(--dim)">© ${CONFIG.copyrightYear} ${CONFIG.name.first} ${CONFIG.name.last}</div>
-    <div><span style="color:var(--green)">●</span> last updated ${CONFIG.lastUpdated}</div>
-  `;
-}
-
-// Cursor
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
-
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
-function setupHovers() {
-  document.querySelectorAll('a, button, .node-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '44px';
-      ring.style.height = '44px';
-      ring.style.borderColor = 'rgba(77,217,240,0.7)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '28px';
-      ring.style.height = '28px';
-      ring.style.borderColor = 'rgba(77,217,240,0.4)';
-    });
-  });
-}
-
-// SVG Connection lines
-function drawConnections() {
-  const svg = document.getElementById('connSvg');
-  const center = document.getElementById('centerCard');
-  const grid = document.getElementById('nodesGrid');
-
-  if (!svg || !center || !grid) return;
-
-  const wrapper = document.querySelector('.connections-wrapper');
-  const wrapperRect = wrapper.getBoundingClientRect();
-
-  svg.innerHTML = '';
-  svg.style.position = 'absolute';
-  svg.style.top = '0';
-  svg.style.left = '0';
-  svg.style.width = '100%';
-  svg.style.height = wrapper.offsetHeight + 'px';
-
-  const cenRect = center.getBoundingClientRect();
-  const cx = cenRect.left + cenRect.width/2 - wrapperRect.left;
-  const cy = cenRect.bottom - wrapperRect.top;
-
-  const cards = grid.querySelectorAll('.node-card');
-  const colors = ['#c8cfe8','#4da3ff','#4dd9f0','#3dffa0','#ff9f4a','#a78bfa'];
-
-  cards.forEach((card, i) => {
-    const r = card.getBoundingClientRect();
-    const tx = r.left + r.width/2 - wrapperRect.left;
-    const ty = r.top - wrapperRect.top;
-
-    const color = colors[i % colors.length];
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    const mx2 = (cx + tx)/2;
-    const my2 = cy + (ty-cy)*0.4;
-    const d = `M ${cx} ${cy} Q ${mx2} ${my2} ${tx} ${ty}`;
-    path.setAttribute('d', d);
-    path.setAttribute('stroke', color);
-    path.setAttribute('stroke-width', '1');
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke-dasharray', '4 6');
-    path.setAttribute('opacity', '0.35');
-
-    svg.appendChild(path);
-
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.setAttribute('r', '3');
-    circle.setAttribute('fill', color);
-    circle.style.filter = `drop-shadow(0 0 4px ${color})`;
-
-    let progress = Math.random();
-    function animDot() {
-      progress = (progress + 0.003) % 1;
-      const len = path.getTotalLength ? path.getTotalLength() : 200;
-      const pt = path.getPointAtLength(progress * len);
-      circle.setAttribute('cx', pt.x);
-      circle.setAttribute('cy', pt.y);
-      circle.setAttribute('opacity', Math.sin(progress * Math.PI) * 0.9);
-      requestAnimationFrame(animDot);
-    }
-    svg.appendChild(circle);
-    setTimeout(() => animDot(), 500 + i * 100);
-  });
-}
-
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      if (e.target.classList.contains('connections-wrapper') || e.target.closest('.connections-wrapper')) {
-        setTimeout(drawConnections, 100);
-      }
-    }
-  });
-}, { threshold: 0.1 });
-
-window.addEventListener('load', () => {
-  render();
-  setupHovers();
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  setTimeout(drawConnections, 500);
-});
-
-window.addEventListener('resize', drawConnections);
 </script>
 </body>
 </html>
