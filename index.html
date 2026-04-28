@@ -10,472 +10,1335 @@
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,400&family=Press+Start+2P&family=Syne:wght@400;700;800&display=swap');
 
   :root {
-    --sky-home: #5c94fc;
-    --sky-about: #1a1a2e;
-    --sky-projects: #0d1b2a;
-    --sky-articles: #2d1b00;
-    --sky-connect: #0a0a23;
-    --ground-dark: #3d2b1f;
-    --ground-mid: #6b3f2a;
-    --ground-light: #b55a1e;
-    --hud-bg: rgba(0,0,0,0.75);
-    --hud-border: rgba(255,255,255,0.15);
     --font-game: 'Press Start 2P', monospace;
     --font-body: 'JetBrains Mono', monospace;
     --font-display: 'Syne', sans-serif;
-    --bg: #0a0b0d;
-    --bg2: #0f1117;
-    --bg3: #141720;
-    --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
-    --cyan: #4dd9f0;
-    --green: #3dffa0;
-    --orange: #ff9f4a;
-    --purple: #a78bfa;
-    --pink: #f472b6;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --text: #c8cfe8;
-    --bright: #e8eeff;
+    --bg: #0a0b0d; --bg2: #0f1117; --bg3: #141720;
+    --border: #1e2230; --dim: #3a4055; --muted: #5a6380;
+    --cyan: #4dd9f0; --green: #3dffa0; --orange: #ff9f4a;
+    --purple: #a78bfa; --pink: #f472b6; --yellow: #fbbf24;
+    --red: #f87171; --text: #c8cfe8; --bright: #e8eeff;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; overflow: hidden; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#000; }
+  body { font-family:var(--font-body); color:var(--text); }
 
-  body {
-    background: #000;
-    font-family: var(--font-body);
-    color: var(--text);
+  /* ── GAME ── */
+  #game-container { position:fixed; inset:0; background:#000; display:block; }
+  #game-canvas { display:block; image-rendering:pixelated; image-rendering:crisp-edges; }
+
+  /* ── AREA NAME BANNER (Pokemon-style) ── */
+  #area-banner {
+    position:fixed; bottom:80px; right:0;
+    background:rgba(0,0,0,0.85);
+    border-left:3px solid #fff;
+    border-top:3px solid #fff;
+    border-bottom:3px solid #fff;
+    padding:8px 20px 8px 16px;
+    font-family:var(--font-game);
+    font-size:8px;
+    color:#fff;
+    z-index:200;
+    opacity:0;
+    transition:opacity 0.3s ease;
+    pointer-events:none;
   }
+  #area-banner.show { opacity:1; }
 
-  /* ── GAME CONTAINER ───────────────────────────────── */
-  #game-container {
-    position: fixed;
-    inset: 0;
-    background: #000;
-  }
-
-  #game-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-  }
-
-  /* ── HUD ──────────────────────────────────────────── */
-  #hud {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    font-family: var(--font-game);
-  }
-
-  /* ── DIALOG BOX ───────────────────────────────────── */
+  /* ── DIALOG BOX (Pokemon-style) ── */
   #dialog-box {
-    position: absolute;
-    bottom: 18%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(80%, 520px);
-    background: rgba(0,0,0,0.92);
-    border: 3px solid #fff;
-    padding: 14px 18px 10px;
-    font-family: var(--font-game);
-    font-size: clamp(7px, 1.5vw, 9px);
-    color: #fff;
-    line-height: 2;
-    z-index: 200;
-    display: none;
+    position:fixed; bottom:0; left:0; right:0;
+    height:96px;
+    background:#f0f0f0;
+    border-top:4px solid #000;
+    display:none;
+    z-index:300;
+    padding:12px 20px 8px 20px;
   }
-  #dialog-text { min-height: 2.2em; }
-  #dialog-hint { text-align: right; font-size: clamp(5px, 1vw, 7px); color: #aaa; margin-top: 6px; }
+  #dialog-box::before {
+    content:'';
+    position:absolute; inset:3px;
+    border:3px solid #888;
+    pointer-events:none;
+  }
+  #dialog-speaker {
+    font-family:var(--font-game);
+    font-size:7px;
+    color:#333;
+    margin-bottom:6px;
+    text-transform:uppercase;
+  }
+  #dialog-text {
+    font-family:var(--font-game);
+    font-size:8px;
+    color:#111;
+    line-height:1.9;
+    max-width:680px;
+  }
+  #dialog-advance {
+    position:absolute;
+    bottom:10px; right:16px;
+    font-family:var(--font-game);
+    font-size:7px;
+    color:#555;
+    animation:blink-caret 0.8s step-end infinite;
+  }
+  @keyframes blink-caret { 0%,100%{opacity:1} 50%{opacity:0} }
 
-  /* ── TOUCH CONTROLS ───────────────────────────────── */
-  #touch-controls {
-    display: none;
-    position: fixed;
-    bottom: 40px;
-    left: 0; right: 0;
-    z-index: 500;
-    pointer-events: none;
+  /* ── HUD ── */
+  #hud {
+    position:fixed; top:0; left:0; right:0;
+    height:32px;
+    background:rgba(0,0,0,0.8);
+    border-bottom:2px solid #222;
+    display:flex;
+    align-items:center;
+    padding:0 12px;
+    gap:20px;
+    z-index:200;
+    font-family:var(--font-game);
+    font-size:7px;
+    color:#fff;
   }
-  #touch-controls > div {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-    pointer-events: auto;
-  }
-  #touch-controls .tcol { display: flex; gap: 8px; }
-  .touch-btn {
-    width: 52px; height: 52px;
-    background: rgba(0,0,0,0.6);
-    border: 2px solid rgba(255,255,255,0.3);
-    color: #fff;
-    font-family: var(--font-game);
-    font-size: 9px;
-    cursor: pointer;
-    border-radius: 4px;
-    touch-action: manipulation;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .touch-btn:active { background: rgba(255,255,255,0.2); }
+  .hud-zone { color:#fbbf24; }
+  .hud-hint { margin-left:auto; color:#666; font-size:6px; }
 
-  /* ── MODE TOGGLE ──────────────────────────────────── */
+  /* ── MODE TOGGLE ── */
   #mode-toggle {
-    position: fixed;
-    bottom: 16px;
-    right: 16px;
-    z-index: 1000;
-    background: rgba(0,0,0,0.85);
-    border: 2px solid #ffd700;
-    color: #ffd700;
-    font-family: var(--font-game);
-    font-size: clamp(6px, 1.2vw, 8px);
-    padding: 8px 12px;
-    cursor: pointer;
-    line-height: 1.6;
-    text-align: center;
+    position:fixed; top:40px; right:12px;
+    z-index:400;
+    background:rgba(0,0,0,0.85);
+    border:2px solid #ffd700;
+    color:#ffd700;
+    font-family:var(--font-game);
+    font-size:7px;
+    padding:7px 10px;
+    cursor:pointer;
+    line-height:1.6;
+    text-align:center;
   }
-  #mode-toggle:hover { background: rgba(255,215,0,0.1); }
+  #mode-toggle:hover { background:#ffd700; color:#000; }
 
-  /* ── CREDITS OVERLAY ──────────────────────────────── */
-  #credits-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 800;
-    overflow: hidden;
-    font-family: var(--font-game);
-    color: #ffd700;
-    text-align: center;
+  /* ── TOUCH CONTROLS ── */
+  #touch-controls {
+    position:fixed; bottom:100px; left:0; right:0;
+    display:none;
+    z-index:300;
+    pointer-events:none;
   }
-  #credits-scroll {
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: clamp(8px, 1.5vw, 12px);
-    line-height: 3;
-    animation: scrollUp 60s linear forwards;
-    white-space: nowrap;
+  .touch-dpad {
+    position:absolute; left:20px; bottom:0;
+    width:100px; height:100px;
+    pointer-events:all;
   }
-  @keyframes scrollUp {
-    from { bottom: -20px; }
-    to { bottom: 110%; }
+  .touch-btn-group {
+    position:absolute; right:20px; bottom:10px;
+    display:flex; gap:10px;
+    pointer-events:all;
   }
-  #credits-close {
-    position: absolute;
-    top: 16px; right: 16px;
-    font-size: 8px;
-    color: #888;
-    cursor: pointer;
-    font-family: var(--font-game);
-    background: none; border: none;
+  .dpad-btn, .action-btn {
+    position:absolute;
+    background:rgba(255,255,255,0.2);
+    border:2px solid rgba(255,255,255,0.4);
+    border-radius:4px;
+    color:#fff;
+    font-family:var(--font-game);
+    font-size:8px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; user-select:none; -webkit-user-select:none;
   }
+  .dpad-up    { width:32px;height:32px; top:0;   left:34px; }
+  .dpad-down  { width:32px;height:32px; bottom:0; left:34px; }
+  .dpad-left  { width:32px;height:32px; top:34px; left:0;   }
+  .dpad-right { width:32px;height:32px; top:34px; right:0;  }
+  .dpad-center{ width:32px;height:32px; top:34px; left:34px; background:rgba(255,255,255,0.1); }
+  .action-btn { position:relative; width:44px;height:44px; border-radius:50%; background:rgba(255,80,80,0.4); border-color:rgba(255,80,80,0.7); }
 
-  /* ── TIME TRIAL RESULT ────────────────────────────── */
-  #trial-result {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.92);
-    z-index: 700;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-game);
-    text-align: center;
-    color: #fff;
-  }
-  #trial-result > div { font-size: clamp(8px, 1.5vw, 12px); line-height: 2.5; }
-
-  /* ══════════════════════════════════════════════════════
-     STRATEGY GUIDE
-  ══════════════════════════════════════════════════════ */
+  /* ── STRATEGY GUIDE ── */
   #strategy-guide {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    overflow-y: auto;
-    z-index: 100;
-    font-family: var(--font-body);
+    position:fixed; inset:0;
+    display:none;
+    background:var(--bg);
+    overflow-y:auto;
+    z-index:500;
   }
-
-  /* Scanline overlay */
-  #strategy-guide::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
-    pointer-events: none;
-    z-index: 1;
+  .guide-nav {
+    position:sticky; top:0;
+    background:var(--bg2);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center;
+    padding:0 20px; gap:0;
+    z-index:10; height:48px;
   }
-
-  #guide-nav {
-    position: sticky;
-    top: 0;
-    background: rgba(10,11,13,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 32px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    z-index: 50;
-  }
-  #guide-nav .guide-logo {
-    font-family: var(--font-game);
-    font-size: 9px;
-    color: var(--cyan);
-    text-decoration: none;
-    margin-right: 8px;
+  .guide-logo {
+    font-family:var(--font-display); font-weight:800; font-size:14px;
+    color:var(--bright); margin-right:24px; white-space:nowrap;
   }
   .guide-tab {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 4px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    background: none; border: none;
-    font-family: var(--font-body);
-    transition: color 0.2s, background 0.2s;
+    padding:0 16px; height:48px; display:flex; align-items:center;
+    color:var(--muted); font-size:12px; cursor:pointer; border-bottom:2px solid transparent;
+    white-space:nowrap; background:none; border-top:none; border-left:none; border-right:none;
+    font-family:var(--font-body); transition:color 0.2s;
   }
-  .guide-tab:hover, .guide-tab.active { color: var(--cyan); background: rgba(77,217,240,0.08); }
-
-  #guide-content {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 32px 120px;
-    position: relative;
-    z-index: 2;
+  .guide-tab:hover { color:var(--text); }
+  .guide-tab.active { color:var(--cyan); border-bottom-color:var(--cyan); }
+  .guide-close {
+    margin-left:auto; color:var(--muted); cursor:pointer;
+    font-size:12px; background:none; border:none; font-family:var(--font-body);
+    padding:8px 12px;
   }
-
-  .guide-section { display: none; }
-  .guide-section.active { display: block; }
-
-  /* Guide Hero */
-  .gh-hero {
-    border: 1px solid var(--border);
-    background: var(--bg2);
-    border-radius: 8px;
-    padding: 36px;
-    margin-bottom: 32px;
-  }
-  .gh-name {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 5vw, 52px);
-    font-weight: 800;
-    color: var(--bright);
-    line-height: 1.1;
-    margin-bottom: 8px;
-  }
-  .gh-name em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .gh-title {
-    font-size: 13px;
-    color: var(--cyan);
-    margin-bottom: 16px;
-    letter-spacing: 0.05em;
-  }
-  .gh-tagline {
-    font-size: 12px;
-    color: var(--text);
-    line-height: 1.8;
-    max-width: 640px;
-    margin-bottom: 20px;
-  }
-  .gh-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
-  .gh-tag {
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    padding: 3px 10px;
-    border-radius: 12px;
-    background: rgba(77,217,240,0.1);
-    border: 1px solid rgba(77,217,240,0.3);
-    color: var(--cyan);
-  }
-  .gh-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-  .gh-btn {
-    font-size: 10px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-family: var(--font-body);
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    border: none;
-    transition: opacity 0.2s;
-  }
-  .gh-btn:hover { opacity: 0.8; }
-  .gh-btn.primary { background: var(--cyan); color: #000; }
-  .gh-btn.secondary { background: transparent; border: 1px solid var(--cyan); color: var(--cyan); }
-
-  /* Guide cards grid */
-  .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; margin-bottom: 32px; }
-  .guide-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 20px;
-  }
-  .gc-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-  .gc-title { font-size: 14px; font-weight: 600; color: var(--bright); margin-bottom: 6px; font-family: var(--font-display); }
-  .gc-sub { font-size: 11px; color: var(--cyan); margin-bottom: 8px; }
-  .gc-desc { font-size: 11px; color: var(--muted); line-height: 1.7; }
-  .gc-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
-  .gc-tag { font-size: 8px; padding: 2px 7px; border-radius: 9px; background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
-  .gc-featured { border-left: 3px solid var(--yellow); }
-  .gc-feat-badge { display: inline-block; font-size: 8px; padding: 2px 7px; background: rgba(251,191,36,0.12); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); border-radius: 3px; margin-bottom: 8px; letter-spacing: 0.05em; }
-
-  /* Experience list */
-  .exp-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 32px; }
-  .exp-item {
-    padding: 20px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .exp-item:first-child { border-top: 1px solid var(--border); }
-  .exp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
-  .exp-role { font-size: 14px; font-weight: 700; color: var(--bright); font-family: var(--font-display); }
-  .exp-co { font-size: 12px; color: var(--cyan); margin-top: 2px; }
-  .exp-date { font-size: 10px; color: var(--muted); white-space: nowrap; }
-  .exp-tag { font-size: 7px; letter-spacing: 0.1em; padding: 2px 6px; border-radius: 3px; margin-left: 8px; vertical-align: middle; }
-  .exp-tag.current { background: rgba(61,255,160,0.12); color: var(--green); border: 1px solid rgba(61,255,160,0.3); }
-  .exp-tag.concurrent { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
-  .exp-tag.foundation { background: rgba(255,159,74,0.1); color: var(--orange); border: 1px solid rgba(255,159,74,0.3); }
-  .exp-desc { font-size: 11px; color: var(--muted); line-height: 1.8; }
-
-  /* Skill bars */
-  .skills-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 28px; margin-bottom: 32px; }
-  .skill-group { margin-bottom: 28px; }
-  .skill-group:last-child { margin-bottom: 0; }
-  .skill-group-lbl { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
-  .skill-row { display: grid; grid-template-columns: 160px 1fr 32px; align-items: center; gap: 12px; margin-bottom: 10px; }
-  .skill-name { font-size: 10px; color: var(--text); }
-  .skill-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .skill-fill { height: 100%; border-radius: 2px; }
-  .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
-  .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
-  .skill-fill.orange { background: linear-gradient(90deg, var(--orange), var(--pink)); }
-  .skill-pct { font-size: 9px; color: var(--muted); text-align: right; }
-
-  /* Article card */
-  .article-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 24px;
-    margin-bottom: 16px;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-  .article-meta { font-size: 10px; color: var(--muted); margin-bottom: 8px; }
-  .article-title { font-size: 16px; font-weight: 700; color: var(--bright); margin-bottom: 8px; font-family: var(--font-display); line-height: 1.3; }
-  .article-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .article-tag { font-size: 8px; padding: 2px 8px; border-radius: 10px; background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
-  .article-coming { opacity: 0.4; }
-
-  /* Connect links */
-  .connect-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 16px; margin-bottom: 32px; }
-  .connect-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 20px;
-    text-decoration: none;
-    display: block;
-    transition: border-color 0.2s;
-  }
-  .connect-card:hover { border-color: var(--cyan); }
-  .cc-platform { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  .cc-handle { font-size: 14px; color: var(--bright); margin-bottom: 4px; font-weight: 600; }
-  .cc-url { font-size: 10px; color: var(--cyan); }
-
-  /* Section heading in guide */
-  .guide-h2 {
-    font-family: var(--font-display);
-    font-size: clamp(20px, 3vw, 30px);
-    font-weight: 800;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-  .guide-h2 em { font-style: normal; color: var(--cyan); }
-  .guide-breadcrumb { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 24px; }
-  .guide-breadcrumb a { color: var(--cyan); text-decoration: none; }
-  .section-divider { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin: 28px 0 16px; display: flex; align-items: center; gap: 12px; }
-  .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); max-width: 180px; }
-
-  /* Cert cards */
-  .cert-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 12px; margin-bottom: 32px; }
-  .cert-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--cyan);
-    border-radius: 6px;
-    padding: 16px;
-  }
-  .cert-name { font-size: 12px; font-weight: 600; color: var(--bright); margin-bottom: 4px; line-height: 1.4; }
-  .cert-meta { font-size: 10px; color: var(--cyan); }
-
-  /* Education box */
-  .edu-box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .edu-degree { font-size: 15px; font-weight: 700; color: var(--bright); font-family: var(--font-display); }
-  .edu-school { font-size: 11px; color: var(--cyan); margin-top: 4px; }
-  .edu-year { font-size: 10px; color: var(--muted); }
-
-  /* Guide footer */
-  .guide-footer {
-    border-top: 1px solid var(--border);
-    padding: 24px 32px;
-    font-size: 10px;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  /* Scrollbar */
-  #strategy-guide::-webkit-scrollbar { width: 4px; }
-  #strategy-guide::-webkit-scrollbar-track { background: var(--bg); }
-  #strategy-guide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  @media (max-width: 600px) {
-    #guide-nav { padding: 10px 16px; gap: 8px; }
-    #guide-content { padding: 24px 16px 100px; }
-    .skill-row { grid-template-columns: auto 1fr auto; }
-    .skill-name { font-size: 9px; }
-  }
+  .guide-close:hover { color:var(--cyan); }
+  .guide-section { display:none; max-width:800px; margin:0 auto; padding:32px 20px 60px; }
+  .guide-section.active { display:block; }
+  .guide-section h1 { font-family:var(--font-display); font-weight:800; font-size:28px; color:var(--bright); margin-bottom:8px; }
+  .guide-section h2 { font-family:var(--font-display); font-weight:700; font-size:18px; color:var(--bright); margin:28px 0 12px; }
+  .guide-section h3 { font-size:13px; color:var(--cyan); margin:20px 0 8px; }
+  .guide-section p { color:var(--text); line-height:1.8; margin-bottom:12px; font-size:14px; }
+  .guide-tag { display:inline-block; background:rgba(77,217,240,0.1); border:1px solid rgba(77,217,240,0.3); color:var(--cyan); padding:2px 10px; border-radius:3px; font-size:12px; margin:2px; }
+  .guide-avail { display:inline-flex; align-items:center; gap:8px; color:var(--green); font-size:13px; margin-bottom:16px; }
+  .guide-avail::before { content:'●'; animation:pulse-g 2s ease-in-out infinite; }
+  @keyframes pulse-g { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .exp-card { border:1px solid var(--border); background:var(--bg2); border-radius:4px; padding:16px 20px; margin-bottom:12px; }
+  .exp-card h3 { margin:0 0 4px; }
+  .exp-date { font-size:11px; color:var(--muted); margin-bottom:8px; }
+  .exp-desc { font-size:13px; color:var(--text); line-height:1.7; }
+  .concurrent-badge { display:inline-block; font-size:10px; border:1px solid var(--orange); color:var(--orange); padding:1px 8px; border-radius:3px; margin-left:8px; }
+  .proj-card { border:1px solid var(--border); background:var(--bg2); border-radius:4px; padding:16px 20px; margin-bottom:12px; }
+  .proj-card h3 { margin:0 0 6px; color:var(--cyan); }
+  .proj-card p { font-size:13px; margin-bottom:10px; }
+  .skill-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .skill-name { font-size:12px; color:var(--text); min-width:180px; }
+  .skill-track { flex:1; height:4px; background:var(--border); border-radius:2px; }
+  .skill-fill { height:100%; border-radius:2px; background:var(--cyan); }
+  .skill-pct { font-size:11px; color:var(--muted); min-width:32px; text-align:right; }
+  .cert-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cert-card { border:1px solid var(--border); background:var(--bg2); border-radius:4px; padding:12px 14px; font-size:12px; }
+  .cert-issuer { color:var(--muted); font-size:11px; margin-top:4px; }
+  .conn-link { display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--border); border-radius:4px; background:var(--bg2); margin-bottom:10px; text-decoration:none; color:var(--text); transition:border-color 0.2s; }
+  .conn-link:hover { border-color:var(--cyan); }
+  .conn-platform { color:var(--cyan); font-size:13px; min-width:100px; }
+  .conn-handle { font-size:13px; }
+  .guide-cv-btn { display:inline-block; padding:10px 24px; border:1px solid var(--cyan); color:var(--cyan); text-decoration:none; font-size:13px; margin-top:8px; }
+  .guide-cv-btn:hover { background:var(--cyan); color:#000; }
+  @media(max-width:600px){ .cert-grid{grid-template-columns:1fr;} .guide-tab{font-size:10px;padding:0 8px;} }
 </style>
+</head>
+<body>
+
+<!-- ── GAME LAYER ── -->
+<div id="game-container">
+  <canvas id="game-canvas"></canvas>
+
+  <div id="hud">
+    <span>★ PIXEL QUEST</span>
+    <span class="hud-zone" id="hud-zone">ROSHAN TOWN</span>
+    <span class="hud-hint">[ARROW KEYS] MOVE &nbsp; [Z / SPACE] INTERACT &nbsp; [TAB] GUIDE</span>
+  </div>
+
+  <div id="area-banner" aria-live="polite"></div>
+
+  <div id="dialog-box" role="dialog" aria-modal="true">
+    <div id="dialog-speaker"></div>
+    <div id="dialog-text"></div>
+    <div id="dialog-advance">▼</div>
+  </div>
+
+  <!-- Touch D-pad -->
+  <div id="touch-controls">
+    <div class="touch-dpad">
+      <div class="dpad-btn dpad-up"    data-key="ArrowUp">▲</div>
+      <div class="dpad-btn dpad-down"  data-key="ArrowDown">▼</div>
+      <div class="dpad-btn dpad-left"  data-key="ArrowLeft">◀</div>
+      <div class="dpad-btn dpad-right" data-key="ArrowRight">▶</div>
+      <div class="dpad-center"></div>
+    </div>
+    <div class="touch-btn-group">
+      <div class="action-btn" data-key="z">A</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODE TOGGLE ── -->
+<button id="mode-toggle" onclick="toggleMode()" aria-label="Toggle strategy guide">📖 GUIDE<br>[TAB]</button>
+
+<!-- ── STRATEGY GUIDE ── -->
+<div id="strategy-guide">
+  <nav class="guide-nav">
+    <span class="guide-logo">ROSHAN ABRAHAM</span>
+    <button class="guide-tab active" data-section="guide-home" onclick="showSection('guide-home')">HOME</button>
+    <button class="guide-tab" data-section="guide-about" onclick="showSection('guide-about')">ABOUT</button>
+    <button class="guide-tab" data-section="guide-projects" onclick="showSection('guide-projects')">PROJECTS</button>
+    <button class="guide-tab" data-section="guide-articles" onclick="showSection('guide-articles')">ARTICLES</button>
+    <button class="guide-tab" data-section="guide-connect" onclick="showSection('guide-connect')">CONNECT</button>
+    <button class="guide-close" onclick="toggleMode()">✕ CLOSE GUIDE</button>
+  </nav>
+
+  <!-- HOME -->
+  <div class="guide-section active" id="guide-home">
+    <h1>Roshan Abraham</h1>
+    <div class="guide-avail">available for work</div>
+    <p>AI Solutions Consultant at Deloitte USI · 5+ years building production AI systems for enterprise and government organizations.</p>
+    <p>Specializing in <strong>LLMOps, Agentic Orchestration, and Advanced RAG systems</strong> — architecting end-to-end ML pipelines from training to deployment at scale.</p>
+    <div style="margin:16px 0;">
+      <span class="guide-tag">#LLMOps</span><span class="guide-tag">#AgenticAI</span><span class="guide-tag">#MLOps</span><span class="guide-tag">#RAG</span><span class="guide-tag">#CloudAI</span>
+    </div>
+    <p style="color:var(--muted);font-size:13px;">Stack: ADK / Claude SDK · Vertex AI · FastAPI · Docker · Vector DBs · LlamaIndex</p>
+    <a class="guide-cv-btn" href="roshan-abraham-cv.pdf" download>↓ Download CV</a>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="guide-section" id="guide-about">
+    <h1>About</h1>
+    <h2>Experience</h2>
+    <div class="exp-card">
+      <h3>AI Solutions Consultant — Deloitte USI</h3>
+      <div class="exp-date">Jan 2024 — Present</div>
+      <div class="exp-desc">Handling Govt projects and transforming AI solutions for enterprise consumption. Building Agentic solutions for State Govt organizations. Winner of AI Hackathon for PR Agentic solutions. Blockchain-ready chatbot provisioning.</div>
+    </div>
+    <div class="exp-card">
+      <h3>AI Team Lead — Appsynergies</h3>
+      <div class="exp-date">2021 — Jan 2024</div>
+      <div class="exp-desc">Planning MLOps and all segments. Developed and architected API systems for model inference. Delivered real-world optimized AI solutions. Mentoring junior AI engineers.</div>
+    </div>
+    <div class="exp-card">
+      <h3>Project Lead AI Engineer — MyDiGiRecords <span class="concurrent-badge">CONCURRENT</span></h3>
+      <div class="exp-date">2022 — 2023</div>
+      <div class="exp-desc">Preprocessed 100+ GB Doc AI model. EPIC and Cerner integration. ABHA FHIR integration and end-to-end OCR NER into FHIR system.</div>
+    </div>
+    <div class="exp-card">
+      <h3>AI Consultant — Tasset <span class="concurrent-badge">CONCURRENT</span></h3>
+      <div class="exp-date">2022 — 2023</div>
+      <div class="exp-desc">Large scale data scraping and text dataset generation. Blockchain-ready chatbot provisioning for client needs.</div>
+    </div>
+    <div class="exp-card">
+      <h3>AI Engineer — Appsynergies</h3>
+      <div class="exp-date">2019 — 2021</div>
+      <div class="exp-desc">Developed and integrated ML models into production pipelines. Built inference APIs and data preprocessing systems.</div>
+    </div>
+    <div class="exp-card">
+      <h3>Data Scientist Intern — QDgrees</h3>
+      <div class="exp-date">2018 — 2019</div>
+      <div class="exp-desc">Applied ML and statistical modelling for data analysis. Built and deployed predictive models and data pipelines.</div>
+    </div>
+
+    <h2>Skills</h2>
+    <h3>AI &amp; LLMOps</h3>
+    <div id="skills-ai"></div>
+    <h3>Cloud &amp; MLOps</h3>
+    <div id="skills-cloud"></div>
+    <h3>Data &amp; Backend</h3>
+    <div id="skills-data"></div>
+
+    <h2>Certifications</h2>
+    <div class="cert-grid">
+      <div class="cert-card">End-to-End ML with TensorFlow on GCP<div class="cert-issuer">Google / Coursera · Aug 2020</div></div>
+      <div class="cert-card">Reliable Google Cloud Infrastructure<div class="cert-issuer">Google / Coursera · Jul 2020</div></div>
+      <div class="cert-card">Python Developer – MTA<div class="cert-issuer">Microsoft · Apr 2020</div></div>
+      <div class="cert-card">AI &amp; Deep Learning<div class="cert-issuer">Online · Jan 2020</div></div>
+      <div class="cert-card">NLP Specialization (4 courses)<div class="cert-issuer">DeepLearning.AI · 2021</div></div>
+      <div class="cert-card">GANs Specialization (3 courses)<div class="cert-issuer">DeepLearning.AI · 2021</div></div>
+      <div class="cert-card">TensorFlow Advanced Techniques (4 courses)<div class="cert-issuer">DeepLearning.AI · 2021</div></div>
+      <div class="cert-card">AI for Medicine Specialization (3 courses)<div class="cert-issuer">DeepLearning.AI · 2021</div></div>
+    </div>
+
+    <h2>Education</h2>
+    <div class="exp-card">
+      <h3>B.Tech Computer Science &amp; Engineering</h3>
+      <div class="exp-date">St. Aloysius Institute of Technology · 2017–2021 (Honors)</div>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div class="guide-section" id="guide-projects">
+    <h1>Projects</h1>
+    <div id="guide-proj-list"></div>
+  </div>
+
+  <!-- ARTICLES -->
+  <div class="guide-section" id="guide-articles">
+    <h1>Articles</h1>
+    <div class="proj-card">
+      <h3>The End of Seeing is Believing</h3>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:8px;">Feb 2026 · 14 min read</p>
+      <p>How to Prove Anything in the Age of Generative AI. A new architectural approach for truth validation — building trusted systems between society.</p>
+      <div><span class="guide-tag">Blockchain</span><span class="guide-tag">AI</span><span class="guide-tag">Ethics</span></div>
+    </div>
+    <div class="proj-card" style="opacity:0.5;">
+      <h3>Building Production RAG Systems</h3>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:8px;">Coming Soon · In Progress</p>
+      <p>What the tutorials don't tell you about building RAG systems at scale.</p>
+    </div>
+    <div class="proj-card" style="opacity:0.5;">
+      <h3>LLMOps in Enterprise</h3>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:8px;">Coming Soon · In Progress</p>
+      <p>Lessons from Deloitte USI on enterprise-grade LLM deployments.</p>
+    </div>
+  </div>
+
+  <!-- CONNECT -->
+  <div class="guide-section" id="guide-connect">
+    <h1>Connect</h1>
+    <p>Open to AI consulting, full-time positions, and interesting collaborations in LLMOps, Agentic AI, and MLOps.</p>
+    <a class="conn-link" href="https://github.com/dweebyuserx" target="_blank">
+      <span class="conn-platform">GitHub</span><span class="conn-handle">@dweebyuserx</span>
+    </a>
+    <a class="conn-link" href="https://www.linkedin.com/in/roshan-abraham-187474138/" target="_blank">
+      <span class="conn-platform">LinkedIn</span><span class="conn-handle">/in/roshan-abraham-187474138</span>
+    </a>
+    <a class="conn-link" href="https://huggingface.co/dweebster" target="_blank">
+      <span class="conn-platform">HuggingFace</span><span class="conn-handle">@dweebster</span>
+    </a>
+    <a class="conn-link" id="email-reveal" href="#" onclick="revealEmail(event)">
+      <span class="conn-platform">Email</span><span class="conn-handle" id="email-text">Click to reveal</span>
+    </a>
+    <a class="conn-link" href="roshan-abraham-cv.pdf" download>
+      <span class="conn-platform">Resume</span><span class="conn-handle">roshan-abraham-cv.pdf ↓</span>
+    </a>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════
+// CONSTANTS & CONFIG
+// ═══════════════════════════════════════════════════════
+const TILE = 16;       // logical pixels per tile
+const LW = 320;        // logical canvas width
+const LH = 180;        // logical canvas height
+
+// Palette
+const C = {
+  // Terrain
+  deepWater:  '#1a4a6b',
+  water:      '#2a6f9a',
+  waterShine: '#3a8fbf',
+  sand:       '#d4b483',
+  grass:      '#5a9e3a',
+  grassDark:  '#4a8a2e',
+  grassLight: '#6ab845',
+  path:       '#c8a96e',
+  pathDark:   '#b8996e',
+  pathEdge:   '#a07040',
+  // Buildings
+  roofRed:    '#c0392b',
+  roofDark:   '#922b21',
+  wall:       '#f5e6c8',
+  wallDark:   '#e0d0a8',
+  wallShadow: '#c8b888',
+  door:       '#6b3a2a',
+  doorFrame:  '#4a2a1a',
+  window:     '#7ec8e3',
+  windowFrame:'#5a4a3a',
+  // Nature
+  treeTop:    '#2d6e1a',
+  treeShade:  '#1e5210',
+  treeTrunk:  '#6b4423',
+  flowerRed:  '#e74c3c',
+  flowerYel:  '#f1c40f',
+  // Pokecenter-style
+  pcRoof:     '#e74c3c',
+  pcWall:     '#f5f5dc',
+  pcSign:     '#e74c3c',
+  // Lab-style building
+  labRoof:    '#3498db',
+  labWall:    '#ecf0f1',
+  // Sign / post
+  signPost:   '#8b6914',
+  signBoard:  '#f5deb3',
+  signText:   '#4a2800',
+  // NPC colors
+  npcBlue:    '#2980b9',
+  npcRed:     '#e74c3c',
+  npcYel:     '#f39c12',
+  npcGreen:   '#27ae60',
+  npcPurple:  '#8e44ad',
+  // HUD / UI
+  hudBg:      '#1c1c1c',
+  white:      '#ffffff',
+  black:      '#000000',
+};
+
+// ═══════════════════════════════════════════════════════
+// MAP DATA
+// Legend:
+//  . = grass          # = tree         W = water
+//  = = path (H)       | = path (V)     + = path cross
+//  H = building roof  h = building wall
+//  P = poke-center    p = poke-wall    L = lab roof  l = lab wall
+//  S = sign           F = flower
+//  N,E,R,G,V = NPCs (n=name, e=exp, r=project, g=article, v=connect)
+//  ~ = sand/shore
+// ═══════════════════════════════════════════════════════
+
+// Map: 40 cols × 30 rows (640×480 logical px)
+const MAP_W = 40, MAP_H = 30;
+const MAP = [
+// 0         1         2         3
+// 0123456789012345678901234567890123456789
+  'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', // 0
+  'WWWWWW~~~~~~~~~~~~~~~~~~~~WWWWWWWWWWWWWW', // 1
+  'WWWW~~.#.#..#..#..#..#..#.~~WWWWWWWWWWW', // 2
+  'WWW~..#....................#..~WWWWWWWWWW', // 3
+  'WW~..##...HHH...|....HHH...##..~WWWWWWWW', // 4
+  'WW~..#....hhh...|....hhh....#..~WWWWWWWW', // 5
+  'WW~...F...SD|.+++....SD|...F....~WWWWWWW', // 6
+  'WW~...........=======.............~WWWWWW', // 7 horizontal path
+  'WW~...F.......=.F....=.......F....~WWWWW', // 8
+  'WW~...#.......=......=.......#....~WWWWW', // 9
+  'WW~..LLL......=......=......PPP...~WWWWW', // 10
+  'WW~..lll......=......=......ppp...~WWWWW', // 11
+  'WW~..Sll......=......=......Spp...~WWWWW', // 12
+  'WW~...........=.N.G..=............~WWWWW', // 13
+  'WW~...........=......=............~WWWWW', // 14
+  'WWW~...F......=..E...=......F...~WWWWWWW', // 15
+  'WWW~..........=......=..........~WWWWWWW', // 16
+  'WWWW~.........+======+.........~WWWWWWWW', // 17 crossroads
+  'WWWWW~........|......|........~WWWWWWWWW', // 18
+  'WWWWWW~.......|......|.......~WWWWWWWWWW', // 19
+  'WWWWWWW~......|......|......~WWWWWWWWWWW', // 20
+  'WWWWWWWW~.....HHH..HHH.....~WWWWWWWWWWW', // 21
+  'WWWWWWWWWW~...hhh..hhh...~WWWWWWWWWWWWW', // 22
+  'WWWWWWWWWWW~~.Shhh.Shhh.~~WWWWWWWWWWWWW', // 23
+  'WWWWWWWWWWWWWW~~~~~~~~WWWWWWWWWWWWWWWWWW', // 24
+  'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', // 25
+  'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', // 26
+  'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', // 27
+  'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', // 28
+  'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW', // 29
+];
+
+// Walkable tiles
+const WALKABLE = new Set(['.','=','|','+','~','F','N','E','R','G','V','n','e','r','g','v']);
+
+function isWalkable(tx, ty) {
+  if(tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H) return false;
+  return WALKABLE.has(MAP[ty][tx]);
+}
+
+// ═══════════════════════════════════════════════════════
+// INTERACTIVE OBJECTS
+// ═══════════════════════════════════════════════════════
+const INTERACTIONS = {
+  // Signs (S)
+  // Signs at top-left buildings (Experience/About)
+  '2,6':  { type:'sign', speaker:'SIGN', lines:['ABOUT TOWN','[ EXPERIENCE & SKILLS ]','Learn about Roshan\'s','career journey here.'] },
+  '21,6': { type:'sign', speaker:'SIGN', lines:['ABOUT TOWN','[ SKILLS LAB ]','Technical skills and','certifications inside.'] },
+  // Lab sign (Projects)
+  '2,12': { type:'sign', speaker:'SIGN', lines:['PROJECT LAB','[ ALL 11 PROJECTS ]','Walk inside to explore','Roshan\'s built work.'] },
+  // Pokecenter sign (Connect/Articles)
+  '26,12':{ type:'sign', speaker:'SIGN', lines:['CONNECT CENTER','[ SOCIAL & CONTACT ]','Find all social links','and contact info here.'] },
+  // South buildings signs
+  '13,23':{ type:'sign', speaker:'SIGN', lines:['WRITING GUILD','[ ARTICLES ]','Read published articles','and upcoming work.'] },
+  '20,23':{ type:'sign', speaker:'SIGN', lines:['DELOITTE OFFICE','[ FEATURED PROJECT ]','Agentic PR Platform','AI Hackathon Winner ★'] },
+
+  // NPCs on path
+  '14,13':{ type:'npc', speaker:'PROF. OAK', color:C.npcBlue,
+    lines:['Welcome to PIXEL QUEST!','This world is Roshan\'s','portfolio. Explore the','towns to learn more!'] },
+  '17,13':{ type:'npc', speaker:'TRAINER', color:C.npcRed,
+    lines:['Heard Roshan won the','AI Hackathon at Deloitte!','His Agentic PR Platform','beat the whole field. ★'] },
+  '19,15':{ type:'npc', speaker:'RESEARCHER', color:C.npcPurple,
+    lines:['Roshan has 5+ years','building production AI.','LLMOps. RAG. Agentic.','The real deal.'] },
+  // Top buildings (north row)
+  '6,4':  { type:'building', speaker:'EXPERIENCE HALL',
+    lines:['[ AI Solutions Consultant ]','Deloitte USI · Jan 2024–Now','Building Agentic solutions','for State Govt orgs.','★ AI Hackathon Winner'] },
+  '22,4': { type:'building', speaker:'SKILLS TOWER',
+    lines:['[ TOP SKILLS ]','LlamaIndex / ADK · 95%','Adv RAG / VectorDBs · 92%','GCP Vertex AI · 95%','Python / FastAPI · 95%'] },
+  // Lab (Projects)
+  '4,10': { type:'building', speaker:'PROJECT LAB',
+    lines:['[ FEATURED PROJECT ]','Agentic PR Platform ★','Multi-agent orchestration','for State Govt (Deloitte)','Tech: ADK · Gemma · MCP'] },
+  // Pokecenter (Connect)
+  '28,10':{ type:'building', speaker:'CONNECT CENTER',
+    lines:['[ FIND ROSHAN ]','GitHub: @dweebyuserx','HuggingFace: @dweebster','LinkedIn: /in/roshan-a','Email: click to reveal'] },
+  // South buildings
+  '14,21':{ type:'building', speaker:'WRITING GUILD',
+    lines:['[ THE END OF SEEING ]','Is Believing · Feb 2026','How to Prove Anything','in the Age of Gen-AI.','Tags: Blockchain AI Ethics'] },
+  '21,21':{ type:'building', speaker:'DELOITTE OFFICE',
+    lines:['[ DELOITTE USI ]','Medical AI Infrastructure','RAG Systems v1-v4','Custom LLM Foundry','MLOps Engine + more...'] },
+};
+
+// ═══════════════════════════════════════════════════════
+// AREA ZONES  (tile regions → zone name)
+// ═══════════════════════════════════════════════════════
+const ZONES = [
+  { name:'ROSHAN TOWN',   x1:8,  y1:12, x2:26, y2:20 },
+  { name:'ABOUT DISTRICT',x1:0,  y1:2,  x2:26, y2:12 },
+  { name:'PROJECT LAB',   x1:0,  y1:10, x2:12, y2:15 },
+  { name:'CONNECT CENTER',x1:22, y1:10, x2:38, y2:15 },
+  { name:'ARTICLE GUILD', x1:8,  y1:20, x2:20, y2:25 },
+  { name:'DELOITTE CITY', x1:18, y1:20, x2:30, y2:25 },
+];
+
+function getZone(tx, ty) {
+  for(const z of ZONES) {
+    if(tx >= z.x1 && tx <= z.x2 && ty >= z.y1 && ty <= z.y2) return z.name;
+  }
+  return 'ROUTE 1';
+}
+
+// ═══════════════════════════════════════════════════════
+// PLAYER
+// ═══════════════════════════════════════════════════════
+const PLAYER = {
+  tx: 17, ty: 17,      // tile position (on crossroads)
+  px: 0,  py: 0,       // pixel offset for smooth movement
+  dir: 2,              // 0=up 1=right 2=down 3=left
+  moving: false,
+  moveTimer: 0,
+  MOVE_SPEED: 0.12,    // seconds per tile
+  frame: 0,
+  frameTimer: 0,
+};
+PLAYER.px = PLAYER.tx * TILE;
+PLAYER.py = PLAYER.ty * TILE;
+
+const CAMERA = { x: 0, y: 0 };
+
+// ═══════════════════════════════════════════════════════
+// GAME STATE
+// ═══════════════════════════════════════════════════════
+const STATE = {
+  mode: 'WORLD',   // WORLD | DIALOG | PAUSED
+  dialog: { lines:[], index:0, speaker:'', pageLines:[], pageIdx:0 },
+  lastZone: '',
+  bannerTimer: 0,
+};
+
+// ═══════════════════════════════════════════════════════
+// INPUT
+// ═══════════════════════════════════════════════════════
+const KEYS = {};
+const JUST_PRESSED = {};
+
+window.addEventListener('keydown', e => {
+  if(!KEYS[e.key]) JUST_PRESSED[e.key] = true;
+  KEYS[e.key] = true;
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+});
+window.addEventListener('keyup', e => { KEYS[e.key] = false; });
+
+// Touch D-pad
+document.querySelectorAll('.dpad-btn').forEach(btn => {
+  const k = btn.dataset.key;
+  btn.addEventListener('touchstart', e => { e.preventDefault(); KEYS[k]=true; }, {passive:false});
+  btn.addEventListener('touchend',   e => { e.preventDefault(); KEYS[k]=false; }, {passive:false});
+  btn.addEventListener('touchcancel',e => { KEYS[k]=false; });
+});
+document.querySelectorAll('.action-btn').forEach(btn => {
+  const k = btn.dataset.key;
+  btn.addEventListener('touchstart', e => { e.preventDefault(); JUST_PRESSED[k]=true; KEYS[k]=true; }, {passive:false});
+  btn.addEventListener('touchend',   e => { e.preventDefault(); KEYS[k]=false; }, {passive:false});
+});
+
+// Tab = guide
+window.addEventListener('keydown', e => {
+  if(e.key === 'Tab') { e.preventDefault(); toggleMode(); }
+});
+
+// ═══════════════════════════════════════════════════════
+// CANVAS SETUP
+// ═══════════════════════════════════════════════════════
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+
+let SCALE = 1;
+function resizeCanvas() {
+  const W = window.innerWidth, H = window.innerHeight;
+  SCALE = Math.min(W / LW, H / LH);
+  canvas.width  = Math.floor(LW * SCALE);
+  canvas.height = Math.floor(LH * SCALE);
+  canvas.style.width  = canvas.width + 'px';
+  canvas.style.height = canvas.height + 'px';
+  // Center canvas
+  canvas.style.position = 'absolute';
+  canvas.style.left = Math.floor((W - canvas.width)  / 2) + 'px';
+  canvas.style.top  = Math.floor((H - canvas.height) / 2) + 'px';
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// ═══════════════════════════════════════════════════════
+// TILE RENDERING
+// ═══════════════════════════════════════════════════════
+function drawTile(tx, ty) {
+  const ch = MAP[ty] ? MAP[ty][tx] : null;
+  if(!ch) return;
+  const x = tx * TILE - CAMERA.x;
+  const y = ty * TILE - CAMERA.y;
+
+  // Skip if off-screen
+  if(x + TILE < 0 || y + TILE < 0 || x > LW || y > LH) return;
+
+  switch(ch) {
+    case 'W': // Water
+      ctx.fillStyle = C.water;
+      ctx.fillRect(x, y, TILE, TILE);
+      // Subtle shimmer stripes
+      ctx.fillStyle = C.waterShine;
+      ctx.fillRect(x+2, y+3, 5, 1);
+      ctx.fillRect(x+9, y+9, 4, 1);
+      ctx.fillRect(x+1, y+13, 6, 1);
+      break;
+
+    case '~': // Sandy shore
+      ctx.fillStyle = C.sand;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = C.grassLight;
+      ctx.fillRect(x, y, TILE, 3);
+      break;
+
+    case '.': // Grass
+      ctx.fillStyle = C.grass;
+      ctx.fillRect(x, y, TILE, TILE);
+      // Subtle variation
+      ctx.fillStyle = C.grassDark;
+      ctx.fillRect(x+1, y+1, 2, 1);
+      ctx.fillRect(x+10, y+7, 2, 1);
+      ctx.fillRect(x+5, y+12, 2, 1);
+      break;
+
+    case '#': // Tree
+      ctx.fillStyle = C.grass;
+      ctx.fillRect(x, y, TILE, TILE);
+      // Trunk
+      ctx.fillStyle = C.treeTrunk;
+      ctx.fillRect(x+6, y+9, 4, 7);
+      // Canopy layers
+      ctx.fillStyle = C.treeTop;
+      ctx.fillRect(x+3, y+5, 10, 7);
+      ctx.fillRect(x+2, y+3, 12, 5);
+      ctx.fillRect(x+4, y+1, 8, 4);
+      ctx.fillStyle = C.treeShade;
+      ctx.fillRect(x+3, y+5, 4, 7);
+      ctx.fillRect(x+2, y+3, 5, 5);
+      break;
+
+    case 'F': // Flower
+      ctx.fillStyle = C.grass;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = (tx + ty) % 2 === 0 ? C.flowerRed : C.flowerYel;
+      ctx.fillRect(x+5, y+7, 2, 2);
+      ctx.fillRect(x+10, y+4, 2, 2);
+      ctx.fillStyle = C.white;
+      ctx.fillRect(x+6, y+8, 1, 1);
+      ctx.fillRect(x+11, y+5, 1, 1);
+      break;
+
+    case '=': // Horizontal path
+    case '|': // Vertical path
+    case '+': // Crossroads
+      ctx.fillStyle = C.path;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = C.pathDark;
+      ctx.fillRect(x, y, TILE, 1);      // top edge
+      ctx.fillRect(x, y+TILE-1, TILE, 1); // bottom edge
+      ctx.fillStyle = C.pathEdge;
+      if(ch !== '|') { ctx.fillRect(x+1, y+6, TILE-2, 1); ctx.fillRect(x+1, y+10, TILE-2, 1); }
+      break;
+
+    case 'H': // Building roof (top tiles)
+      ctx.fillStyle = C.roofRed;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = C.roofDark;
+      ctx.fillRect(x, y, TILE, 3);
+      ctx.fillRect(x, y, 2, TILE);
+      // Roof ridge
+      ctx.fillStyle = '#d44';
+      ctx.fillRect(x+2, y+5, TILE-4, 2);
+      break;
+
+    case 'h': // Building wall
+      ctx.fillStyle = C.wall;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = C.wallShadow;
+      ctx.fillRect(x, y, 2, TILE);
+      ctx.fillRect(x, y+TILE-2, TILE, 2);
+      // Window (only on specific tiles)
+      if((tx + ty) % 3 === 0) {
+        ctx.fillStyle = C.windowFrame;
+        ctx.fillRect(x+3, y+3, 9, 8);
+        ctx.fillStyle = C.window;
+        ctx.fillRect(x+4, y+4, 7, 6);
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.fillRect(x+5, y+5, 2, 2);
+      }
+      break;
+
+    case 'L': // Lab roof (blue — Projects)
+      ctx.fillStyle = C.labRoof;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = '#1a6fa0';
+      ctx.fillRect(x, y, TILE, 3);
+      ctx.fillRect(x, y, 2, TILE);
+      ctx.fillStyle = '#4ab8e0';
+      ctx.fillRect(x+2, y+5, TILE-4, 2);
+      break;
+
+    case 'l': // Lab wall
+      ctx.fillStyle = C.labWall;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = '#c8d8e0';
+      ctx.fillRect(x, y, 2, TILE);
+      ctx.fillRect(x, y+TILE-2, TILE, 2);
+      if((tx + ty) % 3 === 0) {
+        ctx.fillStyle = C.windowFrame;
+        ctx.fillRect(x+3, y+3, 9, 8);
+        ctx.fillStyle = '#a0d8ef';
+        ctx.fillRect(x+4, y+4, 7, 6);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillRect(x+5, y+5, 2, 2);
+      }
+      break;
+
+    case 'P': // Pokecenter roof (red — Connect)
+      ctx.fillStyle = C.pcRoof;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = '#a02820';
+      ctx.fillRect(x, y, TILE, 3);
+      ctx.fillStyle = '#ff6060';
+      ctx.fillRect(x+2, y+5, TILE-4, 2);
+      // Cross symbol
+      ctx.fillStyle = C.white;
+      ctx.fillRect(x+6, y+7, 4, 2);
+      ctx.fillRect(x+7, y+6, 2, 4);
+      break;
+
+    case 'p': // Pokecenter wall
+      ctx.fillStyle = C.pcWall;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = '#ddd';
+      ctx.fillRect(x, y, 2, TILE);
+      ctx.fillRect(x, y+TILE-2, TILE, 2);
+      if((tx + ty) % 3 === 0) {
+        ctx.fillStyle = C.windowFrame;
+        ctx.fillRect(x+3, y+3, 9, 8);
+        ctx.fillStyle = C.window;
+        ctx.fillRect(x+4, y+4, 7, 6);
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.fillRect(x+5, y+5, 2, 2);
+      }
+      break;
+
+    case 'S': // Sign
+      ctx.fillStyle = C.grass;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = C.signPost;
+      ctx.fillRect(x+7, y+9, 2, 7);
+      ctx.fillStyle = C.signBoard;
+      ctx.fillRect(x+3, y+4, 10, 7);
+      ctx.fillStyle = C.signText;
+      ctx.fillRect(x+5, y+6, 6, 1);
+      ctx.fillRect(x+5, y+8, 6, 1);
+      break;
+
+    case 'D': // Door/entrance
+      ctx.fillStyle = C.wall;
+      ctx.fillRect(x, y, TILE, TILE);
+      ctx.fillStyle = C.doorFrame;
+      ctx.fillRect(x+3, y+2, 10, 14);
+      ctx.fillStyle = C.door;
+      ctx.fillRect(x+4, y+3, 8, 12);
+      ctx.fillStyle = 'rgba(255,200,100,0.3)';
+      ctx.fillRect(x+4, y+3, 8, 12);
+      break;
+
+    case 'N': case 'E': case 'R': case 'G': case 'V': // NPCs
+    case 'n': case 'e': case 'r': case 'g': case 'v':
+      ctx.fillStyle = C.grass;
+      ctx.fillRect(x, y, TILE, TILE);
+      // Draw NPC (small figure)
+      const npcCols = { N:C.npcBlue, E:C.npcRed, R:C.npcGreen, G:C.npcPurple, V:C.npcYel,
+                        n:C.npcBlue, e:C.npcRed, r:C.npcGreen, g:C.npcPurple, v:C.npcYel };
+      const nc = npcCols[ch] || C.npcBlue;
+      drawNPC(x+TILE/2, y+TILE-2, nc);
+      break;
+
+    default:
+      ctx.fillStyle = C.grass;
+      ctx.fillRect(x, y, TILE, TILE);
+  }
+}
+
+function drawNPC(cx, by, color) {
+  // Head
+  ctx.fillStyle = '#ffc87a';
+  ctx.fillRect(cx-3, by-14, 6, 6);
+  // Hair/hat
+  ctx.fillStyle = color;
+  ctx.fillRect(cx-3, by-15, 6, 2);
+  // Body
+  ctx.fillStyle = color;
+  ctx.fillRect(cx-4, by-8, 8, 7);
+  // Legs
+  ctx.fillStyle = '#3a3a6a';
+  ctx.fillRect(cx-3, by-1, 3, 3);
+  ctx.fillRect(cx+1, by-1, 3, 3);
+  // Exclamation (! above head when nearby)
+}
+
+// ═══════════════════════════════════════════════════════
+// PLAYER RENDERING
+// ═══════════════════════════════════════════════════════
+// Directions: 0=up 1=right 2=down 3=left
+function drawPlayer() {
+  const sx = PLAYER.px - CAMERA.x + TILE/2;
+  const sy = PLAYER.py - CAMERA.y + TILE;
+
+  const dir  = PLAYER.dir;
+  const frame = PLAYER.moving ? PLAYER.frame : 0;
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.beginPath();
+  ctx.ellipse(sx, sy, 5, 2, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Legs (animated)
+  ctx.fillStyle = '#2a3a6a';
+  if(frame === 0 || !PLAYER.moving) {
+    ctx.fillRect(sx-4, sy-4, 4, 5);
+    ctx.fillRect(sx+1, sy-4, 4, 5);
+  } else {
+    // Walk cycle
+    ctx.fillRect(sx-4, sy-6, 4, 5);
+    ctx.fillRect(sx+1, sy-2, 4, 5);
+  }
+
+  // Body (shirt — blue)
+  ctx.fillStyle = '#3b82f6';
+  ctx.fillRect(sx-5, sy-11, 11, 8);
+
+  // Arms
+  ctx.fillStyle = '#ffd5a0';
+  if(dir === 2 || dir === 0) {
+    ctx.fillRect(sx-7, sy-10, 3, 5); // left arm
+    ctx.fillRect(sx+5, sy-10, 3, 5); // right arm
+  }
+
+  // Head
+  ctx.fillStyle = '#ffd5a0';
+  ctx.fillRect(sx-4, sy-17, 8, 7);
+
+  // Hair
+  ctx.fillStyle = '#2a1800';
+  ctx.fillRect(sx-4, sy-18, 8, 3);
+  ctx.fillRect(sx-5, sy-17, 2, 3);
+
+  // Eyes (direction-aware)
+  ctx.fillStyle = '#111';
+  if(dir === 2) { // facing down
+    ctx.fillRect(sx-2, sy-12, 2, 2);
+    ctx.fillRect(sx+1, sy-12, 2, 2);
+  } else if(dir === 0) { // facing up
+    // no eyes (back of head)
+    ctx.fillStyle = '#2a1800';
+    ctx.fillRect(sx-4, sy-17, 8, 2);
+  } else if(dir === 1) { // right
+    ctx.fillRect(sx+1, sy-12, 2, 2);
+  } else { // left
+    ctx.fillRect(sx-3, sy-12, 2, 2);
+  }
+
+  // Backpack
+  ctx.fillStyle = '#8B4513';
+  if(dir === 0 || dir === 2) {} // front/back: skip backpack detail
+  else {
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(dir===1 ? sx-7 : sx+5, sy-10, 3, 6);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+function render() {
+  ctx.save();
+  ctx.scale(SCALE, SCALE);
+
+  // Draw background
+  ctx.fillStyle = C.grassDark;
+  ctx.fillRect(0, 0, LW, LH);
+
+  // Visible tile range
+  const startX = Math.max(0, Math.floor(CAMERA.x / TILE) - 1);
+  const endX   = Math.min(MAP_W, Math.ceil((CAMERA.x + LW) / TILE) + 1);
+  const startY = Math.max(0, Math.floor(CAMERA.y / TILE) - 1);
+  const endY   = Math.min(MAP_H, Math.ceil((CAMERA.y + LH) / TILE) + 1);
+
+  for(let ty = startY; ty < endY; ty++) {
+    for(let tx = startX; tx < endX; tx++) {
+      drawTile(tx, ty);
+    }
+  }
+
+  // Draw player
+  drawPlayer();
+
+  // Interact hint: if near interactable, draw small "!" above player
+  const faceTX = PLAYER.tx + [0,1,0,-1][PLAYER.dir];
+  const faceTY = PLAYER.ty + [-1,0,1,0][PLAYER.dir];
+  const faceKey = faceTX+','+faceTY;
+  if(INTERACTIONS[faceKey] && STATE.mode === 'WORLD') {
+    const hx = PLAYER.px - CAMERA.x + TILE/2;
+    const hy = PLAYER.py - CAMERA.y - 4;
+    ctx.fillStyle = '#ffdd00';
+    ctx.fillRect(hx-1, hy-10, 3, 7);
+    ctx.fillRect(hx-1, hy-1,  3, 3);
+  }
+
+  ctx.restore();
+}
+
+// ═══════════════════════════════════════════════════════
+// CAMERA UPDATE
+// ═══════════════════════════════════════════════════════
+function updateCamera() {
+  const targetX = PLAYER.px - LW/2 + TILE/2;
+  const targetY = PLAYER.py - LH/2 + TILE/2;
+  CAMERA.x += (targetX - CAMERA.x) * 0.1;
+  CAMERA.y += (targetY - CAMERA.y) * 0.1;
+  CAMERA.x = Math.max(0, Math.min(CAMERA.x, MAP_W*TILE - LW));
+  CAMERA.y = Math.max(0, Math.min(CAMERA.y, MAP_H*TILE - LH));
+}
+
+// ═══════════════════════════════════════════════════════
+// PLAYER UPDATE
+// ═══════════════════════════════════════════════════════
+function updatePlayer(dt) {
+  if(STATE.mode === 'DIALOG') return;
+
+  // Frame animation
+  if(PLAYER.moving) {
+    PLAYER.frameTimer += dt;
+    if(PLAYER.frameTimer >= 0.15) { PLAYER.frame = 1 - PLAYER.frame; PLAYER.frameTimer = 0; }
+  }
+
+  if(!PLAYER.moving) {
+    // Determine direction from keys
+    let dx = 0, dy = 0;
+    if(KEYS['ArrowUp']    || KEYS['w']) { dy = -1; PLAYER.dir = 0; }
+    if(KEYS['ArrowRight'] || KEYS['d']) { dx =  1; PLAYER.dir = 1; }
+    if(KEYS['ArrowDown']  || KEYS['s']) { dy =  1; PLAYER.dir = 2; }
+    if(KEYS['ArrowLeft']  || KEYS['a']) { dx = -1; PLAYER.dir = 3; }
+
+    // Only move in one direction at a time
+    if(dx !== 0) dy = 0;
+
+    if(dx !== 0 || dy !== 0) {
+      const nx = PLAYER.tx + dx;
+      const ny = PLAYER.ty + dy;
+      if(isWalkable(nx, ny)) {
+        PLAYER.tx = nx;
+        PLAYER.ty = ny;
+        PLAYER.moving = true;
+        PLAYER.moveTimer = 0;
+        playStep();
+      }
+    }
+  }
+
+  if(PLAYER.moving) {
+    PLAYER.moveTimer += dt;
+    const progress = Math.min(PLAYER.moveTimer / PLAYER.MOVE_SPEED, 1);
+    // Smooth easing
+    const ease = progress < 0.5 ? 2*progress*progress : -1+(4-2*progress)*progress;
+    PLAYER.px = (PLAYER.tx * TILE) * ease + ((PLAYER.tx - (PLAYER.dir===1?1:PLAYER.dir===3?-1:0)) * TILE) * (1 - ease);
+    PLAYER.py = (PLAYER.ty * TILE) * ease + ((PLAYER.ty - (PLAYER.dir===2?1:PLAYER.dir===0?-1:0)) * TILE) * (1 - ease);
+
+    if(progress >= 1) {
+      PLAYER.px = PLAYER.tx * TILE;
+      PLAYER.py = PLAYER.ty * TILE;
+      PLAYER.moving = false;
+      checkZone();
+    }
+  }
+
+  // Interact key
+  if(JUST_PRESSED['z'] || JUST_PRESSED[' '] || JUST_PRESSED['Enter']) {
+    tryInteract();
+  }
+  // Clear just-pressed
+  for(const k in JUST_PRESSED) delete JUST_PRESSED[k];
+}
+
+// ═══════════════════════════════════════════════════════
+// ZONE DETECTION
+// ═══════════════════════════════════════════════════════
+function checkZone() {
+  const zone = getZone(PLAYER.tx, PLAYER.ty);
+  if(zone !== STATE.lastZone) {
+    STATE.lastZone = zone;
+    showAreaBanner(zone);
+    document.getElementById('hud-zone').textContent = zone;
+  }
+}
+
+let bannerTimeout = null;
+function showAreaBanner(name) {
+  const el = document.getElementById('area-banner');
+  el.textContent = name;
+  el.classList.add('show');
+  clearTimeout(bannerTimeout);
+  bannerTimeout = setTimeout(() => el.classList.remove('show'), 2500);
+  playEnterZone();
+}
+
+// ═══════════════════════════════════════════════════════
+// INTERACTION
+// ═══════════════════════════════════════════════════════
+function tryInteract() {
+  if(STATE.mode === 'DIALOG') {
+    advanceDialog();
+    return;
+  }
+
+  // Check tile in facing direction
+  const faceTX = PLAYER.tx + [0,1,0,-1][PLAYER.dir];
+  const faceTY = PLAYER.ty + [-1,0,1,0][PLAYER.dir];
+  const key = faceTX + ',' + faceTY;
+
+  if(INTERACTIONS[key]) {
+    openDialog(INTERACTIONS[key]);
+  }
+}
+
+function openDialog(data) {
+  STATE.mode = 'DIALOG';
+  STATE.dialog.lines = data.lines || [];
+  STATE.dialog.index = 0;
+
+  const box = document.getElementById('dialog-box');
+  box.style.display = 'block';
+  document.getElementById('dialog-speaker').textContent = data.speaker || '';
+
+  typewriterLine(STATE.dialog.lines[0] || '');
+  playDialogOpen();
+}
+
+function advanceDialog() {
+  STATE.dialog.index++;
+  if(STATE.dialog.index >= STATE.dialog.lines.length) {
+    closeDialog();
+    return;
+  }
+  typewriterLine(STATE.dialog.lines[STATE.dialog.index]);
+  playClick();
+}
+
+let typeTimer = null;
+function typewriterLine(text) {
+  const el = document.getElementById('dialog-text');
+  el.textContent = '';
+  let i = 0;
+  clearInterval(typeTimer);
+  typeTimer = setInterval(() => {
+    el.textContent += text[i++];
+    if(i >= text.length) clearInterval(typeTimer);
+  }, 28);
+}
+
+function closeDialog() {
+  STATE.mode = 'WORLD';
+  document.getElementById('dialog-box').style.display = 'none';
+  document.getElementById('dialog-text').textContent = '';
+  document.getElementById('dialog-speaker').textContent = '';
+}
+
+// Close dialog on Escape
+window.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && STATE.mode === 'DIALOG') closeDialog();
+});
+
+// ═══════════════════════════════════════════════════════
+// AUDIO
+// ═══════════════════════════════════════════════════════
+let AC = null;
+function ac() {
+  if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state === 'suspended') AC.resume();
+  return AC;
+}
+document.addEventListener('keydown', () => { try { ac(); } catch(e){} }, {once:true});
+document.addEventListener('touchstart', () => { try { ac(); } catch(e){} }, {once:true});
+
+let lastStepTime = 0;
+function playStep() {
+  const now = performance.now();
+  if(now - lastStepTime < 100) return;
+  lastStepTime = now;
+  try {
+    const c = ac();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'sine';
+    o.frequency.value = 180;
+    g.gain.setValueAtTime(0.04, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.08);
+    o.start(); o.stop(c.currentTime + 0.08);
+  } catch(e){}
+}
+
+function playDialogOpen() {
+  try {
+    const c = ac();
+    [440,550,660].forEach((f,i) => {
+      const o=c.createOscillator(), g=c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type='square'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.08, c.currentTime+i*0.06);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime+i*0.06+0.1);
+      o.start(c.currentTime+i*0.06); o.stop(c.currentTime+i*0.06+0.12);
+    });
+  } catch(e){}
+}
+
+function playClick() {
+  try {
+    const c=ac(), o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type='square'; o.frequency.value=880;
+    g.gain.setValueAtTime(0.05,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.05);
+    o.start(); o.stop(c.currentTime+0.06);
+  } catch(e){}
+}
+
+function playEnterZone() {
+  try {
+    const c=ac();
+    [523,659,784].forEach((f,i)=>{
+      const o=c.createOscillator(), g=c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type='sine'; o.frequency.value=f;
+      g.gain.setValueAtTime(0.07, c.currentTime+i*0.1);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime+i*0.1+0.2);
+      o.start(c.currentTime+i*0.1); o.stop(c.currentTime+i*0.1+0.22);
+    });
+  } catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+// GAME LOOP
+// ═══════════════════════════════════════════════════════
+let lastTime = 0;
+function loop(ts) {
+  const dt = Math.min((ts - lastTime) / 1000, 0.05);
+  lastTime = ts;
+  if(document.getElementById('game-container').style.display !== 'none') {
+    updatePlayer(dt);
+    updateCamera();
+    render();
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ═══════════════════════════════════════════════════════
+// GUIDE / MODE TOGGLE
+// ═══════════════════════════════════════════════════════
+function toggleMode() {
+  const gc  = document.getElementById('game-container');
+  const sg  = document.getElementById('strategy-guide');
+  const btn = document.getElementById('mode-toggle');
+  const showingGame = gc.style.display !== 'none';
+  gc.style.display = showingGame ? 'none' : 'block';
+  sg.style.display = showingGame ? 'block' : 'none';
+  btn.innerHTML = showingGame ? '▶ PLAY<br>[TAB]' : '📖 GUIDE<br>[TAB]';
+}
+
+function showSection(id) {
+  document.querySelectorAll('.guide-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
+  const sec = document.getElementById(id);
+  if(sec) sec.classList.add('active');
+  const tab = document.querySelector(`.guide-tab[data-section="${id}"]`);
+  if(tab) tab.classList.add('active');
+  document.getElementById('strategy-guide').scrollTop = 0;
+}
+
+// Email reveal
+function revealEmail(e) {
+  e.preventDefault();
+  const addr = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
+  document.getElementById('email-text').textContent = addr;
+  document.getElementById('email-reveal').href = 'mailto:' + addr;
+}
+
+// Mobile default: show guide
+if(window.matchMedia('(hover:none),(max-width:768px)').matches) {
+  document.getElementById('game-container').style.display = 'none';
+  document.getElementById('strategy-guide').style.display = 'block';
+  document.getElementById('mode-toggle').innerHTML = '▶ PLAY<br>[TAB]';
+  document.getElementById('touch-controls').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
+// POPULATE GUIDE DYNAMICALLY
+// ═══════════════════════════════════════════════════════
+(function populateGuide() {
+  // Skills
+  const SKILLS = [
+    { group:'skills-ai', items:[
+      ['LlamaIndex / ADK',95],['Adv RAG / Vector DBs',92],['Model Steering / Aligning',88],
+      ['LightEval / RAGAS',88],['ML Feature Eng / Drift',88],['LLM Serving / Fine-tuning',75],
+      ['NumPy / JAX / TensorFlow',45]
+    ]},
+    { group:'skills-cloud', items:[
+      ['GCP Vertex AI',95],['Docker / VM Serving',75],['AWS Bedrock / Textract',65],['OpenUI / W&B',60]
+    ]},
+    { group:'skills-data', items:[
+      ['Python / FastAPI',95],['PostgreSQL / BigQuery',80],['Claude Code / OpenClaw',75],['FHIR / Medical AI',60]
+    ]},
+  ];
+  SKILLS.forEach(({group, items}) => {
+    const el = document.getElementById(group);
+    if(!el) return;
+    items.forEach(([name, pct]) => {
+      el.innerHTML += `<div class="skill-bar-row">
+        <span class="skill-name">${name}</span>
+        <div class="skill-track"><div class="skill-fill" style="width:${pct}%"></div></div>
+        <span class="skill-pct">${pct}%</span>
+      </div>`;
+    });
+  });
+
+  // Projects
+  const PROJECTS = [
+    ['Agentic PR Platform ★', 'ADK · Gemma/Claude · Vertex AI · Firebase · MCP', 'Multi-agent orchestration platform for State Govt deployments at Deloitte. AI Hackathon Winner.'],
+    ['Medical AI Infrastructure', 'Document AI · FHIR · NER · GCP · ML pipeline', 'OCR engine with NER parser for medical documents. EPIC and Cerner integration.'],
+    ['Advanced RAG System v1–v4', 'Weaviate · Milvus · ADK · RAGAS · DSPy · Redis', 'Four RAG builds from basic retrieval to full multi-agent production RAGAS eval.'],
+    ['Custom LLM Foundry', 'Gemma/Qwen2.5 · vLLM/Unsloth · W&B/HF · Docker/RunPod · DSPy', 'Fine-tuning pipeline with custom data collection. Public artifact on HuggingFace @dweebster.'],
+    ['MLOps Engine', 'BigQuery · Model registry', 'Dynamic model trainer/evaluator. Scheduled retraining for classification and regression.'],
+    ['Disease Detection in Cattle', 'TFX · Serverless · Zapier · Model registry', 'CCTV cattle monitoring. Ear tag OCR alerts to rancher on disease detection.'],
+    ['Stable Diffusion Pipeline', 'Stable Diffusion · Python · ComfyUI', 'Generative AI pipeline for visual content creation and automation.'],
+    ['Claude Agent Code Conversion', 'Claude Agent SDK · Anthropic API · MCP · prompt caching', 'Multi-agent code conversion + dynamic test generation with minimal token consumption.'],
+    ['Education Data Pipeline', 'ADK · LLM openrouter · Redis RAG · WHO standards', 'Transforms raw educational content into student-profile-adapted learning material.'],
+    ['In-Store Navigation AI', 'NetworkX · conversational AI · Claude', 'Conversational AI for store layouts as graphs. Natural-language aisle navigation.'],
+    ['ChatBot Systems v1–v3', 'LangChain · Redis · FastAPI · Docker · RASA · Ollama', 'RASA → Dialogflow → LLM-backed RAG progression. Three shipped chatbots.'],
+  ];
+  const pl = document.getElementById('guide-proj-list');
+  if(pl) {
+    PROJECTS.forEach(([name, tech, desc]) => {
+      pl.innerHTML += `<div class="proj-card">
+        <h3>${name}</h3>
+        <p>${desc}</p>
+        <div>${tech.split('·').map(t=>`<span class="guide-tag">${t.trim()}</span>`).join('')}</div>
+      </div>`;
+    });
+  }
+})();
+
+// Init zone
+checkZone();
+</script>
+
 <!-- Cloudflare Web Analytics -->
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js'
   data-cf-beacon='{"token":"CLOUDFLARE_TOKEN_HERE"}'></script>
+<!-- End Cloudflare Web Analytics -->
+
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
   (function(c,l,a,r,i,t,y){
@@ -483,1390 +1346,6 @@
     t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
     y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
   })(window,document,"clarity","script","CLARITY_ID_HERE");
-</script>
-</head>
-<body>
-
-<!-- ══ GAME MODE ════════════════════════════════════════════ -->
-<div id="game-container">
-  <canvas id="game-canvas"></canvas>
-
-  <div id="hud"></div>
-
-  <div id="dialog-box">
-    <div id="dialog-text"></div>
-    <div id="dialog-hint">SPACE / ENTER ▶</div>
-  </div>
-
-  <div id="touch-controls">
-    <div>
-      <div class="tcol">
-        <button class="touch-btn" data-key="ArrowLeft">◀</button>
-        <button class="touch-btn" data-key="ArrowRight">▶</button>
-      </div>
-      <div class="tcol">
-        <button class="touch-btn" data-key="e">ACT</button>
-        <button class="touch-btn" data-key=" ">JUMP</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ STRATEGY GUIDE ═══════════════════════════════════════ -->
-<div id="strategy-guide">
-  <nav id="guide-nav">
-    <span class="guide-logo">PIXEL QUEST</span>
-    <button class="guide-tab active" data-section="guide-home">HOME</button>
-    <button class="guide-tab" data-section="guide-about">ABOUT</button>
-    <button class="guide-tab" data-section="guide-projects">PROJECTS</button>
-    <button class="guide-tab" data-section="guide-articles">ARTICLES</button>
-    <button class="guide-tab" data-section="guide-connect">CONNECT</button>
-  </nav>
-
-  <div id="guide-content">
-
-    <!-- HOME -->
-    <section id="guide-home" class="guide-section active">
-      <div class="gh-hero">
-        <div class="gh-name">Roshan <em>Abraham.</em></div>
-        <div class="gh-title">AI Solutions Consultant &nbsp;·&nbsp; India | USA | UK &nbsp;·&nbsp; <span style="color:var(--green)">● Available for Work</span></div>
-        <div class="gh-tagline">AI Engineer specializing in LLMOps, Agentic Systems, MLOps, and enterprise AI solutions. Building intelligent systems that transform how organizations work.</div>
-        <div class="gh-tags">
-          <span class="gh-tag">#LLMOps</span>
-          <span class="gh-tag">#AgenticAI</span>
-          <span class="gh-tag">#MLOps</span>
-          <span class="gh-tag">#RAG</span>
-          <span class="gh-tag">#CloudAI</span>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:20px;">
-          Stack: <span style="color:var(--cyan)">ADK / Claude SDK · Vertex AI · FastAPI · Docker · Vector DBs · LlamaIndex</span>
-        </div>
-        <div class="gh-actions">
-          <a class="gh-btn primary" href="roshan-abraham-cv.pdf" download>Download CV</a>
-          <button class="gh-btn secondary" onclick="showGuideSection('guide-connect')">Get in Touch</button>
-          <button class="gh-btn secondary" onclick="toggleMode()">▶ Play Game</button>
-        </div>
-      </div>
-
-      <div class="section-divider" data-n="01">recent highlights</div>
-      <div class="guide-grid">
-        <div class="guide-card">
-          <div class="gc-label">Current Role</div>
-          <div class="gc-title">AI Solutions Consultant</div>
-          <div class="gc-sub">Deloitte USI · Jan 2024 — Present</div>
-          <div class="gc-desc">Agentic State Govt solutions. AI Hackathon Winner for PR Agentic platform. Enterprise LLM deployments.</div>
-        </div>
-        <div class="guide-card gc-featured">
-          <div class="gc-feat-badge">★ AI HACKATHON WINNER</div>
-          <div class="gc-title">Agentic PR Platform</div>
-          <div class="gc-sub">ADK · Gemma/Claude · Vertex AI · Firebase · MCP</div>
-          <div class="gc-desc">Multi-agent PR automation system. Featured project at Deloitte AI Hackathon.</div>
-        </div>
-        <div class="guide-card">
-          <div class="gc-label">5+ Years Experience</div>
-          <div class="gc-title">Production AI Systems</div>
-          <div class="gc-sub">LLMOps · Agentic · RAG · Medical AI</div>
-          <div class="gc-desc">End-to-end ML pipelines from training to deployment. 11 shipped projects across multiple domains.</div>
-        </div>
-      </div>
-
-      <div class="section-divider" data-n="02">skills overview</div>
-      <div class="skills-box">
-        <div class="skill-group">
-          <div class="skill-group-lbl">// ai &amp; llmops</div>
-          <div class="skill-row"><span class="skill-name">LlamaIndex / ADK</span><div class="skill-track"><div class="skill-fill cyan" style="width:95%"></div></div><span class="skill-pct">95</span></div>
-          <div class="skill-row"><span class="skill-name">Adv RAG / Vector DBs</span><div class="skill-track"><div class="skill-fill cyan" style="width:92%"></div></div><span class="skill-pct">92</span></div>
-          <div class="skill-row"><span class="skill-name">Model Steering</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
-        </div>
-        <div class="skill-group">
-          <div class="skill-group-lbl">// cloud &amp; mlops</div>
-          <div class="skill-row"><span class="skill-name">GCP Vertex AI</span><div class="skill-track"><div class="skill-fill green" style="width:95%"></div></div><span class="skill-pct">95</span></div>
-          <div class="skill-row"><span class="skill-name">Docker / VM Serving</span><div class="skill-track"><div class="skill-fill green" style="width:75%"></div></div><span class="skill-pct">75</span></div>
-        </div>
-        <div class="skill-group">
-          <div class="skill-group-lbl">// data &amp; backend</div>
-          <div class="skill-row"><span class="skill-name">Python / FastAPI</span><div class="skill-track"><div class="skill-fill orange" style="width:95%"></div></div><span class="skill-pct">95</span></div>
-          <div class="skill-row"><span class="skill-name">PostgreSQL / BigQuery</span><div class="skill-track"><div class="skill-fill orange" style="width:80%"></div></div><span class="skill-pct">80</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ABOUT -->
-    <section id="guide-about" class="guide-section">
-      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / about</div>
-      <div class="guide-h2">About <em>Me.</em></div>
-      <p style="font-size:13px;line-height:2;color:var(--text);margin-bottom:12px;">I'm an <strong style="color:var(--cyan)">AI Solutions Consultant</strong> at Deloitte USI with 5+ years of experience building production AI systems for enterprise and government organizations.</p>
-      <p style="font-size:13px;line-height:2;color:var(--text);margin-bottom:12px;">I specialize in <strong style="color:var(--cyan)">LLMOps, Agentic Orchestration, and Advanced RAG systems</strong> — architecting end-to-end ML pipelines from training to deployment at scale.</p>
-      <p style="font-size:13px;line-height:2;color:var(--text);margin-bottom:28px;">My expertise spans <strong style="color:var(--cyan)">Medical AI infrastructure</strong>, custom LLM foundries, and building autonomous agent systems. Winner of AI Hackathon for PR Agentic solutions.</p>
-
-      <div class="section-divider">experience</div>
-      <div class="exp-list">
-        <div class="exp-item">
-          <div class="exp-header">
-            <div><div class="exp-role">AI Solutions Consultant <span class="exp-tag current">current</span></div><div class="exp-co">Deloitte USI</div></div>
-            <div class="exp-date">Jan 2024 — Present</div>
-          </div>
-          <div class="exp-desc">Handling Govt projects and transforming AI solutions for enterprise consumption. Building Agentic solutions for State Govt organizations. Winner of AI Hackathon for PR Agentic solutions. Blockchain-ready chatbot provisioning.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-header">
-            <div><div class="exp-role">AI Team Lead</div><div class="exp-co">Appsynergies</div></div>
-            <div class="exp-date">2021 — Jan 2024</div>
-          </div>
-          <div class="exp-desc">Led MLOps planning across all segments. Architected API systems for model inference at scale. Delivered optimized AI solutions leveraging custom industry expertise. Mentored junior AI engineers.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-header">
-            <div><div class="exp-role">Project Lead AI Engineer <span class="exp-tag concurrent">concurrent</span></div><div class="exp-co">MyDiGiRecords</div></div>
-            <div class="exp-date">2022 — 2023</div>
-          </div>
-          <div class="exp-desc">Preprocessed 100+ GB Doc AI model for training and fine-tuning. EPIC and Cerner medical distributor integration. Developed ABHA FHIR integration and end-to-end OCR-NER into FHIR system.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-header">
-            <div><div class="exp-role">AI Consultant <span class="exp-tag concurrent">concurrent</span></div><div class="exp-co">Tasset</div></div>
-            <div class="exp-date">Mid 2022 — 2023</div>
-          </div>
-          <div class="exp-desc">Large-scale data scraping and text dataset generation. Blockchain-ready chatbot provisioning for client needs.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-header">
-            <div><div class="exp-role">AI Engineer <span class="exp-tag foundation">foundation</span></div><div class="exp-co">Appsynergies</div></div>
-            <div class="exp-date">2019 — 2021</div>
-          </div>
-          <div class="exp-desc">Developed and integrated ML models into production pipelines. Built inference APIs and data preprocessing systems. Early MLOps foundations.</div>
-        </div>
-        <div class="exp-item">
-          <div class="exp-header">
-            <div><div class="exp-role">Data Scientist Intern <span class="exp-tag foundation">foundation</span></div><div class="exp-co">QDgrees</div></div>
-            <div class="exp-date">2018 — 2019</div>
-          </div>
-          <div class="exp-desc">Applied ML and statistical modelling for data analysis. Built and deployed predictive models and data pipelines.</div>
-        </div>
-      </div>
-
-      <div class="section-divider">skills</div>
-      <div class="skills-box">
-        <div class="skill-group">
-          <div class="skill-group-lbl">// ai &amp; llmops</div>
-          <div class="skill-row"><span class="skill-name">LlamaIndex / ADK</span><div class="skill-track"><div class="skill-fill cyan" style="width:95%"></div></div><span class="skill-pct">95</span></div>
-          <div class="skill-row"><span class="skill-name">Adv RAG / Vector DBs</span><div class="skill-track"><div class="skill-fill cyan" style="width:92%"></div></div><span class="skill-pct">92</span></div>
-          <div class="skill-row"><span class="skill-name">Model Steering</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
-          <div class="skill-row"><span class="skill-name">LightEval / RAGAS</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
-          <div class="skill-row"><span class="skill-name">ML Feature Eng / Drift</span><div class="skill-track"><div class="skill-fill cyan" style="width:88%"></div></div><span class="skill-pct">88</span></div>
-          <div class="skill-row"><span class="skill-name">LLM Serving / Fine-tuning</span><div class="skill-track"><div class="skill-fill cyan" style="width:75%"></div></div><span class="skill-pct">75</span></div>
-          <div class="skill-row"><span class="skill-name">NumPy / JAX / TF</span><div class="skill-track"><div class="skill-fill cyan" style="width:45%"></div></div><span class="skill-pct">45</span></div>
-        </div>
-        <div class="skill-group">
-          <div class="skill-group-lbl">// cloud &amp; mlops</div>
-          <div class="skill-row"><span class="skill-name">GCP Vertex AI</span><div class="skill-track"><div class="skill-fill green" style="width:95%"></div></div><span class="skill-pct">95</span></div>
-          <div class="skill-row"><span class="skill-name">Docker / VM Serving</span><div class="skill-track"><div class="skill-fill green" style="width:75%"></div></div><span class="skill-pct">75</span></div>
-          <div class="skill-row"><span class="skill-name">AWS Bedrock</span><div class="skill-track"><div class="skill-fill green" style="width:65%"></div></div><span class="skill-pct">65</span></div>
-          <div class="skill-row"><span class="skill-name">OpenUI / W&amp;B</span><div class="skill-track"><div class="skill-fill green" style="width:60%"></div></div><span class="skill-pct">60</span></div>
-        </div>
-        <div class="skill-group">
-          <div class="skill-group-lbl">// data &amp; backend</div>
-          <div class="skill-row"><span class="skill-name">Python / FastAPI</span><div class="skill-track"><div class="skill-fill orange" style="width:95%"></div></div><span class="skill-pct">95</span></div>
-          <div class="skill-row"><span class="skill-name">PostgreSQL / BigQuery</span><div class="skill-track"><div class="skill-fill orange" style="width:80%"></div></div><span class="skill-pct">80</span></div>
-          <div class="skill-row"><span class="skill-name">Claude Code</span><div class="skill-track"><div class="skill-fill orange" style="width:75%"></div></div><span class="skill-pct">75</span></div>
-          <div class="skill-row"><span class="skill-name">FHIR / Medical AI</span><div class="skill-track"><div class="skill-fill orange" style="width:60%"></div></div><span class="skill-pct">60</span></div>
-        </div>
-      </div>
-
-      <div class="section-divider">education</div>
-      <div class="edu-box">
-        <div>
-          <div class="edu-degree">B.Tech Computer Science &amp; Engineering</div>
-          <div class="edu-school">St. Aloysius Institute of Technology</div>
-        </div>
-        <div class="edu-year">2017 — 2021 (Honors)</div>
-      </div>
-
-      <div class="section-divider" style="margin-top:28px;">certifications</div>
-      <div class="cert-grid">
-        <div class="cert-card" style="border-left-color:var(--green)"><div class="cert-name">End-to-End ML with TensorFlow on GCP</div><div class="cert-meta">Google / Coursera · Aug 2020</div></div>
-        <div class="cert-card" style="border-left-color:var(--cyan)"><div class="cert-name">Reliable Google Cloud Infrastructure</div><div class="cert-meta">Google / Coursera · Jul 2020</div></div>
-        <div class="cert-card" style="border-left-color:var(--purple)"><div class="cert-name">Python Developer – MTA</div><div class="cert-meta">Microsoft · Apr 2020</div></div>
-        <div class="cert-card" style="border-left-color:var(--orange)"><div class="cert-name">Artificial Intelligence &amp; Deep Learning</div><div class="cert-meta">Online · Jan 2020</div></div>
-        <div class="cert-card" style="border-left-color:var(--cyan)"><div class="cert-name">NLP Specialization</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
-        <div class="cert-card" style="border-left-color:var(--pink)"><div class="cert-name">GANs Specialization</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
-        <div class="cert-card" style="border-left-color:var(--green)"><div class="cert-name">TensorFlow Advanced Techniques</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
-        <div class="cert-card" style="border-left-color:var(--orange)"><div class="cert-name">AI for Medicine Specialization</div><div class="cert-meta">DeepLearning.AI · 2021</div></div>
-      </div>
-    </section>
-
-    <!-- PROJECTS -->
-    <section id="guide-projects" class="guide-section">
-      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / projects</div>
-      <div class="guide-h2">Projects <em>&amp; Work.</em></div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:28px;">11 production AI systems shipped across LLMOps, Agentic AI, Medical AI, and more.</p>
-
-      <div class="guide-card gc-featured" style="margin-bottom:16px;">
-        <div class="gc-feat-badge">★ FEATURED — AI HACKATHON WINNER</div>
-        <div class="gc-title" style="font-size:18px;">Agentic PR Platform</div>
-        <div class="gc-sub">ADK · Gemma/Claude · Vertex AI · Firebase · MCP</div>
-        <div class="gc-desc">Multi-agent PR automation system. Built for and won Deloitte USI AI Hackathon. Agentic pipeline with multi-model orchestration, Firebase real-time sync, and MCP tool integration.</div>
-        <div class="gc-tags">
-          <span class="gc-tag">ADK</span><span class="gc-tag">Gemma</span><span class="gc-tag">Claude</span><span class="gc-tag">Vertex AI</span><span class="gc-tag">MCP</span><span class="gc-tag">Firebase</span>
-        </div>
-      </div>
-
-      <div class="guide-grid">
-        <div class="guide-card"><div class="gc-label">Project 2</div><div class="gc-title">Medical AI Infrastructure</div><div class="gc-sub">Document AI · FHIR · NER · GCP</div><div class="gc-desc">100+ GB Doc AI model training. EPIC/Cerner integration. ABHA FHIR OCR-NER pipeline.</div><div class="gc-tags"><span class="gc-tag">Document AI</span><span class="gc-tag">FHIR</span><span class="gc-tag">GCP</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 3</div><div class="gc-title">Advanced RAG Systems v1–v4</div><div class="gc-sub">Weaviate · Milvus · ADK · RAGAS · DSPy · Redis</div><div class="gc-desc">Four iterative RAG builds from basic to production-grade evaluation with RAGAS and DSPy optimization.</div><div class="gc-tags"><span class="gc-tag">Weaviate</span><span class="gc-tag">Milvus</span><span class="gc-tag">RAGAS</span><span class="gc-tag">DSPy</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 4</div><div class="gc-title">Custom LLM Foundry</div><div class="gc-sub">Gemma/Qwen2.5 · vLLM · W&amp;B · HuggingFace · Docker/RunPod</div><div class="gc-desc">Gemma and Qwen2.5 fine-tuning with Unsloth/vLLM. Public artifact on HuggingFace @dweebster.</div><div class="gc-tags"><span class="gc-tag">Gemma</span><span class="gc-tag">Qwen2.5</span><span class="gc-tag">vLLM</span><span class="gc-tag">HuggingFace</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 5</div><div class="gc-title">MLOps Engine</div><div class="gc-sub">BigQuery · Model Registry</div><div class="gc-desc">Dynamic trainer and evaluator. Scheduled retraining pipelines with BigQuery and model registry integration.</div><div class="gc-tags"><span class="gc-tag">BigQuery</span><span class="gc-tag">MLOps</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 6</div><div class="gc-title">Disease Detection in Cattle</div><div class="gc-sub">TFX · Serverless · Zapier · Model Registry</div><div class="gc-desc">CCTV schedule monitoring with ear tag OCR alerts. TFX pipeline with serverless inference and Zapier integration.</div><div class="gc-tags"><span class="gc-tag">TFX</span><span class="gc-tag">Serverless</span><span class="gc-tag">Zapier</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 7</div><div class="gc-title">Stable Diffusion Pipeline</div><div class="gc-sub">Stable Diffusion · ComfyUI · Python</div><div class="gc-desc">Generative AI visual content pipeline. Stable Diffusion with ComfyUI automation and Python orchestration.</div><div class="gc-tags"><span class="gc-tag">Stable Diffusion</span><span class="gc-tag">ComfyUI</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 8</div><div class="gc-title">Claude Agent Code Conversion</div><div class="gc-sub">Claude Agent SDK · Anthropic API · MCP</div><div class="gc-desc">Multi-agent code conversion with dynamic test generation and prompt caching optimization.</div><div class="gc-tags"><span class="gc-tag">Claude SDK</span><span class="gc-tag">MCP</span><span class="gc-tag">Prompt Caching</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 9</div><div class="gc-title">Education Data Pipeline</div><div class="gc-sub">ADK · LLM OpenRouter · Redis RAG</div><div class="gc-desc">WHO psych standards benchmarking for student profiles. ADK-powered adaptive content generation.</div><div class="gc-tags"><span class="gc-tag">ADK</span><span class="gc-tag">Redis</span><span class="gc-tag">OpenRouter</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 10</div><div class="gc-title">In-Store Navigation AI</div><div class="gc-sub">NetworkX · Conversational AI · Claude</div><div class="gc-desc">Graph-based store layout routing with natural language navigation. Aisle-level directions via Claude.</div><div class="gc-tags"><span class="gc-tag">NetworkX</span><span class="gc-tag">Claude</span></div></div>
-        <div class="guide-card"><div class="gc-label">Project 11</div><div class="gc-title">ChatBot Systems v1–v3</div><div class="gc-sub">LangChain · Redis · FastAPI · RASA · Ollama</div><div class="gc-desc">Three shipped chatbot generations: RASA rule-based → Dialogflow → LLM RAG with full backend.</div><div class="gc-tags"><span class="gc-tag">LangChain</span><span class="gc-tag">RASA</span><span class="gc-tag">FastAPI</span><span class="gc-tag">Redis</span></div></div>
-      </div>
-    </section>
-
-    <!-- ARTICLES -->
-    <section id="guide-articles" class="guide-section">
-      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / articles</div>
-      <div class="guide-h2">Articles <em>&amp; Writing.</em></div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:28px;">Technical writing on AI, ethics, and the future of intelligent systems.</p>
-
-      <div class="article-card">
-        <div style="flex:1">
-          <div class="article-meta">Feb 2026 &nbsp;·&nbsp; 14 min read &nbsp;·&nbsp; <a href="articles.html" style="color:var(--cyan);text-decoration:none;">view on articles page ↗</a></div>
-          <div class="article-title">The End of Seeing is Believing: How to Prove Anything in the Age of Generative AI</div>
-          <div class="article-tags">
-            <span class="article-tag">Blockchain</span>
-            <span class="article-tag">AI</span>
-            <span class="article-tag">Ethics</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="article-card article-coming">
-        <div style="flex:1">
-          <div class="article-meta">Coming Soon &nbsp;·&nbsp; In Progress</div>
-          <div class="article-title">Building Production RAG Systems: What the Tutorials Don't Tell You</div>
-          <div class="article-tags"><span class="article-tag">LLMOps</span><span class="article-tag">RAG</span><span class="article-tag">Engineering</span></div>
-        </div>
-      </div>
-
-      <div class="article-card article-coming">
-        <div style="flex:1">
-          <div class="article-meta">Coming Soon &nbsp;·&nbsp; Drafting</div>
-          <div class="article-title">LLMOps in Enterprise: Lessons from Deloitte USI</div>
-          <div class="article-tags"><span class="article-tag">LLMOps</span><span class="article-tag">Enterprise</span><span class="article-tag">Deloitte</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONNECT -->
-    <section id="guide-connect" class="guide-section">
-      <div class="guide-breadcrumb"><a href="#" onclick="showGuideSection('guide-home');return false;">~</a> / connect</div>
-      <div class="guide-h2">Connect <em>&amp; Reach Out.</em></div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:28px;">Open to consulting engagements, full-time positions, and interesting conversations about AI.</p>
-
-      <div class="connect-grid">
-        <a class="connect-card" href="https://github.com/dweebyuserx" target="_blank" rel="noopener">
-          <div class="cc-platform">GitHub</div>
-          <div class="cc-handle">@dweebyuserx</div>
-          <div class="cc-url">github.com/dweebyuserx ↗</div>
-        </a>
-        <a class="connect-card" href="https://huggingface.co/dweebster" target="_blank" rel="noopener">
-          <div class="cc-platform">HuggingFace</div>
-          <div class="cc-handle">@dweebster</div>
-          <div class="cc-url">huggingface.co/dweebster ↗</div>
-        </a>
-        <a class="connect-card" href="https://www.linkedin.com/in/roshan-abraham-187474138/" target="_blank" rel="noopener">
-          <div class="cc-platform">LinkedIn</div>
-          <div class="cc-handle">Roshan Abraham</div>
-          <div class="cc-url">/in/roshan-abraham-187474138 ↗</div>
-        </a>
-        <a class="connect-card" href="mailto:abraham.roshan.a@gmail.com">
-          <div class="cc-platform">Email</div>
-          <div class="cc-handle">abraham.roshan.a</div>
-          <div class="cc-url">@gmail.com</div>
-        </a>
-      </div>
-
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:24px;font-size:12px;color:var(--muted);line-height:1.9;">
-        <div style="color:var(--bright);font-weight:600;margin-bottom:8px;">Currently Available</div>
-        <div>Open to AI consulting engagements, full-time positions, and interesting projects. Based in India with flexibility for USA and UK engagements.</div>
-        <div style="margin-top:12px;"><a href="roshan-abraham-cv.pdf" download style="color:var(--cyan);text-decoration:none;">Download CV (PDF) ↓</a></div>
-      </div>
-    </section>
-
-  </div><!-- /guide-content -->
-
-  <div class="guide-footer">
-    <span style="color:var(--dim)">❯ built with HTML, CSS &amp; vanilla JS</span>
-    <span style="color:var(--dim)">© 2026 Roshan Abraham</span>
-    <span><span style="color:var(--green)">●</span> PIXEL QUEST v1.0</span>
-  </div>
-</div><!-- /strategy-guide -->
-
-<!-- ══ ALWAYS-VISIBLE TOGGLE ══════════════════════════════════ -->
-<button id="mode-toggle" onclick="toggleMode()">📖 STRATEGY<br>GUIDE [TAB]</button>
-
-<!-- ══ CREDITS OVERLAY ═════════════════════════════════════════ -->
-<div id="credits-overlay">
-  <button id="credits-close" onclick="closeCredits()">[ESC] CLOSE</button>
-  <div id="credits-scroll">
-    ★ ★ ★ PIXEL QUEST ★ ★ ★<br>
-    <br>
-    MADE WITH<br>
-    <br>
-    HTML<br>
-    CSS BOX-SHADOWS<br>
-    CANVAS 2D API<br>
-    WEB AUDIO API<br>
-    VANILLA JAVASCRIPT<br>
-    <br>
-    NO NPM<br>
-    NO FRAMEWORKS<br>
-    NO DEPENDENCIES<br>
-    <br>
-    ★ ★ ★<br>
-    <br>
-    BUILT BY<br>
-    ROSHAN ABRAHAM<br>
-    AI SOLUTIONS CONSULTANT<br>
-    <br>
-    INDIA | USA | UK<br>
-    <br>
-    github.com/dweebyuserx<br>
-    huggingface.co/dweebster<br>
-    <br>
-    ★ THANK YOU FOR PLAYING ★<br>
-    <br><br><br>
-  </div>
-</div>
-
-<!-- ══ TIME TRIAL RESULT ═══════════════════════════════════════ -->
-<div id="trial-result" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:700;align-items:center;justify-content:center;">
-  <div style="font-family:'Press Start 2P',monospace;font-size:clamp(8px,1.5vw,12px);text-align:center;color:#fff;line-height:2.8;">
-    <div style="color:#ffd700;font-size:clamp(12px,2.5vw,20px);margin-bottom:16px;">TIME TRIAL COMPLETE</div>
-    <div id="trial-time-display">TIME: 0:00.00</div>
-    <div id="trial-rank-display">RANK: ★★★ S</div>
-    <div style="font-size:clamp(6px,1vw,8px);color:#888;margin-top:12px;">&lt; 3:00 = S &nbsp;·&nbsp; &lt; 5:00 = A &nbsp;·&nbsp; &lt; 8:00 = B</div>
-    <div style="margin-top:20px;"><button onclick="closeTrialResult()" style="font-family:'Press Start 2P',monospace;font-size:clamp(7px,1.2vw,9px);background:transparent;border:2px solid #fff;color:#fff;padding:8px 16px;cursor:pointer;">CONTINUE</button></div>
-  </div>
-</div>
-
-<script>
-// ══════════════════════════════════════════════════════════════
-// PIXEL QUEST — Game Engine
-// ══════════════════════════════════════════════════════════════
-
-// ── Constants ─────────────────────────────────────────────────
-const TILE = 32;
-const GRAVITY = 800;
-const JUMP_VEL = -420;
-const WALK_SPEED = 160;
-const TERMINAL_VEL = 600;
-const LOGICAL_W = 320;
-const LOGICAL_H = 180;
-const PLAYER_W = 10;
-const PLAYER_H = 14;
-
-// ── State ──────────────────────────────────────────────────────
-const GAME = {
-  mode: 'WORLD',   // WORLD | DIALOG | PAUSED
-  world: 1,
-  player: { x: 40, y: 100, vx: 0, vy: 0, onGround: false, facing: 1, frame: 0, frameTimer: 0 },
-  camera: { x: 0 },
-  score: 0,
-  collected: new Set(),
-  dialogQueue: [],
-  dialogIndex: 0,
-  dialogAction: null,
-  trialActive: false,
-  trialStart: 0,
-  trialCollected: new Set(),
-  trialGoal: 11,
-};
-
-const keys = {};
-let lastKeyDown = '';
-let dialogKeyConsumed = false;
-
-document.addEventListener('keydown', e => {
-  if(e.key === 'Tab') { e.preventDefault(); toggleMode(); return; }
-  keys[e.key] = true;
-  handleKeyDown(e);
-});
-document.addEventListener('keyup', e => { keys[e.key] = false; });
-
-// ── Canvas ─────────────────────────────────────────────────────
-const canvas = document.getElementById('game-canvas');
-const ctx = canvas.getContext('2d');
-ctx.imageSmoothingEnabled = false;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-function getScale() {
-  return Math.min(canvas.width / LOGICAL_W, canvas.height / LOGICAL_H);
-}
-
-// ── Sprite Data ────────────────────────────────────────────────
-const SC = {
-  0: null,
-  1: '#ffd5a0',  // skin
-  2: '#4a2800',  // outline/hair
-  3: '#3b82f6',  // shirt blue
-  4: '#e8eeff',  // highlight
-  5: '#8b4513',  // pants
-  6: '#e05050',  // red accent
-};
-
-const SPRITE_IDLE = [
-  [0,0,0,2,2,2,2,2,0,0],
-  [0,0,2,1,1,1,1,1,2,0],
-  [0,0,2,1,4,1,1,1,2,0],
-  [0,0,2,1,1,1,1,1,2,0],
-  [0,0,0,2,2,2,2,2,0,0],
-  [0,2,3,3,3,3,3,3,2,0],
-  [0,2,3,3,3,3,3,3,2,0],
-  [0,2,3,3,3,3,3,3,2,0],
-  [0,2,3,2,3,3,2,3,2,0],
-  [0,0,2,5,2,0,2,5,2,0],
-  [0,0,2,5,2,0,2,5,2,0],
-  [0,0,2,5,2,0,2,5,2,0],
-  [0,0,2,2,2,0,2,2,2,0],
-  [0,0,0,0,0,0,0,0,0,0],
-];
-
-const SPRITE_RUN1 = [
-  [0,0,0,2,2,2,2,2,0,0],
-  [0,0,2,1,1,1,1,1,2,0],
-  [0,0,2,1,4,1,1,1,2,0],
-  [0,0,2,1,1,1,1,1,2,0],
-  [0,0,0,2,2,2,2,2,0,0],
-  [2,3,3,3,3,3,3,3,2,0],
-  [0,2,3,3,3,3,3,3,2,0],
-  [0,2,3,3,3,3,3,3,2,2],
-  [0,2,3,2,3,3,2,3,0,0],
-  [0,0,2,5,5,2,5,2,0,0],
-  [0,0,0,2,5,2,5,2,0,0],
-  [0,0,0,2,2,2,2,2,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-];
-
-const SPRITE_RUN2 = [
-  [0,0,0,2,2,2,2,2,0,0],
-  [0,0,2,1,1,1,1,1,2,0],
-  [0,0,2,1,4,1,1,1,2,0],
-  [0,0,2,1,1,1,1,1,2,0],
-  [0,0,0,2,2,2,2,2,0,0],
-  [0,2,3,3,3,3,3,3,2,2],
-  [0,2,3,3,3,3,3,3,2,0],
-  [2,3,3,3,3,3,3,3,2,0],
-  [0,0,2,3,2,3,2,3,2,0],
-  [0,0,2,5,2,5,5,2,0,0],
-  [0,0,2,5,2,2,5,0,0,0],
-  [0,0,2,2,0,2,2,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0,0,0],
-];
-
-function drawSprite(spriteData, px, py, facingRight) {
-  spriteData.forEach((row, ry) => {
-    row.forEach((ci, rx) => {
-      if(!SC[ci]) return;
-      ctx.fillStyle = SC[ci];
-      const dx = facingRight ? px + rx : px + (PLAYER_W - 1 - rx);
-      ctx.fillRect(Math.floor(dx), Math.floor(py + ry), 1, 1);
-    });
-  });
-}
-
-// ── World Definitions ──────────────────────────────────────────
-// Tilemap: each string row = one row of 32px tiles
-// World 1: 2016px wide = 63 tiles. Rows: 0=sky, 1=sky, 2=qblocks, 3=play, 4=ground
-// World 2: 2240px = 70 tiles
-// World 3: 3200px = 100 tiles
-// World 4: 1632px = 51 tiles
-// World 5: 1792px = 56 tiles
-
-function mkrow(len, char) { return char.repeat(len); }
-
-const WORLDS = {
-  1: {
-    name: 'HOME', sky: '#5c94fc', width: 63 * TILE,
-    tiles: [
-      mkrow(63, '.'),
-      mkrow(63, '.'),
-      '...?....?....?....?....?....?.................................',
-      mkrow(63, '.'),
-      mkrow(63, 'G'),
-    ],
-    objects: [
-      { type:'qblock', tx:3,  ty:2, letter:'R', collected:false, dialog:['ROSHAN ABRAHAM','AI Solutions Consultant','5+ years in production AI','● AVAILABLE FOR WORK'] },
-      { type:'qblock', tx:8,  ty:2, letter:'O', collected:false, dialog:['Stack:','ADK / Claude SDK','Vertex AI  FastAPI  Docker','Vector DBs  LlamaIndex'] },
-      { type:'qblock', tx:13, ty:2, letter:'S', collected:false, dialog:['AI Hackathon Winner','Agentic PR Platform','Deloitte USI  State Govt','Enterprise AI Solutions'] },
-      { type:'qblock', tx:18, ty:2, letter:'H', collected:false, dialog:['Location:','India  |  USA  |  UK','Open to consulting','and full-time positions'] },
-      { type:'qblock', tx:23, ty:2, letter:'A', collected:false, dialog:['Download CV:','roshan-abraham-cv.pdf','Press SPACE to download',''] },
-      { type:'qblock', tx:28, ty:2, letter:'N', collected:false, dialog:['Contact:','@dweebyuserx on GitHub','@dweebster on HuggingFace','abraham.roshan.a@gmail.com'] },
-    ],
-    warpPipe: { tx: 58, ty: 3 },
-  },
-  2: {
-    name: 'ABOUT', sky: '#1a1a2e', width: 70 * TILE,
-    tiles: [
-      mkrow(70, '.'),
-      '....BB....BB....BB....BB....BB................................',
-      '....BB....BB....BB....BB....BB................................',
-      '....BB....BB....BB....BB....BB................................',
-      mkrow(70, 'G'),
-    ],
-    objects: [
-      { type:'building', tx:4,  ty:1, dialog:['Data Scientist Intern','QDgrees  2018-2019','Applied ML & statistical modelling','Built predictive models & pipelines'] },
-      { type:'building', tx:10, ty:1, dialog:['AI Engineer','Appsynergies  2019-2021','Integrated ML models into production','Inference APIs  data preprocessing'] },
-      { type:'building', tx:16, ty:1, dialog:['AI Engineer (promoted)','Appsynergies  2021-Jan 2024','MLOps planning all segments','Mentored junior AI engineers'] },
-      { type:'building', tx:22, ty:1, dialog:['Project Lead AI Engineer','MyDiGiRecords  2022-2023','FHIR integration  OCR-NER','100+ GB Doc AI model training'] },
-      { type:'building', tx:28, ty:1, dialog:['AI Consultant  [CONCURRENT]','Tasset  Mid 2022-2023','Large-scale data scraping','Blockchain chatbot provisioning'] },
-      { type:'building', tx:36, ty:1, dialog:['AI Solutions Consultant','Deloitte USI  Jan 2024-Present','★ AI Hackathon Winner','Agentic State Govt solutions'] },
-    ],
-    warpPipe: { tx: 65, ty: 3 },
-  },
-  3: {
-    name: 'PROJECTS', sky: '#0d1b2a', width: 100 * TILE,
-    tiles: [
-      mkrow(100, '.'),
-      mkrow(100, '.'),
-      mkrow(100, '.'),
-      '.T....T....T....T....T....T....T....T....T....T....T........',
-      mkrow(100, 'G'),
-    ],
-    objects: [
-      { type:'terminal', tx:1,  featured:true,  dialog:['[FEATURED] Agentic PR Platform','ADK  Gemma/Claude  Vertex AI','Firebase  MCP','AI Hackathon Winner @ Deloitte'] },
-      { type:'terminal', tx:6,  dialog:['Medical AI Infrastructure','Document OCR + NER  FHIR','EPIC & Cerner integration','GCP  Document AI  ML pipeline'] },
-      { type:'terminal', tx:11, dialog:['Advanced RAG System v1-v4','Weaviate  Milvus  ADK  DSPy','4 builds  increasing complexity','RAGAS production evaluation'] },
-      { type:'terminal', tx:16, dialog:['Custom LLM Foundry','Gemma/Qwen2.5 fine-tuning','vLLM  W&B  HuggingFace','Public artifact: HF @dweebster'] },
-      { type:'terminal', tx:21, dialog:['MLOps Engine','Dynamic trainer + evaluator','BigQuery  Model registry','Scheduled retraining pipelines'] },
-      { type:'terminal', tx:26, dialog:['Disease Detection: Cattle','CCTV schedule monitoring','TFX  Ear tag OCR alerts','Serverless  Zapier integration'] },
-      { type:'terminal', tx:31, dialog:['Stable Diffusion Pipeline','Generative AI visual content','Stable Diffusion  ComfyUI','Python pipeline automation'] },
-      { type:'terminal', tx:36, dialog:['Claude Agent Code Conversion','Multi-agent code conversion','Dynamic test generation','Prompt caching optimization'] },
-      { type:'terminal', tx:41, dialog:['Education Data Pipeline','WHO psych standards benchmarks','ADK  Redis RAG  openrouter','Student-profile adapted content'] },
-      { type:'terminal', tx:46, dialog:['In-Store Navigation AI','NetworkX graph store layouts','Natural language navigation','Aisle-level routing  Claude'] },
-      { type:'terminal', tx:51, dialog:['ChatBot Systems v1-v3','RASA -> Dialogflow -> LLM RAG','Three shipped chatbot systems','LangChain  Redis  FastAPI'] },
-    ],
-    warpPipe: { tx: 95, ty: 3 },
-  },
-  4: {
-    name: 'ARTICLES', sky: '#2d1b00', width: 51 * TILE,
-    tiles: [
-      mkrow(51, '.'),
-      mkrow(51, '.'),
-      '..BBB...BBB...BBB.........................................',
-      '..BBB...BBB...BBB.........................................',
-      mkrow(51, 'G'),
-    ],
-    objects: [
-      { type:'bookshelf', tx:2,  ty:2, dialog:['The End of Seeing is Believing','How to Prove Anything in the','Age of Generative AI','Feb 2026  14 min  Blockchain/AI/Ethics'] },
-      { type:'bookshelf', tx:8,  ty:2, dialog:['[COMING SOON]','Building Production RAG Systems','What the Tutorials Don\'t Tell You','Status: in progress...'] },
-      { type:'bookshelf', tx:14, ty:2, dialog:['[COMING SOON]','LLMOps in Enterprise','Lessons from Deloitte USI','Status: drafting...'] },
-    ],
-    warpPipe: { tx: 46, ty: 3 },
-  },
-  5: {
-    name: 'CONNECT', sky: '#0a0a23', width: 56 * TILE,
-    tiles: [
-      mkrow(56, '.'),
-      '......PPPP...................PPPP........................',
-      '..............PPPP..............................PPPP....',
-      mkrow(56, '.'),
-      mkrow(56, 'G'),
-    ],
-    objects: [
-      { type:'platform_terminal', tx:6,  ty:1, platform:'github',     dialog:['GitHub','@dweebyuserx','github.com/dweebyuserx','SPACE to open link ->'] },
-      { type:'platform_terminal', tx:14, ty:2, platform:'huggingface', dialog:['HuggingFace','@dweebster','huggingface.co/dweebster','SPACE to open link ->'] },
-      { type:'platform_terminal', tx:27, ty:1, platform:'linkedin',    dialog:['LinkedIn','/in/roshan-abraham-187474138','linkedin.com/in/...','SPACE to open link ->'] },
-      { type:'platform_terminal', tx:46, ty:2, platform:'email',       dialog:['Email','abraham.roshan.a@gmail.com','Press SPACE to compose',''] },
-    ],
-    tower: { tx: 35 },
-  },
-};
-
-// Link actions for platform terminals
-const PLATFORM_LINKS = {
-  github: 'https://github.com/dweebyuserx',
-  huggingface: 'https://huggingface.co/dweebster',
-  linkedin: 'https://www.linkedin.com/in/roshan-abraham-187474138/',
-  email: 'mailto:abraham.roshan.a@gmail.com',
-};
-
-// ── Collision ──────────────────────────────────────────────────
-const SOLID_TILES = new Set(['G', 'P', 'B', '?', 'T']);
-// Question blocks are solid only if collected (marked by obj.solid after hit)
-// Platforms: solid from top only
-
-function getTileAt(world, tx, ty) {
-  if(ty < 0 || ty >= world.tiles.length) return '.';
-  const row = world.tiles[ty];
-  if(tx < 0 || tx >= row.length) return '.';
-  return row[tx];
-}
-
-function isSolidAt(world, tx, ty) {
-  const ch = getTileAt(world, tx, ty);
-  if(ch === '?') {
-    // Check if already-collected qblock
-    const obj = world.objects.find(o => o.type === 'qblock' && o.tx === tx && o.ty === ty);
-    return true; // still solid after collection (shows '·')
-  }
-  return SOLID_TILES.has(ch);
-}
-
-function resolveCollisionsX(p, world) {
-  const col = p.vx > 0 ? Math.floor((p.x + PLAYER_W) / TILE) : Math.floor(p.x / TILE);
-  const r0 = Math.floor(p.y / TILE);
-  const r1 = Math.floor((p.y + PLAYER_H - 1) / TILE);
-  for(let row = r0; row <= r1; row++) {
-    if(isSolidAt(world, col, row)) {
-      if(p.vx > 0) p.x = col * TILE - PLAYER_W;
-      else p.x = (col + 1) * TILE;
-      p.vx = 0;
-      return;
-    }
-  }
-}
-
-function resolveCollisionsY(p, world) {
-  const row = p.vy > 0 ? Math.floor((p.y + PLAYER_H) / TILE) : Math.floor(p.y / TILE);
-  const c0 = Math.floor(p.x / TILE);
-  const c1 = Math.floor((p.x + PLAYER_W - 1) / TILE);
-  for(let col = c0; col <= c1; col++) {
-    const ch = getTileAt(world, col, row);
-    let solid = false;
-    if(ch === 'P') {
-      // Platform: only solid from top (landing)
-      if(p.vy > 0) solid = true;
-    } else {
-      solid = isSolidAt(world, col, row);
-    }
-    if(solid) {
-      if(p.vy > 0) { p.y = row * TILE - PLAYER_H; p.onGround = true; }
-      else {
-        // Hit from below — check qblock trigger
-        if(ch === '?') triggerQBlock(world, col, row);
-        p.y = (row + 1) * TILE;
-      }
-      p.vy = 0;
-      return;
-    }
-  }
-}
-
-function triggerQBlock(world, tx, ty) {
-  const obj = world.objects.find(o => o.type === 'qblock' && o.tx === tx && o.ty === ty);
-  if(obj && !obj.collected) {
-    obj.collected = true;
-    GAME.score += 100;
-    playSound('coin');
-    // CV download for 'A' block (tx:23, letter:A)
-    if(obj.letter === 'A') {
-      showDialog(obj.dialog, () => { window.open('roshan-abraham-cv.pdf'); });
-    } else {
-      showDialog(obj.dialog);
-    }
-  }
-}
-
-// ── Player Update ──────────────────────────────────────────────
-function updatePlayer(dt) {
-  if(GAME.mode !== 'WORLD') return;
-  const p = GAME.player;
-  const world = WORLDS[GAME.world];
-
-  if(keys['ArrowLeft'] || keys['a']) { p.vx = -WALK_SPEED; p.facing = -1; }
-  else if(keys['ArrowRight'] || keys['d']) { p.vx = WALK_SPEED; p.facing = 1; }
-  else { p.vx *= 0.65; if(Math.abs(p.vx) < 1) p.vx = 0; }
-
-  if((keys['ArrowUp'] || keys[' '] || keys['w']) && p.onGround) {
-    p.vy = JUMP_VEL; p.onGround = false; playSound('jump');
-  }
-
-  p.vy += GRAVITY * dt;
-  if(p.vy > TERMINAL_VEL) p.vy = TERMINAL_VEL;
-
-  p.x += p.vx * dt;
-  resolveCollisionsX(p, world);
-
-  p.y += p.vy * dt;
-  p.onGround = false;
-  resolveCollisionsY(p, world);
-
-  if(p.x < 0) p.x = 0;
-  if(p.x > world.width - PLAYER_W) p.x = world.width - PLAYER_W;
-
-  // Fall off bottom = respawn
-  if(p.y > LOGICAL_H + 32) { p.x = 40; p.y = 80; p.vx = 0; p.vy = 0; }
-
-  // Animate
-  p.frameTimer += dt;
-  if(p.frameTimer > 0.13) { p.frame = (p.frame + 1) % 2; p.frameTimer = 0; }
-}
-
-// ── Camera ─────────────────────────────────────────────────────
-function updateCamera() {
-  const p = GAME.player;
-  const world = WORLDS[GAME.world];
-  const target = p.x - LOGICAL_W / 3;
-  GAME.camera.x += (target - GAME.camera.x) * 0.1;
-  GAME.camera.x = Math.max(0, Math.min(GAME.camera.x, world.width - LOGICAL_W));
-}
-
-// ── Interaction Check ──────────────────────────────────────────
-let interactCooldown = 0;
-function checkInteractions() {
-  if(GAME.mode !== 'WORLD') return;
-  const p = GAME.player;
-  const world = WORLDS[GAME.world];
-  if(interactCooldown > 0) { interactCooldown--; return; }
-
-  const interactKey = keys['e'] || keys['Enter'] || keys['z'];
-
-  world.objects.forEach(obj => {
-    const objX = obj.tx * TILE;
-    const objY = (obj.ty !== undefined ? obj.ty : 3) * TILE;
-
-    switch(obj.type) {
-      case 'terminal':
-      case 'building':
-      case 'bookshelf':
-      case 'platform_terminal': {
-        const dist = Math.abs(p.x + PLAYER_W/2 - (objX + TILE));
-        if(dist < TILE * 2 && p.onGround && interactKey && !obj._triggered) {
-          obj._triggered = true;
-          interactCooldown = 20;
-          playSound('block_hit');
-          if(obj.type === 'terminal') {
-            // Time trial tracking
-            if(GAME.trialActive) {
-              const key = `${obj.tx}_${GAME.world}`;
-              if(!GAME.trialCollected.has(key)) {
-                GAME.trialCollected.add(key);
-                GAME.score += 200;
-                if(GAME.trialCollected.size >= GAME.trialGoal) {
-                  endTimeTrial();
-                  return;
-                }
-              }
-            } else {
-              GAME.score += 50;
-            }
-          }
-          const action = (obj.type === 'platform_terminal' && obj.platform)
-            ? () => { const url = PLATFORM_LINKS[obj.platform]; if(url) window.open(url, '_blank'); }
-            : null;
-          showDialog(obj.dialog, action);
-          setTimeout(() => { obj._triggered = false; }, 800);
-        }
-        if(dist >= TILE * 2) obj._triggered = false;
-        break;
-      }
-    }
-  });
-
-  // Warp pipe check
-  if(world.warpPipe && (keys['ArrowDown'] || keys['s']) && p.onGround) {
-    const pipeX = world.warpPipe.tx * TILE;
-    if(Math.abs(p.x - pipeX) < TILE * 1.5) {
-      // Warp to next world or credits
-      if(GAME.world === 3 && world.warpPipe.tx === 95) {
-        showCredits();
-      } else {
-        const nextWorld = GAME.world < 5 ? GAME.world + 1 : 1;
-        travelToWorld(nextWorld);
-      }
-    }
-  }
-}
-
-// ── Travel between worlds ──────────────────────────────────────
-function travelToWorld(n) {
-  playSound('enter_door');
-  GAME.world = n;
-  const world = WORLDS[n];
-  GAME.player.x = 40; GAME.player.y = 80; GAME.player.vx = 0; GAME.player.vy = 0;
-  GAME.camera.x = 0;
-  GAME.mode = 'WORLD';
-}
-
-// ── Render ─────────────────────────────────────────────────────
-function render() {
-  const scale = getScale();
-  const offsetX = Math.floor((canvas.width - LOGICAL_W * scale) / 2);
-  const offsetY = Math.floor((canvas.height - LOGICAL_H * scale) / 2);
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.save();
-  ctx.translate(offsetX, offsetY);
-  ctx.scale(scale, scale);
-
-  const world = WORLDS[GAME.world];
-
-  // Sky
-  ctx.fillStyle = world.sky;
-  ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
-
-  // Background parallax elements
-  drawBackground(world);
-
-  // Camera translate
-  ctx.save();
-  ctx.translate(-Math.floor(GAME.camera.x), 0);
-
-  drawTiles(world);
-  drawObjects(world);
-  drawWarpPipe(world);
-
-  // Player
-  const p = GAME.player;
-  let sprite = SPRITE_IDLE;
-  if(Math.abs(p.vx) > 8 && p.onGround) {
-    sprite = p.frame === 0 ? SPRITE_RUN1 : SPRITE_RUN2;
-  } else if(!p.onGround) {
-    sprite = SPRITE_RUN1;
-  }
-  drawSprite(sprite, p.x, p.y, p.facing === 1);
-
-  // Interaction hint
-  drawInteractHints(world);
-
-  ctx.restore();
-
-  // HUD (no camera offset)
-  drawHUD(world);
-
-  ctx.restore();
-}
-
-function drawBackground(world) {
-  // Stars for night worlds, clouds for day
-  if(world.sky === '#5c94fc') {
-    // Day: clouds
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    [[30,20,24,12],[80,30,18,9],[160,15,28,14],[240,25,20,10]].forEach(([x,y,w,h]) => {
-      ctx.beginPath();
-      ctx.ellipse(x - (GAME.camera.x * 0.2) % LOGICAL_W, y, w, h, 0, 0, Math.PI * 2);
-      ctx.fill();
-    });
-  } else {
-    // Night: stars
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    [[20,10],[60,25],[120,8],[190,18],[260,12],[300,30],[80,5],[150,28],[230,6]].forEach(([x,y]) => {
-      ctx.fillRect((x - GAME.camera.x * 0.05 + LOGICAL_W * 2) % LOGICAL_W, y, 1, 1);
-    });
-  }
-}
-
-function drawTiles(world) {
-  const camX = GAME.camera.x;
-  const startCol = Math.max(0, Math.floor(camX / TILE) - 1);
-  const endCol = Math.min(world.tiles[0].length - 1, Math.ceil((camX + LOGICAL_W) / TILE) + 1);
-
-  world.tiles.forEach((row, ty) => {
-    for(let tx = startCol; tx <= endCol; tx++) {
-      const ch = row[tx] || '.';
-      if(ch === '.') continue;
-      const x = tx * TILE, y = ty * TILE;
-
-      switch(ch) {
-        case 'G': {
-          // Ground: top stripe lighter
-          ctx.fillStyle = '#5a3a24';
-          ctx.fillRect(x, y, TILE, 4);
-          ctx.fillStyle = '#3d2b1f';
-          ctx.fillRect(x, y + 4, TILE, TILE - 4);
-          // Grass detail
-          ctx.fillStyle = '#6b3f2a';
-          ctx.fillRect(x + 2, y, TILE - 4, 2);
-          break;
-        }
-        case 'P': {
-          ctx.fillStyle = '#7a5535';
-          ctx.fillRect(x, y, TILE, 8);
-          ctx.fillStyle = '#5a3a20';
-          ctx.fillRect(x, y + 8, TILE, 4);
-          break;
-        }
-        case 'B': {
-          ctx.fillStyle = '#1a1a3e';
-          ctx.fillRect(x, y, TILE, TILE);
-          ctx.strokeStyle = '#2a2a6a';
-          ctx.lineWidth = 1;
-          ctx.strokeRect(x + 1, y + 1, TILE - 2, TILE - 2);
-          // Window detail
-          ctx.fillStyle = '#2a3a5a';
-          ctx.fillRect(x + 6, y + 6, 8, 8);
-          ctx.fillRect(x + 18, y + 6, 8, 8);
-          ctx.fillRect(x + 6, y + 18, 8, 8);
-          ctx.fillRect(x + 18, y + 18, 8, 8);
-          break;
-        }
-        case '?': {
-          const obj = world.objects.find(o => o.type === 'qblock' && o.tx === tx && o.ty === ty);
-          const collected = obj && obj.collected;
-          ctx.fillStyle = collected ? '#444' : '#e9ad0c';
-          ctx.fillRect(x, y, TILE, TILE);
-          ctx.fillStyle = collected ? '#666' : '#ffd700';
-          ctx.fillRect(x + 2, y + 2, TILE - 4, 4);
-          ctx.fillStyle = '#000';
-          ctx.font = `bold ${TILE * 0.45}px monospace`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(collected ? '·' : (obj ? obj.letter : '?'), x + TILE / 2, y + TILE / 2);
-          break;
-        }
-        case 'T': {
-          // Terminal
-          ctx.fillStyle = '#071a0e';
-          ctx.fillRect(x, y, TILE, TILE);
-          ctx.strokeStyle = '#00cc66';
-          ctx.lineWidth = 1;
-          ctx.strokeRect(x + 2, y + 2, TILE - 4, TILE - 4);
-          // Screen glow
-          ctx.fillStyle = '#001a0a';
-          ctx.fillRect(x + 4, y + 4, TILE - 8, TILE - 8);
-          ctx.fillStyle = '#00ff88';
-          ctx.font = `bold 8px monospace`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText('▣', x + TILE / 2, y + TILE / 2);
-          break;
-        }
-      }
-    }
-  });
-}
-
-function drawObjects(world) {
-  // Extra visual decoration for buildings (signs, doors), bookshelves (books), terminals (featured star)
-  world.objects.forEach(obj => {
-    if(obj.type === 'building') {
-      const x = obj.tx * TILE, y = obj.ty * TILE;
-      // Door at bottom of building
-      const groundY = (world.tiles.length - 1) * TILE;
-      ctx.fillStyle = '#8b4513';
-      ctx.fillRect(x + 10, groundY - 18, 12, 18);
-      ctx.fillStyle = '#6b3000';
-      ctx.fillRect(x + 12, groundY - 16, 4, 10);
-      // Sign
-      ctx.fillStyle = '#222';
-      ctx.fillRect(x + 4, y + TILE + 2, TILE * 2 - 8, 10);
-      ctx.fillStyle = '#4dd9f0';
-      ctx.font = 'bold 5px monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText('▶ ENTER', x + TILE, y + TILE + 3);
-    }
-    if(obj.type === 'bookshelf') {
-      const x = obj.tx * TILE, y = obj.ty * TILE;
-      // Colorful book spines
-      const bookColors = ['#e05050','#50a0e0','#50e078','#e0b850','#a050e0','#e08050'];
-      for(let i = 0; i < 6; i++) {
-        ctx.fillStyle = bookColors[i % bookColors.length];
-        ctx.fillRect(x + 2 + i * 4, y + 4, 3, TILE * 2 - 8);
-      }
-      ctx.fillStyle = '#333';
-      ctx.fillRect(x, y + TILE * 2 - 4, TILE * 3, 4);
-    }
-    if(obj.type === 'terminal' && obj.featured) {
-      const x = obj.tx * TILE, y = obj.ty * TILE;
-      ctx.fillStyle = '#ffd700';
-      ctx.font = 'bold 7px monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-      ctx.fillText('★', x + TILE / 2, y - 2);
-    }
-    if(obj.type === 'platform_terminal') {
-      const x = obj.tx * TILE, y = obj.ty * TILE;
-      // Small terminal box on platform
-      ctx.fillStyle = '#0a0a2a';
-      ctx.fillRect(x, y + TILE / 2, TILE, TILE / 2);
-      ctx.strokeStyle = '#4dd9f0';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x + 1, y + TILE / 2 + 1, TILE - 2, TILE / 2 - 2);
-      ctx.fillStyle = '#4dd9f0';
-      ctx.font = '7px monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      const icons = { github: 'GH', huggingface: 'HF', linkedin: 'LI', email: '@' };
-      ctx.fillText(icons[obj.platform] || '?', x + TILE / 2, y + TILE * 0.75);
-    }
-  });
-}
-
-function drawWarpPipe(world) {
-  if(!world.warpPipe) return;
-  const x = world.warpPipe.tx * TILE;
-  const y = (world.tiles.length - 2) * TILE;
-  // Pipe body
-  ctx.fillStyle = '#1a7a1a';
-  ctx.fillRect(x + 4, y, TILE - 8, TILE + 4);
-  // Pipe cap
-  ctx.fillStyle = '#22aa22';
-  ctx.fillRect(x, y - 6, TILE, 10);
-  ctx.fillStyle = '#33cc33';
-  ctx.fillRect(x + 2, y - 6, TILE - 4, 3);
-  // Arrow
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 8px monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('▼', x + TILE / 2, y + TILE / 2);
-}
-
-function drawInteractHints(world) {
-  if(GAME.mode !== 'WORLD') return;
-  const p = GAME.player;
-  world.objects.forEach(obj => {
-    if(obj.type === 'qblock') return;
-    const objX = obj.tx * TILE;
-    const dist = Math.abs(p.x + PLAYER_W/2 - (objX + TILE));
-    if(dist < TILE * 2) {
-      const hintY = (obj.ty !== undefined ? obj.ty : 3) * TILE - 12;
-      ctx.fillStyle = 'rgba(0,0,0,0.7)';
-      ctx.fillRect(objX - 6, hintY, 42, 10);
-      ctx.fillStyle = '#ffd700';
-      ctx.font = '4px monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText('[E] INTERACT', objX + TILE / 2, hintY + 2);
-    }
-  });
-  // Warp pipe hint
-  if(world.warpPipe) {
-    const pipeX = world.warpPipe.tx * TILE;
-    const dist = Math.abs(p.x - pipeX);
-    if(dist < TILE * 2) {
-      const hy = (world.tiles.length - 2) * TILE - 14;
-      ctx.fillStyle = 'rgba(0,0,0,0.7)';
-      ctx.fillRect(pipeX - 4, hy, 44, 10);
-      ctx.fillStyle = '#3dffa0';
-      ctx.font = '4px monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText('[↓] WARP NEXT', pipeX + TILE / 2, hy + 2);
-    }
-  }
-}
-
-function drawHUD(world) {
-  // Score box
-  ctx.fillStyle = 'rgba(0,0,0,0.65)';
-  ctx.fillRect(2, 2, 98, 13);
-  ctx.fillStyle = '#fff';
-  ctx.font = '5px "Press Start 2P", monospace';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText('SCORE: ' + String(GAME.score).padStart(6, '0'), 4, 5);
-
-  // World name
-  ctx.fillStyle = 'rgba(0,0,0,0.65)';
-  const wname = 'WORLD ' + GAME.world + ' - ' + world.name;
-  const ww = wname.length * 5 + 8;
-  ctx.fillRect(LOGICAL_W / 2 - ww / 2, 2, ww, 13);
-  ctx.fillStyle = '#ffd700';
-  ctx.textAlign = 'center';
-  ctx.fillText(wname, LOGICAL_W / 2, 5);
-
-  // Tab hint
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.font = '4px monospace';
-  ctx.textAlign = 'right';
-  ctx.textBaseline = 'top';
-  ctx.fillText('[TAB] GUIDE', LOGICAL_W - 2, 6);
-
-  // Time trial HUD
-  if(GAME.trialActive) {
-    const elapsed = (performance.now() - GAME.trialStart) / 1000;
-    const m = Math.floor(elapsed / 60);
-    const s = Math.floor(elapsed % 60);
-    const cs = Math.floor((elapsed % 1) * 100);
-    const tstr = `${m}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
-    ctx.fillStyle = 'rgba(255,215,0,0.85)';
-    ctx.fillRect(2, LOGICAL_H - 16, 120, 13);
-    ctx.fillStyle = '#000';
-    ctx.font = '5px "Press Start 2P", monospace';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    ctx.fillText(`TT: ${tstr} [${GAME.trialCollected.size}/${GAME.trialGoal}]`, 4, LOGICAL_H - 14);
-  }
-
-  // Controls hint at bottom
-  ctx.fillStyle = 'rgba(255,255,255,0.25)';
-  ctx.font = '3px monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('ARROWS/WASD: MOVE  |  SPACE/W: JUMP  |  E: INTERACT  |  T: TIME TRIAL (WORLD 3)', LOGICAL_W / 2, LOGICAL_H - 4);
-}
-
-// ── Dialog System ──────────────────────────────────────────────
-let typewriterTimer = null;
-
-function showDialog(lines, action) {
-  GAME.mode = 'DIALOG';
-  GAME.dialogQueue = lines;
-  GAME.dialogIndex = 0;
-  GAME.dialogAction = action || null;
-  const box = document.getElementById('dialog-box');
-  box.style.display = 'block';
-  typewriterLine(lines[0]);
-}
-
-function typewriterLine(text) {
-  const el = document.getElementById('dialog-text');
-  el.textContent = '';
-  if(typewriterTimer) clearInterval(typewriterTimer);
-  let i = 0;
-  typewriterTimer = setInterval(() => {
-    el.textContent += text[i++] || '';
-    if(i >= text.length) clearInterval(typewriterTimer);
-  }, 28);
-}
-
-function advanceDialog() {
-  // Skip typewriter if still running
-  const el = document.getElementById('dialog-text');
-  const current = GAME.dialogQueue[GAME.dialogIndex];
-  if(el.textContent.length < current.length) {
-    clearInterval(typewriterTimer);
-    el.textContent = current;
-    return;
-  }
-
-  GAME.dialogIndex++;
-  if(GAME.dialogIndex >= GAME.dialogQueue.length) {
-    closeDialog();
-    if(GAME.dialogAction) { GAME.dialogAction(); GAME.dialogAction = null; }
-  } else {
-    typewriterLine(GAME.dialogQueue[GAME.dialogIndex]);
-  }
-}
-
-function closeDialog() {
-  GAME.mode = 'WORLD';
-  document.getElementById('dialog-box').style.display = 'none';
-  if(typewriterTimer) clearInterval(typewriterTimer);
-}
-
-// ── Key Handler ────────────────────────────────────────────────
-function handleKeyDown(e) {
-  if(GAME.mode === 'DIALOG') {
-    if(e.key === ' ' || e.key === 'Enter' || e.key === 'e' || e.key === 'z') {
-      e.preventDefault();
-      advanceDialog();
-    }
-    if(e.key === 'Escape') closeDialog();
-    return;
-  }
-
-  if(e.key === 't' || e.key === 'T') {
-    if(GAME.world === 3 && !GAME.trialActive) {
-      startTimeTrial();
-    }
-  }
-}
-
-// ── Game Loop ──────────────────────────────────────────────────
-let lastTime = 0;
-function gameLoop(timestamp) {
-  const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
-  lastTime = timestamp;
-
-  const gc = document.getElementById('game-container');
-  if(gc.style.display !== 'none') {
-    updatePlayer(dt);
-    updateCamera();
-    checkInteractions();
-    render();
-  }
-  requestAnimationFrame(gameLoop);
-}
-requestAnimationFrame(gameLoop);
-
-// ── Web Audio ──────────────────────────────────────────────────
-let AC = null;
-function ensureAC() {
-  if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
-  if(AC.state === 'suspended') AC.resume();
-}
-document.addEventListener('keydown', () => ensureAC(), { once: true });
-document.addEventListener('touchstart', () => ensureAC(), { once: true });
-
-const SOUNDS = {
-  coin(o, g) {
-    o.type = 'sine';
-    o.frequency.setValueAtTime(988, AC.currentTime);
-    o.frequency.setValueAtTime(1319, AC.currentTime + 0.07);
-    g.gain.setValueAtTime(0.25, AC.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.3);
-    o.start(); o.stop(AC.currentTime + 0.3);
-  },
-  jump(o, g) {
-    o.type = 'sawtooth';
-    o.frequency.setValueAtTime(400, AC.currentTime);
-    o.frequency.exponentialRampToValueAtTime(800, AC.currentTime + 0.12);
-    g.gain.setValueAtTime(0.1, AC.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.18);
-    o.start(); o.stop(AC.currentTime + 0.2);
-  },
-  block_hit(o, g) {
-    o.type = 'square';
-    o.frequency.setValueAtTime(220, AC.currentTime);
-    o.frequency.setValueAtTime(110, AC.currentTime + 0.05);
-    g.gain.setValueAtTime(0.12, AC.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.15);
-    o.start(); o.stop(AC.currentTime + 0.15);
-  },
-  enter_door(o, g) {
-    o.type = 'sine';
-    [330, 440, 550, 660].forEach((f, i) => {
-      o.frequency.setValueAtTime(f, AC.currentTime + i * 0.08);
-    });
-    g.gain.setValueAtTime(0.18, AC.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.5);
-    o.start(); o.stop(AC.currentTime + 0.5);
-  },
-};
-
-function playSound(type) {
-  try {
-    ensureAC();
-    const osc = AC.createOscillator();
-    const gain = AC.createGain();
-    osc.connect(gain);
-    gain.connect(AC.destination);
-    SOUNDS[type]?.(osc, gain);
-  } catch(e) {}
-}
-
-// ── Mode Toggle ────────────────────────────────────────────────
-function toggleMode() {
-  const gc = document.getElementById('game-container');
-  const guide = document.getElementById('strategy-guide');
-  const btn = document.getElementById('mode-toggle');
-  const showingGame = gc.style.display !== 'none';
-  gc.style.display = showingGame ? 'none' : 'block';
-  guide.style.display = showingGame ? 'block' : 'none';
-  btn.innerHTML = showingGame ? '▶ PLAY<br>GAME' : '📖 STRATEGY<br>GUIDE [TAB]';
-}
-
-// ── Guide Navigation ───────────────────────────────────────────
-function showGuideSection(id) {
-  document.querySelectorAll('.guide-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.guide-tab').forEach(t => t.classList.remove('active'));
-  const sec = document.getElementById(id);
-  if(sec) sec.classList.add('active');
-  const tab = document.querySelector(`.guide-tab[data-section="${id}"]`);
-  if(tab) tab.classList.add('active');
-  const guide = document.getElementById('strategy-guide');
-  if(guide) guide.scrollTop = 0;
-}
-
-document.querySelectorAll('.guide-tab').forEach(btn => {
-  btn.addEventListener('click', () => showGuideSection(btn.dataset.section));
-});
-
-// ── Credits (Warp Easter Egg) ──────────────────────────────────
-function showCredits() {
-  const el = document.getElementById('credits-overlay');
-  el.style.display = 'block';
-  GAME.mode = 'PAUSED';
-}
-function closeCredits() {
-  document.getElementById('credits-overlay').style.display = 'none';
-  GAME.mode = 'WORLD';
-}
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape' && document.getElementById('credits-overlay').style.display !== 'none') {
-    closeCredits();
-  }
-});
-
-// ── Time Trial ─────────────────────────────────────────────────
-function startTimeTrial() {
-  GAME.trialActive = true;
-  GAME.trialStart = performance.now();
-  GAME.trialCollected = new Set();
-  // Reset all terminal _triggered flags
-  WORLDS[3].objects.forEach(o => { o._triggered = false; });
-  showDialog(['TIME TRIAL STARTED!', 'Activate all 11 project terminals', 'in WORLD 3 as fast as you can!', 'GO GO GO!']);
-}
-
-function endTimeTrial() {
-  const elapsed = (performance.now() - GAME.trialStart) / 1000;
-  GAME.trialActive = false;
-  const m = Math.floor(elapsed / 60);
-  const s = Math.floor(elapsed % 60);
-  const cs = Math.floor((elapsed % 1) * 100);
-  const timeStr = `${m}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
-  let rank = 'B';
-  if(elapsed < 180) rank = 'S';
-  else if(elapsed < 300) rank = 'A';
-  GAME.score += 1000;
-  playSound('enter_door');
-  document.getElementById('trial-time-display').textContent = 'TIME: ' + timeStr;
-  document.getElementById('trial-rank-display').textContent = 'RANK: ' + (rank === 'S' ? '★★★ S' : rank === 'A' ? '★★ A' : '★ B');
-  const tr = document.getElementById('trial-result');
-  tr.style.display = 'flex';
-}
-
-function closeTrialResult() {
-  document.getElementById('trial-result').style.display = 'none';
-  GAME.mode = 'WORLD';
-}
-
-// ── Touch Controls ─────────────────────────────────────────────
-if(window.matchMedia('(hover: none)').matches) {
-  document.getElementById('touch-controls').style.display = 'block';
-}
-document.querySelectorAll('.touch-btn').forEach(btn => {
-  const key = btn.dataset.key;
-  btn.addEventListener('touchstart', e => { e.preventDefault(); keys[key] = true; if(GAME.mode === 'DIALOG') advanceDialog(); }, { passive: false });
-  btn.addEventListener('touchend', e => { e.preventDefault(); keys[key] = false; }, { passive: false });
-});
-
-// ── Mobile default = Guide mode ────────────────────────────────
-if(window.matchMedia('(hover: none), (max-width: 768px)').matches) {
-  document.getElementById('game-container').style.display = 'none';
-  document.getElementById('strategy-guide').style.display = 'block';
-  document.getElementById('mode-toggle').innerHTML = '▶ PLAY<br>GAME';
-}
-
-// ── URL hash routing (world=N) ─────────────────────────────────
-(function() {
-  const hash = window.location.hash;
-  const m = hash.match(/world=(\d)/);
-  if(m) {
-    const n = parseInt(m[1]);
-    if(n >= 1 && n <= 5) {
-      travelToWorld(n);
-      // Ensure game mode is shown
-      document.getElementById('game-container').style.display = 'block';
-      document.getElementById('strategy-guide').style.display = 'none';
-      document.getElementById('mode-toggle').innerHTML = '📖 STRATEGY<br>GUIDE [TAB]';
-    }
-  }
-})();
-
-// ── Dialog Space/Enter advance in game ────────────────────────
-document.addEventListener('keydown', e => {
-  if(GAME.mode === 'DIALOG' && (e.key === ' ' || e.key === 'Enter')) {
-    e.preventDefault();
-  }
-});
 </script>
 </body>
 </html>
