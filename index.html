@@ -559,6 +559,56 @@ const INTERACTIONS = {
 };
 
 // ═══════════════════════════════════════════════════════
+// BUILDING AURAS  (animated skill badges orbiting structures)
+// cx/cy = building center tile; tags = orbiting tech badges
+// ═══════════════════════════════════════════════════════
+const BUILDING_AURAS = [
+  // Project Lab (blue, cols 4-6 rows 10-12)
+  { cx:5, cy:11, tags:[
+    {label:'ADK',   color:'#4dd9f0'},
+    {label:'RAG',   color:'#3dffa0'},
+    {label:'GCP',   color:'#ff9f4a'},
+    {label:'PY',    color:'#fbbf24'},
+    {label:'LLAMA', color:'#a78bfa'},
+    {label:'vLLM',  color:'#f472b6'},
+  ]},
+  // Connect Center / Pokecenter (red, cols 26-28 rows 10-12)
+  { cx:27, cy:11, tags:[
+    {label:'GH',    color:'#e8eeff'},
+    {label:'LI',    color:'#4dd9f0'},
+    {label:'HF',    color:'#ff9f4a'},
+    {label:'EMAIL', color:'#3dffa0'},
+  ]},
+  // Experience Hall (left top building, cols 10-12 rows 4-5)
+  { cx:11, cy:5, tags:[
+    {label:'USI',   color:'#3dffa0'},
+    {label:'GOVT',  color:'#4dd9f0'},
+    {label:'AGENT', color:'#ff9f4a'},
+    {label:'5YRS',  color:'#fbbf24'},
+  ]},
+  // Skills Tower (right top building, cols 21-23 rows 4-5)
+  { cx:22, cy:5, tags:[
+    {label:'LLMOps',color:'#a78bfa'},
+    {label:'NLP',   color:'#3dffa0'},
+    {label:'VDB',   color:'#4dd9f0'},
+    {label:'MLOps', color:'#ff9f4a'},
+  ]},
+  // Writing Guild (south-left, cols 14-16 rows 21-23)
+  { cx:15, cy:22, tags:[
+    {label:'WEB3',  color:'#4dd9f0'},
+    {label:'ETHICS',color:'#3dffa0'},
+    {label:'AI',    color:'#fbbf24'},
+  ]},
+  // Deloitte City (south-right, cols 19-21 rows 21-23)
+  { cx:20, cy:22, tags:[
+    {label:'AGTC',  color:'#f472b6'},
+    {label:'MCP',   color:'#a78bfa'},
+    {label:'LLM',   color:'#3dffa0'},
+    {label:'★WIN',  color:'#fbbf24'},
+  ]},
+];
+
+// ═══════════════════════════════════════════════════════
 // AREA ZONES  (tile regions → zone name)
 // ═══════════════════════════════════════════════════════
 const ZONES = [
@@ -594,13 +644,14 @@ PLAYER.px = PLAYER.tx * TILE;
 PLAYER.py = PLAYER.ty * TILE;
 
 const CAMERA = { x: 0, y: 0 };
+let gameTime = 0;
 
 // ═══════════════════════════════════════════════════════
 // GAME STATE
 // ═══════════════════════════════════════════════════════
 const STATE = {
   mode: 'WORLD',   // WORLD | DIALOG | PAUSED
-  dialog: { lines:[], index:0, speaker:'', pageLines:[], pageIdx:0 },
+  dialog: { lines:[], index:0, speaker:'', color:null, displayText:'', typing:false },
   lastZone: '',
   bannerTimer: 0,
 };
@@ -861,6 +912,189 @@ function drawTile(tx, ty) {
   }
 }
 
+// ═══════════════════════════════════════════════════════
+// BUILDING AURA RENDERER
+// ═══════════════════════════════════════════════════════
+function drawBuildingAura(aura) {
+  const wx = aura.cx * TILE + TILE/2 - CAMERA.x;
+  const wy = aura.cy * TILE + TILE/2 - CAMERA.y;
+  // Skip entire aura if building is off-screen
+  if(wx < -TILE*4 || wx > LW+TILE*4 || wy < -TILE*4 || wy > LH+TILE*4) return;
+
+  const tags = aura.tags;
+  const rx = TILE * 2.4;  // horizontal orbit radius
+  const ry = TILE * 1.0;  // vertical (flatter = more top-down perspective feel)
+
+  tags.forEach((tag, i) => {
+    const phase = (i / tags.length) * Math.PI * 2;
+    const angle = gameTime * 0.55 + phase;
+    const bx = wx + Math.cos(angle) * rx;
+    const by_base = wy + Math.sin(angle) * ry;
+    const floatY  = Math.sin(gameTime * 2.2 + i * 1.1) * 1.5;
+    const bx2 = bx;
+    const by2 = by_base + floatY;
+
+    if(bx2 < -20 || bx2 > LW+20 || by2 < -12 || by2 > LH+12) return;
+
+    // Badge dimensions (4px Press Start 2P ≈ 4px per char)
+    const fw = tag.label.length * 4 + 6;
+    const fh = 8;
+    const fx = Math.round(bx2 - fw/2);
+    const fy = Math.round(by2 - fh/2);
+
+    // Pulse opacity: 0.75–1.0
+    const alpha = 0.8 + Math.sin(gameTime * 1.8 + i * 0.9) * 0.15;
+
+    // Glow halo (2 slightly larger semitransparent rects)
+    ctx.globalAlpha = alpha * 0.25;
+    ctx.fillStyle = tag.color;
+    ctx.fillRect(fx-2, fy-2, fw+4, fh+4);
+    ctx.globalAlpha = alpha * 0.12;
+    ctx.fillRect(fx-4, fy-4, fw+8, fh+8);
+
+    // Badge background
+    ctx.globalAlpha = alpha * 0.88;
+    ctx.fillStyle = '#0a0b0d';
+    ctx.fillRect(fx, fy, fw, fh);
+
+    // Badge border: 1px on each edge via thin rects
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = tag.color;
+    ctx.fillRect(fx,      fy,      fw, 1);      // top
+    ctx.fillRect(fx,      fy+fh-1, fw, 1);      // bottom
+    ctx.fillRect(fx,      fy,      1,  fh);     // left
+    ctx.fillRect(fx+fw-1, fy,      1,  fh);     // right
+
+    // Badge label
+    ctx.fillStyle = tag.color;
+    ctx.font = '4px "Press Start 2P"';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tag.label, Math.round(bx2), Math.round(by2 + 0.5));
+
+    ctx.globalAlpha = 1;
+  });
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
+// ═══════════════════════════════════════════════════════
+// CANVAS DIALOG RENDERER  (drawn on top of world, bottom of screen)
+// ═══════════════════════════════════════════════════════
+function drawDialogCanvas() {
+  if(STATE.mode !== 'DIALOG') return;
+
+  const pad = 5;
+  const dh  = 52;
+  const dy  = LH - dh - pad;
+  const dx  = pad;
+  const dw  = LW - pad * 2;
+
+  // Drop shadow
+  ctx.globalAlpha = 0.55;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(dx+2, dy+2, dw, dh);
+  ctx.globalAlpha = 1;
+
+  // Outer border (black 2px)
+  ctx.fillStyle = '#000';
+  ctx.fillRect(dx, dy, dw, dh);
+
+  // Main fill (warm cream)
+  ctx.fillStyle = '#f0ece0';
+  ctx.fillRect(dx+2, dy+2, dw-4, dh-4);
+
+  // Inner border frame (gray)
+  ctx.fillStyle = '#777';
+  ctx.fillRect(dx+4,      dy+4,      dw-8, 1);   // top
+  ctx.fillRect(dx+4,      dy+dh-5,   dw-8, 1);   // bottom
+  ctx.fillRect(dx+4,      dy+4,      1,    dh-8); // left
+  ctx.fillRect(dx+dw-5,   dy+4,      1,    dh-8); // right
+
+  // Accent line just inside top border (subtle colour from NPC/sign type)
+  const accentCol = STATE.dialog.color || '#4dd9f0';
+  ctx.fillStyle = accentCol;
+  ctx.globalAlpha = 0.4;
+  ctx.fillRect(dx+5, dy+5, dw-10, 1);
+  ctx.globalAlpha = 1;
+
+  // ── Speaker tab (floats above box) ─────────────────
+  const speaker = STATE.dialog.speaker || '';
+  if(speaker) {
+    const tabPad = 5;
+    ctx.font = '5px "Press Start 2P"';
+    const tw = ctx.measureText(speaker).width;
+    const tabW = Math.min(Math.round(tw) + tabPad*2, dw - 20);
+    const tabH = 11;
+    const tx   = dx + 10;
+    const ty   = dy - tabH - 1;
+
+    // Tab shadow
+    ctx.globalAlpha = 0.4;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(tx+2, ty+2, tabW, tabH);
+    ctx.globalAlpha = 1;
+
+    // Tab background
+    ctx.fillStyle = '#000';
+    ctx.fillRect(tx, ty, tabW, tabH);
+    ctx.fillStyle = '#f0ece0';
+    ctx.fillRect(tx+1, ty+1, tabW-2, tabH-2);
+
+    // Accent border top
+    ctx.fillStyle = accentCol;
+    ctx.fillRect(tx+1, ty+1, tabW-2, 1);
+
+    // Speaker text
+    ctx.fillStyle = '#111';
+    ctx.font = '5px "Press Start 2P"';
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillText(speaker, tx + tabPad, ty + 3);
+  }
+
+  // ── Dialog text (typewriter) ───────────────────────
+  ctx.fillStyle = '#111';
+  ctx.font = '6px "Press Start 2P"';
+  ctx.textBaseline = 'top';
+  ctx.textAlign = 'left';
+  ctx.fillText(STATE.dialog.displayText || '', dx+10, dy+12);
+
+  // ── Page counter (e.g. 2/4) ────────────────────────
+  const total   = STATE.dialog.lines.length;
+  const current = STATE.dialog.index + 1;
+  ctx.fillStyle = '#999';
+  ctx.font = '4px "Press Start 2P"';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'top';
+  ctx.fillText(current+'/'+total, dx+dw-8, dy+6);
+
+  // ── Blinking advance arrow ─────────────────────────
+  if(!STATE.dialog.typing) {
+    const blink = Math.floor(gameTime * 2.8) % 2 === 0;
+    if(blink) {
+      ctx.fillStyle = '#444';
+      ctx.font = '5px "Press Start 2P"';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('▼', dx+dw-9, dy+dh-6);
+    }
+  } else {
+    // Cursor blink while typing
+    if(Math.floor(gameTime * 4) % 2 === 0) {
+      ctx.fillStyle = '#444';
+      ctx.font = '6px "Press Start 2P"';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      const tw2 = ctx.measureText(STATE.dialog.displayText || '').width;
+      ctx.fillText('_', dx+10+tw2+1, dy+12);
+    }
+  }
+
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+}
+
 function drawNPC(cx, by, color) {
   // Head
   ctx.fillStyle = '#ffc87a';
@@ -973,6 +1207,9 @@ function render() {
     }
   }
 
+  // Draw building auras (under player)
+  BUILDING_AURAS.forEach(aura => drawBuildingAura(aura));
+
   // Draw player
   drawPlayer();
 
@@ -987,6 +1224,9 @@ function render() {
     ctx.fillRect(hx-1, hy-10, 3, 7);
     ctx.fillRect(hx-1, hy-1,  3, 3);
   }
+
+  // Draw canvas dialog on top of world
+  drawDialogCanvas();
 
   ctx.restore();
 }
@@ -1007,7 +1247,14 @@ function updateCamera() {
 // PLAYER UPDATE
 // ═══════════════════════════════════════════════════════
 function updatePlayer(dt) {
-  if(STATE.mode === 'DIALOG') return;
+  // Check interact first (works in all modes)
+  const interactPressed = JUST_PRESSED['z'] || JUST_PRESSED[' '] || JUST_PRESSED['Enter'];
+  for(const k in JUST_PRESSED) delete JUST_PRESSED[k];
+
+  if(STATE.mode === 'DIALOG') {
+    if(interactPressed) advanceDialog();
+    return;
+  }
 
   // Frame animation
   if(PLAYER.moving) {
@@ -1056,11 +1303,7 @@ function updatePlayer(dt) {
   }
 
   // Interact key
-  if(JUST_PRESSED['z'] || JUST_PRESSED[' '] || JUST_PRESSED['Enter']) {
-    tryInteract();
-  }
-  // Clear just-pressed
-  for(const k in JUST_PRESSED) delete JUST_PRESSED[k];
+  if(interactPressed) tryInteract();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1106,18 +1349,22 @@ function tryInteract() {
 
 function openDialog(data) {
   STATE.mode = 'DIALOG';
-  STATE.dialog.lines = data.lines || [];
-  STATE.dialog.index = 0;
-
-  const box = document.getElementById('dialog-box');
-  box.style.display = 'block';
-  document.getElementById('dialog-speaker').textContent = data.speaker || '';
-
+  STATE.dialog.lines  = data.lines  || [];
+  STATE.dialog.index  = 0;
+  STATE.dialog.speaker = data.speaker || '';
+  STATE.dialog.color  = data.color  || null;
   typewriterLine(STATE.dialog.lines[0] || '');
   playDialogOpen();
 }
 
 function advanceDialog() {
+  // If still typing, skip to end of current line
+  if(STATE.dialog.typing) {
+    clearInterval(typeTimer);
+    STATE.dialog.displayText = STATE.dialog.lines[STATE.dialog.index] || '';
+    STATE.dialog.typing = false;
+    return;
+  }
   STATE.dialog.index++;
   if(STATE.dialog.index >= STATE.dialog.lines.length) {
     closeDialog();
@@ -1129,21 +1376,26 @@ function advanceDialog() {
 
 let typeTimer = null;
 function typewriterLine(text) {
-  const el = document.getElementById('dialog-text');
-  el.textContent = '';
+  STATE.dialog.displayText = '';
+  STATE.dialog.typing = true;
   let i = 0;
   clearInterval(typeTimer);
   typeTimer = setInterval(() => {
-    el.textContent += text[i++];
-    if(i >= text.length) clearInterval(typeTimer);
+    STATE.dialog.displayText += text[i++];
+    if(i >= text.length) {
+      clearInterval(typeTimer);
+      STATE.dialog.typing = false;
+    }
   }, 28);
 }
 
 function closeDialog() {
+  clearInterval(typeTimer);
   STATE.mode = 'WORLD';
-  document.getElementById('dialog-box').style.display = 'none';
-  document.getElementById('dialog-text').textContent = '';
-  document.getElementById('dialog-speaker').textContent = '';
+  STATE.dialog.displayText = '';
+  STATE.dialog.speaker = '';
+  STATE.dialog.lines = [];
+  STATE.dialog.typing = false;
 }
 
 // Close dialog on Escape
@@ -1226,6 +1478,7 @@ let lastTime = 0;
 function loop(ts) {
   const dt = Math.min((ts - lastTime) / 1000, 0.05);
   lastTime = ts;
+  gameTime += dt;
   if(document.getElementById('game-container').style.display !== 'none') {
     updatePlayer(dt);
     updateCamera();
@@ -1233,7 +1486,8 @@ function loop(ts) {
   }
   requestAnimationFrame(loop);
 }
-requestAnimationFrame(loop);
+// Wait for Press Start 2P to load so canvas text is crisp from frame 1
+document.fonts.ready.then(() => requestAnimationFrame(loop));
 
 // ═══════════════════════════════════════════════════════
 // GUIDE / MODE TOGGLE
