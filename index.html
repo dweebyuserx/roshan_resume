@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — resume</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Oxanium:wght@400;600;700;800&family=Share+Tech+Mono&display=swap');
 
   :root {
     --bg: #0a0b0d;
@@ -26,7 +26,9 @@
     --yellow: #fbbf24;
     --red: #f87171;
     --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --font-display: 'Oxanium', sans-serif;
+    --font-label: 'Share Tech Mono', monospace;
+    --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px; --s6: 64px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -66,14 +68,70 @@
     transition: all 0.15s ease;
   }
 
+  /* ── EFFECT LAYERS ── */
+  #rain-cv { position: fixed; inset: 0; z-index: 0; opacity: 0.055; pointer-events: none; }
+  #illus-cv { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
+  #illus-cv.show { opacity: 1; }
+  #dot-field { position: fixed; inset: 0; z-index: 2; pointer-events: none;
+    background-image: radial-gradient(circle, var(--dim) 1px, transparent 1px);
+    background-size: 28px 28px; }
+  #cur-glow { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%;
+    width: 0; height: 0;
+    background: radial-gradient(circle, rgba(77,217,240,0.06) 0%, transparent 65%);
+    transform: translate(-50%, -50%);
+    transition: left 0.06s linear, top 0.06s linear, width 0.4s ease, height 0.4s ease; }
+  #vign { position: fixed; inset: 0; z-index: 5; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%); }
+  #illus-label { position: fixed; z-index: 50; font-family: var(--font-label); font-size: 9px;
+    letter-spacing: 1.5px; color: var(--cyan); background: rgba(6,7,9,0.85);
+    border: 1px solid rgba(77,217,240,0.25); border-radius: 3px; padding: 4px 10px;
+    pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+  #illus-label.show { opacity: 1; }
+
+  /* ── UPDATED CURSOR ── */
+  .cursor { box-shadow: 0 0 10px var(--cyan); }
+  .cursor-ring { transition: width 0.15s, height 0.15s, border-color 0.15s; }
+
+  /* ── PARTICLE TRAIL ── */
+  .particle-trail { position: fixed; pointer-events: none; z-index: 9997; border-radius: 50%;
+    width: 3px; height: 3px; animation: pt-fade 0.7s ease-out forwards; }
+  @keyframes pt-fade { to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); } }
+
+  /* ── MOBILE: disable effects ── */
+  @media (max-width: 768px) {
+    #rain-cv, #illus-cv, #dot-field, #cur-glow, #vign, #illus-label { display: none; }
+    .cursor, .cursor-ring { display: none; }
+    body { cursor: auto; }
+  }
+
+  /* ── COMPILE-REVEAL ── */
+  .compile-card { position: relative; overflow: hidden; }
+  .compile-overlay {
+    position: absolute; inset: 0; padding: 14px 16px;
+    font-size: 9px; line-height: 1.5; color: var(--dim);
+    white-space: pre; pointer-events: none;
+    background: inherit; z-index: 1;
+    opacity: 1; transition: opacity 0.25s ease;
+  }
+  .compile-card.visible .compile-overlay { opacity: 0; transition-delay: 0.2s; }
+  .compile-real { opacity: 0; transition: opacity 0.3s ease 0.35s; }
+  .compile-card.visible .compile-real { opacity: 1; }
+  .compile-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.5s ease 0.15s; z-index: 2;
+  }
+  .compile-card.visible::after { transform: scaleX(1); }
+
   /* Scanline overlay */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.09) 3px, rgba(0,0,0,0.09) 4px);
     pointer-events: none;
-    z-index: 1000;
+    z-index: 4;
   }
 
   /* NAV */
