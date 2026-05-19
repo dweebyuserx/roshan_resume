@@ -15,3 +15,7 @@ Thumbs.db
 .claude
 CLAUDE.md
 
+# Superpowers and environment
+.superpowers/
+.env
+*.local
