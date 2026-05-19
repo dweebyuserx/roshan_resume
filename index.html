@@ -221,14 +221,110 @@
     max-width: 200px;
   }
 
-  /* HERO */
+  /* ── HERO ── */
   #hero {
+    min-height: 100vh;
+    padding-top: 60px;
     display: grid;
-    grid-template-columns: 1fr 420px;
-    gap: 60px;
-    align-items: center;
+    grid-template-columns: 1fr 460px;
+    grid-template-rows: 1fr auto;
+    gap: 0 52px;
+  }
+  .hero-main {
+    grid-column: 1; grid-row: 1;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: var(--s6) 0 var(--s4) var(--s5);
+  }
+  .hero-aside {
+    grid-column: 2; grid-row: 1 / 3;
+    display: flex; flex-direction: column; gap: 14px;
+    padding: var(--s6) var(--s5) var(--s4) 0;
+    justify-content: center;
+  }
+  .hero-bottom {
+    grid-column: 1; grid-row: 2;
+    padding: 0 0 var(--s4) var(--s5);
   }
 
+  /* ASCII name stage */
+  .ascii-stage { position: relative; height: 110px; overflow: hidden; margin-bottom: 22px; }
+  .ascii-frame {
+    position: absolute; inset: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(5px, 0.75vw, 6.8px);
+    line-height: 1.22; white-space: pre; letter-spacing: 0;
+    text-shadow: 0 0 8px rgba(77,217,240,0.3);
+    opacity: 0; transition: opacity 0.1s;
+  }
+  .ascii-frame.show { opacity: 1; }
+  .ascii-frame.split-r { transform: translateX(2px); }
+  .ascii-frame.split-l { transform: translateX(-2px); }
+  .orb {
+    position: absolute; font-family: var(--font-mono); pointer-events: none;
+    color: rgba(77,217,240,0.3);
+    animation: orb-drift linear infinite;
+  }
+  @keyframes orb-drift {
+    0%   { opacity: 0.1; transform: translate(0,0); }
+    25%  { opacity: 0.45; }
+    75%  { opacity: 0.5; }
+    100% { opacity: 0.05; transform: translate(var(--ex), var(--ey)); }
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-label);
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .hero-main h1 {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.8vw, 38px);
+    font-weight: 800; color: var(--bright);
+    line-height: 1.08; letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .hero-main h1 em { color: var(--cyan); font-style: normal; }
+  .hero-desc {
+    font-size: 11.5px; color: var(--muted);
+    line-height: 1.85; max-width: 400px; margin-bottom: 20px;
+  }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 22px; }
+  .hero-tags .tag {
+    font-family: var(--font-label);
+    font-size: 9px; padding: 3px 9px;
+    border: 1px solid var(--border); border-radius: 2px;
+    color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .hero-tags .tag:hover { border-color: var(--cyan); color: var(--cyan); }
+  .hero-cta { display: flex; gap: 12px; }
+
+  /* Stats row */
+  .stats-row {
+    display: flex; gap: 40px;
+    padding: 20px 0; border-top: 1px solid var(--border);
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 30px; font-weight: 800; color: var(--bright); line-height: 1;
+  }
+  .stat-num em { color: var(--cyan); font-style: normal; font-size: 18px; }
+  .stat-lbl {
+    font-family: var(--font-label);
+    font-size: 9px; color: var(--muted);
+    letter-spacing: 2px; text-transform: uppercase; margin-top: 4px;
+  }
+
+  /* Stack badges */
+  .stack-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack-badge {
+    font-family: var(--font-label); font-size: 9px;
+    padding: 4px 8px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 2px; color: var(--muted);
+  }
+
+  /* Terminal */
   .hero-terminal {
     background: var(--bg2);
     border: 1px solid var(--border);
@@ -272,46 +368,6 @@
     background: var(--cyan);
     animation: blink 1s step-end infinite;
     vertical-align: text-bottom;
-  }
-
-  .hero-content h1 {
-    font-family: var(--font-display);
-    font-size: clamp(42px, 6vw, 80px);
-    font-weight: 800;
-    line-height: 1;
-    color: var(--bright);
-    margin-bottom: 16px;
-  }
-  .hero-content h1 em {
-    font-style: normal;
-    background: linear-gradient(135deg, var(--cyan), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .hero-tagline {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 32px;
-    max-width: 480px;
-  }
-
-  .hero-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 40px;
-  }
-  .tag {
-    padding: 4px 12px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    font-size: 11px;
-    color: var(--cyan);
-    background: rgba(77,217,240,0.04);
-    letter-spacing: 0.05em;
   }
 
   .hero-cta {
@@ -652,8 +708,10 @@
 
   /* Mobile */
   @media (max-width: 900px) {
-    #hero { grid-template-columns: 1fr; }
-    .hero-terminal { display: none; }
+    #hero { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .hero-aside { display: none; }
+    .hero-main { padding: 80px var(--s3) var(--s3); }
+    .hero-bottom { padding: 0 var(--s3) var(--s4); }
     .about-grid { grid-template-columns: 1fr; }
     nav { padding: 16px 24px; }
     section { padding: 100px 24px 60px; }
@@ -719,24 +777,72 @@
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-content fade-up">
+  <div class="hero-main">
+    <!-- ASCII name stage — 4 glitch frames, JS-controlled -->
+    <div class="ascii-stage" id="asciiStage">
+      <div class="ascii-frame show" id="asciiFrame0" style="color:var(--cyan)">
+ ██████╗  ██████╗ ███████╗██╗  ██╗ █████╗ ███╗   ██╗
+ ██╔══██╗██╔═══██╗██╔════╝██║  ██║██╔══██╗████╗  ██║
+ ██████╔╝██║   ██║███████╗███████║███████║██╔██╗ ██║
+ ██╔══██╗██║   ██║╚════██║██╔══██║██╔══██║██║╚██╗██║
+ ██║  ██║╚██████╔╝███████║██║  ██║██║  ██║██║ ╚████║
+ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝</div>
+      <div class="ascii-frame" id="asciiFrame1" style="color:var(--green)">
+ ╔════════════════════════════════════════════════════╗
+ ║  SERVER: roshan-prod-01    STATUS: ● ONLINE        ║
+ ╠════════╦══════════╦═════════════╦══════════════════╣
+ ║ CPU 3% ║ RAM 12GB ║ DISK 240GB  ║ NET ▲ 1.2GB/s   ║
+ ╠════════╩══════════╩═════════════╩══════════════════╣
+ ╚════════════════════════════════════════════════════╝</div>
+      <div class="ascii-frame" id="asciiFrame2" style="color:var(--orange)">
+          /\    /\    /\    /\    /\    /\    /\
+         /  \  /██\  /  \  /██\  /  \  /██\  /  \
+        / RA \/ ██ \/ SH \/ ██ \/ AN \/ ██ \/    \
+       /──────────────────────────────────────────\
+      |  ┌──┐        ┌──────────────┐        ┌──┐  |
+      |  │  │ OPEN   │  roshan.dev  │ ALWAYS │  │  |
+      |  └──┘        └──────────────┘        └──┘  |</div>
+      <div class="ascii-frame" id="asciiFrame3" style="color:var(--purple)">
+ INPUT          HIDDEN                        OUTPUT
+  ◉ ──────────── ◉ ──── ◉ ──────────────────── ◉
+   \   ╲        / \ ╲  / \                    /
+    ◉   ╲──── ◉    ╲◉╱   ◉ ── ◉ ── [ROSHAN] ◉
+   /     ╲  /       X    /       ╲            \
+  ◉       ◉         ◉  ◉    ◉    ◉─────────── ◉
+   \     / \       / \/      \  /
+    ◉ ─── ◉ ╲─── ◉  /\   ◉──◉ ──────────────  ◉</div>
+    </div>
+
+    <p class="hero-eyebrow" id="heroEyebrow">AI Solutions Consultant · roshan.dev</p>
     <h1 id="heroName"></h1>
-    <p class="hero-tagline" id="heroTagline"></p>
+    <p class="hero-desc" id="heroDesc"></p>
     <div class="hero-tags" id="heroTags"></div>
     <div class="hero-cta">
       <a href="#connections" class="btn btn-primary">get in touch</a>
-      <a href="#projects" class="btn btn-ghost">view projects</a>
+      <a href="#projects" class="btn btn-ghost">view projects →</a>
     </div>
   </div>
 
-  <div class="hero-terminal fade-up" style="transition-delay:0.2s">
-    <div class="term-bar">
-      <div class="term-dot r"></div>
-      <div class="term-dot y"></div>
-      <div class="term-dot g"></div>
-      <div class="term-title" id="termTitle"></div>
+  <div class="hero-aside">
+    <div class="hero-terminal" id="heroTerminal">
+      <div class="term-bar">
+        <div class="term-dot r"></div>
+        <div class="term-dot y"></div>
+        <div class="term-dot g"></div>
+        <div class="term-title" id="termTitle"></div>
+      </div>
+      <div class="term-body" id="termBody"></div>
     </div>
-    <div class="term-body" id="termBody"></div>
+    <div class="stack-row" id="stackRow"></div>
+  </div>
+
+  <div class="hero-bottom">
+    <div class="stats-row" id="statsRow">
+      <div><div class="stat-num">7<em>+</em></div><div class="stat-lbl">Years Experience</div></div>
+      <div><div class="stat-num">40<em>+</em></div><div class="stat-lbl">AI Systems Shipped</div></div>
+      <div><div class="stat-num">12<em>+</em></div><div class="stat-lbl">Enterprise Clients</div></div>
+      <div><div class="stat-num">3<em>×</em></div><div class="stat-lbl">Avg Cost Reduction</div></div>
+    </div>
   </div>
 </section>
 
@@ -1015,10 +1121,23 @@ function render() {
 
   // Hero
   document.getElementById('heroName').innerHTML = `${CONFIG.name.first}<br><em>${CONFIG.name.last}.</em>`;
-  document.getElementById('heroTagline').textContent = CONFIG.tagline;
+
+  // hero desc — first about paragraph truncated as sub-tagline
+  const heroDescEl = document.getElementById('heroDesc');
+  if (heroDescEl) heroDescEl.textContent = CONFIG.aboutParagraphs && CONFIG.aboutParagraphs[0]
+    ? CONFIG.aboutParagraphs[0].substring(0, 180) + '…'
+    : '';
 
   const heroTags = document.getElementById('heroTags');
   heroTags.innerHTML = CONFIG.heroTags.map(t => `<span class="tag">${t}</span>`).join('');
+
+  // stack row badges
+  const stackRowEl = document.getElementById('stackRow');
+  if (stackRowEl && CONFIG.stack) {
+    stackRowEl.innerHTML = CONFIG.stack.map(s =>
+      `<span class="stack-badge">${s}</span>`
+    ).join('');
+  }
 
   // Terminal
   document.getElementById('termTitle').textContent = `${CONFIG.handle}@dev — ~/resume — zsh`;
@@ -1320,7 +1439,7 @@ window.addEventListener('load', () => {
     setTimeout(() => el.classList.add('visible'), i * 200 + 100);
   });
 
-  typeStream(document.querySelector('.hero-content h1'));
+  typeStream(document.querySelector('.hero-main h1'));
 
   // Connection lines
   const connSec = document.getElementById('connections');
