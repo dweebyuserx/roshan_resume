@@ -900,6 +900,265 @@
 <footer id="footer"></footer>
 
 <script>
+// ── ILLUSTRATION ZONES (index.html) ──
+const ZONES = [
+  {
+    id: 'hero-main', sel: '.hero-main', label: '// profile loaded',
+    color: '#4dd9f0',
+    art: [
+      '  ┌──────────────────────────────┐  ',
+      '  │  ❯ whoami                    │  ',
+      '  │  > roshan.abraham            │  ',
+      '  │  ❯ curl roshan.dev/api/me    │  ',
+      '  │  > {"role":"AI Consultant",  │  ',
+      '  │     "yoe":7,"status":"open"} │  ',
+      '  │  ❯ █                        │  ',
+      '  └──────────────────────────────┘  ',
+    ]
+  },
+  {
+    id: 'terminal', sel: '#heroTerminal', label: '// zsh session active',
+    color: '#3dffa0',
+    art: [
+      '   ╭─────────────────────╮   ',
+      '   │  roshan@dev  ✓ zsh  │   ',
+      '   ├─────────────────────┤   ',
+      '   │  uptime: 7y 3m      │   ',
+      '   │  load:   0.04       │   ',
+      '   │  mem:    free 14GB  │   ',
+      '   │  disk:   ██░░ 42%   │   ',
+      '   ╰─────────────────────╯   ',
+    ]
+  },
+  {
+    id: 'about', sel: '#about', label: '// skills resolved',
+    color: '#a78bfa',
+    art: [
+      '   npm install @roshan/brain    ',
+      '   ┌──────────────────────────┐ ',
+      '   │ ✓ llm-finetuning  v9.2.0 │ ',
+      '   │ ✓ rag-systems     v8.8.1 │ ',
+      '   │ ✓ agentic-pipelines v9.5 │ ',
+      '   │ ✓ vector-db       v8.5.0 │ ',
+      '   │ ✓ mlops-infra     v8.0.3 │ ',
+      '   └──────────────────────────┘ ',
+    ]
+  },
+  {
+    id: 'projects', sel: '#projects', label: '// projects compiled',
+    color: '#ff9f4a',
+    art: [
+      '  git log --oneline --graph      ',
+      '  * 8f2a1c  verity-protocol      ',
+      '  │ ✓ 94% accuracy  │ prod       ',
+      '  * 3d9b4f  rag-optimizer        ',
+      '  │ ✓ eval harness  │ prod       ',
+      '  * 1c7e2a  llm-cost-guard       ',
+      '    ✓ 3× cheaper    │ prod       ',
+    ]
+  },
+  {
+    id: 'stats', sel: '.stats-row', label: '// metrics loaded',
+    color: '#fbbf24',
+    art: [
+      '  ┌──────────────────────────┐  ',
+      '  │  PERFORMANCE METRICS     │  ',
+      '  ├──────────────────────────┤  ',
+      '  │  Experience  ████████ 7y │  ',
+      '  │  Systems     ███████ 40+ │  ',
+      '  │  Clients     █████  12+  │  ',
+      '  │  Cost↓       ████   3×   │  ',
+      '  └──────────────────────────┘  ',
+    ]
+  },
+];
+
+// ── EFFECT LAYERS INIT ──
+(function initEffects(ZONES) {
+  if (window.innerWidth <= 768) return; // disable on mobile
+
+  const curEl   = document.getElementById('cursor');
+  const ringEl  = document.getElementById('cursorRing');
+  const glowEl  = document.getElementById('cur-glow');
+  const ilCv    = document.getElementById('illus-cv');
+  const ilCtx   = ilCv.getContext('2d');
+  const ilLabel = document.getElementById('illus-label');
+  const rainCv  = document.getElementById('rain-cv');
+  const rCtx    = rainCv.getContext('2d');
+
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let rx = mx, ry = my;
+
+  // Canvas resize
+  function resizeCv() {
+    rainCv.width  = ilCv.width  = window.innerWidth;
+    rainCv.height = ilCv.height = window.innerHeight;
+  }
+  resizeCv();
+  window.addEventListener('resize', resizeCv);
+
+  // ── CURSOR + PARTICLES ──
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (curEl)  { curEl.style.left  = mx + 'px'; curEl.style.top  = my + 'px'; }
+    if (glowEl) { glowEl.style.left = mx + 'px'; glowEl.style.top = my + 'px'; }
+    ilLabel.style.left = (mx + 16) + 'px';
+    ilLabel.style.top  = (my - 28) + 'px';
+    if (Math.random() > 0.68) spawnParticle(mx, my);
+    checkZones(mx, my);
+  });
+
+  function spawnParticle(x, y) {
+    const p = document.createElement('div');
+    p.className = 'particle-trail';
+    const cols = ['#4dd9f0','#3dffa0','#a78bfa','#f472b6'];
+    const c = cols[Math.floor(Math.random() * 4)];
+    const dx = (Math.random() - 0.5) * 52, dy = (Math.random() - 0.5) * 52;
+    p.style.cssText = `left:${x}px;top:${y}px;background:${c};box-shadow:0 0 5px ${c};--dx:${dx}px;--dy:${dy}px`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+
+  // Eased ring follow
+  (function animRing() {
+    rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
+    if (ringEl) { ringEl.style.left = rx + 'px'; ringEl.style.top = ry + 'px'; }
+    requestAnimationFrame(animRing);
+  })();
+
+  // Ring expand on interactive elements
+  document.querySelectorAll('a, .btn, button, [data-hover]').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      if (ringEl) { ringEl.style.width = '46px'; ringEl.style.height = '46px'; ringEl.style.borderColor = 'rgba(77,217,240,0.8)'; }
+      if (glowEl) { glowEl.style.width = '500px'; glowEl.style.height = '500px'; }
+    });
+    el.addEventListener('mouseleave', () => {
+      if (ringEl) { ringEl.style.width = '28px'; ringEl.style.height = '28px'; ringEl.style.borderColor = 'rgba(77,217,240,0.4)'; }
+      if (glowEl) { glowEl.style.width = '0'; glowEl.style.height = '0'; }
+    });
+  });
+
+  // ── ASCII RAIN ──
+  const RAIN_CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZアイウエオカキクケ0123456789@#{}[]|<>╔╗╚╝║═';
+  let drops = [];
+  function initDrops() {
+    drops = Array(Math.floor(rainCv.width / 14)).fill(0).map(() => Math.random() * rainCv.height / 14);
+  }
+  initDrops();
+  window.addEventListener('resize', initDrops);
+
+  setInterval(() => {
+    rCtx.fillStyle = 'rgba(6,7,9,0.045)';
+    rCtx.fillRect(0, 0, rainCv.width, rainCv.height);
+    rCtx.font = '12px Courier New';
+    const cursorCol = Math.floor(mx / 14);
+    drops.forEach((d, i) => {
+      const c = RAIN_CH[Math.floor(Math.random() * RAIN_CH.length)];
+      const x = i * 14, y = d * 14, r = Math.random();
+      const nearCursor = Math.abs(i - cursorCol) <= 2;
+      rCtx.fillStyle = nearCursor ? `rgba(77,217,240,${0.6 - Math.abs(i-cursorCol)*0.2})` :
+                       r > 0.98 ? '#fff' : r > 0.93 ? '#4dd9f0' : '#0c2010';
+      rCtx.fillText(c, x, y);
+      if (y > rainCv.height && Math.random() > 0.977) drops[i] = 0;
+      drops[i] += 0.45 + Math.random() * 0.28;
+    });
+  }, 58);
+
+  // ── CONTEXTUAL ILLUSTRATIONS ──
+  let currentZone = null, ilT = 0, ilLines = [], ilColor = '#4dd9f0';
+
+  function drawIllus() {
+    ilCtx.clearRect(0, 0, ilCv.width, ilCv.height);
+    if (!currentZone || !ilLines.length) return;
+    const offX = mx < ilCv.width / 2  ? ilCv.width - 340 : 40;
+    const offY = my < ilCv.height / 2 ? ilCv.height - 200 : 80;
+    ilCtx.font = '11px "JetBrains Mono", monospace';
+    const shown = Math.min(ilLines.length, Math.floor(ilT / 60) + 1);
+    for (let i = 0; i < shown; i++) {
+      const isLast = i === shown - 1;
+      const lineStr = isLast ? ilLines[i].substring(0, Math.floor(((ilT % 60) / 60) * ilLines[i].length)) : ilLines[i];
+      ilCtx.fillStyle = ilColor;
+      ilCtx.globalAlpha = 0.5;
+      ilCtx.fillText(lineStr, offX, offY + i * 16);
+    }
+    ilCtx.globalAlpha = 1;
+  }
+
+  function startZone(zone) {
+    if (currentZone === zone.id) return;
+    currentZone = zone.id; ilLines = zone.art; ilColor = zone.color; ilT = 0;
+    ilCv.classList.add('show');
+    ilLabel.textContent = zone.label;
+    ilLabel.classList.add('show');
+  }
+  function stopZone() {
+    currentZone = null;
+    ilCv.classList.remove('show');
+    ilLabel.classList.remove('show');
+  }
+
+  function checkZones(mx_, my_) {
+    for (const zone of ZONES) {
+      const el = document.querySelector(zone.sel);
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      const PAD = 80;
+      if (mx_ > r.left - PAD && mx_ < r.right + PAD && my_ > r.top - PAD && my_ < r.bottom + PAD) {
+        startZone(zone); return;
+      }
+    }
+    stopZone();
+  }
+
+  (function animIllus() {
+    if (currentZone) { ilT += 1.6; drawIllus(); }
+    requestAnimationFrame(animIllus);
+  })();
+
+})(typeof ZONES !== 'undefined' ? ZONES : []);
+
+// ── ASCII NAME GLITCH CYCLE ──
+(function initGlitch() {
+  const frames = [0,1,2,3].map(i => document.getElementById('asciiFrame' + i));
+  if (!frames[0]) return;
+  let cf = 0;
+
+  function switchTo(n) {
+    const cur = frames[cf], nxt = frames[n];
+    cur.classList.add('split-r');
+    setTimeout(() => { cur.classList.remove('split-r'); cur.classList.add('split-l'); }, 60);
+    setTimeout(() => { cur.classList.remove('split-l', 'show'); nxt.classList.add('show'); cf = n; }, 120);
+  }
+
+  // Cycle every 8s
+  setInterval(() => switchTo((cf + 1) % 4), 8000);
+
+  // Micro-glitch on frame 0 every 3.2s (no swap)
+  setInterval(() => {
+    if (cf === 0) {
+      frames[0].classList.add('split-r');
+      setTimeout(() => frames[0].classList.remove('split-r'), 80);
+      setTimeout(() => { frames[0].classList.add('split-l'); setTimeout(() => frames[0].classList.remove('split-l'), 80); }, 100);
+    }
+  }, 3200);
+
+  // Orbital characters
+  const stage = document.getElementById('asciiStage');
+  if (stage) {
+    '<>{}[]|/\\*@#$%^&~;:=+-×÷≠∞∑░▒▓│─╭╮╰╯'.split('').forEach(c => {
+      const o = document.createElement('div');
+      o.className = 'orb';
+      o.textContent = c;
+      const l = Math.random() * 100, t = Math.random() * 100;
+      const dur = 3 + Math.random() * 6, del = Math.random() * 4;
+      const ex = (Math.random() - 0.5) * 80, ey = (Math.random() - 0.5) * 60;
+      o.style.cssText = `left:${l}%;top:${t}%;font-size:${8 + Math.random()*5}px;` +
+        `--ex:${ex}px;--ey:${ey}px;animation-duration:${dur}s;animation-delay:-${del}s`;
+      stage.appendChild(o);
+    });
+  }
+})();
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // CONFIG - Edit this object with your personal data
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1271,15 +1530,6 @@ function typeStream(el, speed) {
 // ═══════════════════════════════════════════════════════════════════════════════
 const ring = document.getElementById('cursorRing');
 let mx = 0, my = 0, rx = 0, ry = 0;
-
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
 
 function setupCursorHovers() {
   document.querySelectorAll('a, button, .node-card, .article-item, .project-card').forEach(el => {
