@@ -1430,12 +1430,15 @@ function render() {
         <div class="skill-group-label">${group.label}</div>
         <div class="skill-bars">
           ${group.items.map(s => `
-            <div class="skill-row">
-              <span class="skill-name">${s.name}</span>
-              <div class="skill-track">
-                <div class="skill-fill ${group.color}" style="width:${s.pct}%"></div>
+            <div class="skill-row compile-card">
+              <div class="compile-overlay">// resolving skill module...\nimport SkillModule from '@ra/core'\nexport default { id: "${s.name.toLowerCase().replace(/\s+/g,'-')}", pct: ${s.pct || 0} }</div>
+              <div class="compile-real">
+                <span class="skill-name">${s.name}</span>
+                <div class="skill-track">
+                  <div class="skill-fill ${group.color}" style="width:${s.pct}%"></div>
+                </div>
+                <span class="skill-pct">${s.pct}</span>
               </div>
-              <span class="skill-pct">${s.pct}</span>
             </div>
           `).join('')}
         </div>
@@ -1463,15 +1466,18 @@ function render() {
   // Projects
   const projectsGrid = document.getElementById('projectsGrid');
   projectsGrid.innerHTML = CONFIG.projects.map(p => `
-    <div class="project-card" style="--accent:var(--${p.accent})">
-      <span class="project-icon">${p.icon}</span>
-      <div class="project-name">${p.name}</div>
-      <div class="project-desc">${p.desc}</div>
-      <div class="project-tech">
-        ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
-      </div>
-      <div class="project-links">
-        ${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
+    <div class="project-card compile-card" style="--accent:var(--${p.accent})">
+      <div class="compile-overlay">// building project component...\nconst proj = {\n  name: "${p.name}",\n  stack: [${p.tech ? p.tech.slice(0,3).map(t=>`"${t}"`).join(', ') : ''}]\n}</div>
+      <div class="compile-real">
+        <span class="project-icon">${p.icon}</span>
+        <div class="project-name">${p.name}</div>
+        <div class="project-desc">${p.desc}</div>
+        <div class="project-tech">
+          ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
+        </div>
+        <div class="project-links">
+          ${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
+        </div>
       </div>
     </div>
   `).join('');
@@ -1562,6 +1568,7 @@ const observer = new IntersectionObserver(entries => {
 
 function setupObservers() {
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  document.querySelectorAll('.compile-card').forEach(el => observer.observe(el));
 
   const aboutObs = new IntersectionObserver(entries => {
     entries.forEach(e => {
