@@ -692,6 +692,12 @@
 </head>
 <body>
 
+<canvas id="rain-cv"></canvas>
+<canvas id="illus-cv"></canvas>
+<div id="dot-field"></div>
+<div id="cur-glow"></div>
+<div id="vign"></div>
+<div id="illus-label"></div>
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
@@ -1144,15 +1150,8 @@ function typeStream(el, speed) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // CURSOR
 // ═══════════════════════════════════════════════════════════════════════════════
-const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursorRing');
 let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
 
 function animRing() {
   rx += (mx - rx) * 0.12;
