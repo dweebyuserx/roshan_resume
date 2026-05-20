@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — projects</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,600;0,700;1,300&family=Oxanium:wght@400;600;700;800&family=Share+Tech+Mono&display=swap');
 
   :root {
     --bg: #0a0b0d;
@@ -26,7 +26,9 @@
     --yellow: #fbbf24;
     --red: #f87171;
     --font-mono: 'JetBrains Mono', monospace;
-    --font-display: 'Syne', sans-serif;
+    --font-display: 'Oxanium', sans-serif;
+    --font-label: 'Share Tech Mono', monospace;
+    --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px; --s6: 64px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -63,13 +65,61 @@
     transition: all 0.15s ease;
   }
 
+  /* ── EFFECT LAYERS ── */
+  #rain-cv { position: fixed; inset: 0; z-index: 0; opacity: 0.055; pointer-events: none; }
+  #illus-cv { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
+  #illus-cv.show { opacity: 1; }
+  #dot-field { position: fixed; inset: 0; z-index: 2; pointer-events: none;
+    background-image: radial-gradient(circle, var(--dim) 1px, transparent 1px);
+    background-size: 28px 28px; }
+  #cur-glow { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%;
+    width: 0; height: 0;
+    background: radial-gradient(circle, rgba(77,217,240,0.06) 0%, transparent 65%);
+    transform: translate(-50%, -50%);
+    transition: left 0.06s linear, top 0.06s linear, width 0.4s ease, height 0.4s ease; }
+  #vign { position: fixed; inset: 0; z-index: 5; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%); }
+  #illus-label { position: fixed; z-index: 50; font-family: var(--font-label); font-size: 9px;
+    letter-spacing: 1.5px; color: var(--cyan); background: rgba(6,7,9,0.85);
+    border: 1px solid rgba(77,217,240,0.25); border-radius: 3px; padding: 4px 10px;
+    pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+  #illus-label.show { opacity: 1; }
+  .cursor { box-shadow: 0 0 10px var(--cyan); }
+  .cursor-ring { transition: width 0.15s, height 0.15s, border-color 0.15s; }
+  .particle-trail { position: fixed; pointer-events: none; z-index: 9997; border-radius: 50%;
+    width: 3px; height: 3px; animation: pt-fade 0.7s ease-out forwards; }
+  @keyframes pt-fade { to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); } }
+  .compile-card { position: relative; overflow: hidden; }
+  .compile-overlay {
+    position: absolute; inset: 0; padding: 14px 16px;
+    font-size: 9px; line-height: 1.5; color: var(--dim);
+    white-space: pre; pointer-events: none;
+    background: inherit; z-index: 1;
+    opacity: 1; transition: opacity 0.25s ease;
+  }
+  .compile-card.visible .compile-overlay { opacity: 0; transition-delay: 0.2s; }
+  .compile-real { opacity: 0; transition: opacity 0.3s ease 0.35s; }
+  .compile-card.visible .compile-real { opacity: 1; }
+  .compile-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.5s ease 0.15s; z-index: 2;
+  }
+  .compile-card.visible::after { transform: scaleX(1); }
+  @media (max-width: 768px) {
+    #rain-cv, #illus-cv, #dot-field, #cur-glow, #vign, #illus-label { display: none; }
+    .cursor, .cursor-ring { display: none; }
+    body { cursor: auto; }
+  }
+
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.09) 2px, rgba(0,0,0,0.09) 3px);
     pointer-events: none;
-    z-index: 1000;
+    z-index: 4;
   }
 
   nav {
@@ -531,6 +581,12 @@
 </head>
 <body>
 
+<canvas id="rain-cv"></canvas>
+<canvas id="illus-cv"></canvas>
+<div id="dot-field"></div>
+<div id="cur-glow"></div>
+<div id="vign"></div>
+<div id="illus-label"></div>
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
@@ -568,6 +624,105 @@
 <footer id="footer"></footer>
 
 <script>
+const ZONES = [
+  {
+    id: 'featured', sel: '.featured-project',
+    label: '// featured project',
+    color: '#4dd9f0',
+    art: [
+      '  ┌──────────────────────────┐  ',
+      '  │   VERITY PROTOCOL v2.1   │  ',
+      '  ├──────────────────────────┤  ',
+      '  │  [client]──▶[gateway]    │  ',
+      '  │       │                  │  ',
+      '  │  [agent loop]            │  ',
+      '  │   ╱         ╲           │  ',
+      '  │ [vdb]    [gpt-4o]        │  ',
+      '  └──────────────────────────┘  ',
+    ]
+  },
+  {
+    id: 'projects-grid', sel: '.projects-grid',
+    label: '// project registry',
+    color: '#ff9f4a',
+    art: [
+      '  git log --oneline --graph      ',
+      '  * 8f2a1c  verity-protocol      ',
+      '  * 3d9b4f  rag-optimizer        ',
+      '  * 1c7e2a  llm-cost-guard       ',
+      '  * 9a4f3b  agent-framework      ',
+      '  * 2e8c1d  embed-pipeline       ',
+    ]
+  },
+];
+
+(function initEffects(ZONES) {
+  if (window.innerWidth <= 768) return;
+  const curEl   = document.getElementById('cursor');
+  const ringEl  = document.getElementById('cursorRing');
+  const glowEl  = document.getElementById('cur-glow');
+  const ilCv    = document.getElementById('illus-cv');
+  const ilCtx   = ilCv.getContext('2d');
+  const ilLabel = document.getElementById('illus-label');
+  const rainCv  = document.getElementById('rain-cv');
+  const rCtx    = rainCv.getContext('2d');
+  let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  let rx = mx, ry = my;
+  function resizeCv() { rainCv.width = ilCv.width = window.innerWidth; rainCv.height = ilCv.height = window.innerHeight; }
+  resizeCv(); window.addEventListener('resize', resizeCv);
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    if (curEl) { curEl.style.left = mx + 'px'; curEl.style.top = my + 'px'; }
+    if (glowEl) { glowEl.style.left = mx + 'px'; glowEl.style.top = my + 'px'; }
+    ilLabel.style.left = (mx + 16) + 'px'; ilLabel.style.top = (my - 28) + 'px';
+    if (Math.random() > 0.68) spawnParticle(mx, my);
+    checkZones(mx, my);
+  });
+  function spawnParticle(x, y) {
+    const p = document.createElement('div'); p.className = 'particle-trail';
+    const cols = ['#4dd9f0','#3dffa0','#a78bfa','#f472b6'];
+    const c = cols[Math.floor(Math.random() * 4)];
+    const dx = (Math.random() - 0.5) * 52, dy = (Math.random() - 0.5) * 52;
+    p.style.cssText = `left:${x}px;top:${y}px;background:${c};box-shadow:0 0 5px ${c};--dx:${dx}px;--dy:${dy}px`;
+    document.body.appendChild(p); setTimeout(() => p.remove(), 700);
+  }
+  (function animRing() { rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14; if (ringEl) { ringEl.style.left = rx + 'px'; ringEl.style.top = ry + 'px'; } requestAnimationFrame(animRing); })();
+  document.querySelectorAll('a, .btn, button, [data-hover]').forEach(el => {
+    el.addEventListener('mouseenter', () => { if (ringEl) { ringEl.style.width = '46px'; ringEl.style.height = '46px'; ringEl.style.borderColor = 'rgba(77,217,240,0.8)'; } if (glowEl) { glowEl.style.width = '500px'; glowEl.style.height = '500px'; } });
+    el.addEventListener('mouseleave', () => { if (ringEl) { ringEl.style.width = '28px'; ringEl.style.height = '28px'; ringEl.style.borderColor = 'rgba(77,217,240,0.4)'; } if (glowEl) { glowEl.style.width = '0'; glowEl.style.height = '0'; } });
+  });
+  const RAIN_CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZアイウエオカキクケ0123456789@#{}[]|<>╔╗╚╝║═';
+  let drops = [];
+  function initDrops() { drops = Array(Math.floor(rainCv.width / 14)).fill(0).map(() => Math.random() * rainCv.height / 14); }
+  initDrops(); window.addEventListener('resize', initDrops);
+  setInterval(() => {
+    rCtx.fillStyle = 'rgba(6,7,9,0.045)'; rCtx.fillRect(0, 0, rainCv.width, rainCv.height); rCtx.font = '12px Courier New';
+    const cursorCol = Math.floor(mx / 14);
+    drops.forEach((d, i) => {
+      const c = RAIN_CH[Math.floor(Math.random() * RAIN_CH.length)]; const x = i * 14, y = d * 14, r = Math.random();
+      const nearCursor = Math.abs(i - cursorCol) <= 2;
+      rCtx.fillStyle = nearCursor ? `rgba(77,217,240,${0.6 - Math.abs(i-cursorCol)*0.2})` : r > 0.98 ? '#fff' : r > 0.93 ? '#4dd9f0' : '#0c2010';
+      rCtx.fillText(c, x, y);
+      if (y > rainCv.height && Math.random() > 0.977) drops[i] = 0; drops[i] += 0.45 + Math.random() * 0.28;
+    });
+  }, 58);
+  let currentZone = null, ilT = 0, ilLines = [], ilColor = '#4dd9f0';
+  function drawIllus() {
+    ilCtx.clearRect(0, 0, ilCv.width, ilCv.height); if (!currentZone || !ilLines.length) return;
+    const offX = mx < ilCv.width / 2 ? ilCv.width - 340 : 40; const offY = my < ilCv.height / 2 ? ilCv.height - 200 : 80;
+    ilCtx.font = '11px "JetBrains Mono", monospace';
+    const shown = Math.min(ilLines.length, Math.floor(ilT / 60) + 1);
+    for (let i = 0; i < shown; i++) {
+      const isLast = i === shown - 1; const lineStr = isLast ? ilLines[i].substring(0, Math.floor(((ilT % 60) / 60) * ilLines[i].length)) : ilLines[i];
+      ilCtx.fillStyle = ilColor; ilCtx.globalAlpha = 0.5; ilCtx.fillText(lineStr, offX, offY + i * 16);
+    } ilCtx.globalAlpha = 1;
+  }
+  function startZone(zone) { if (currentZone === zone.id) return; currentZone = zone.id; ilLines = zone.art; ilColor = zone.color; ilT = 0; ilCv.classList.add('show'); ilLabel.textContent = zone.label; ilLabel.classList.add('show'); }
+  function stopZone() { currentZone = null; ilCv.classList.remove('show'); ilLabel.classList.remove('show'); }
+  function checkZones(mx_, my_) { for (const zone of ZONES) { const el = document.querySelector(zone.sel); if (!el) continue; const r = el.getBoundingClientRect(); const PAD = 80; if (mx_ > r.left - PAD && mx_ < r.right + PAD && my_ > r.top - PAD && my_ < r.bottom + PAD) { startZone(zone); return; } } stopZone(); }
+  (function animIllus() { if (currentZone) { ilT += 1.6; drawIllus(); } requestAnimationFrame(animIllus); })();
+})(typeof ZONES !== 'undefined' ? ZONES : []);
+
 const _em = atob('YWJyYWhhbS5yb3NoYW4uYUBnbWFpbC5jb20=');
 const CONFIG = {
   name: { first: "Roshan", last: "Abraham" },
@@ -775,8 +930,11 @@ function render() {
           </div>`).join('')}
       </div>` : '';
     const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
+    const overlayText = `// building project component...\nconst proj = {\n  name: "${p.name}",\n  stack: [${p.tech ? p.tech.slice(0,3).map(t=>`"${t}"`).join(', ') : ''}]\n}`;
     return `
-      <div class="project-card${i === 0 ? ' active' : ''}" style="--accent:var(--${p.accent})" data-idx="${i}" onclick="setFeatured(+this.dataset.idx)">
+      <div class="project-card compile-card${i === 0 ? ' active' : ''}" style="--accent:var(--${p.accent})" data-idx="${i}" onclick="setFeatured(+this.dataset.idx)">
+        <div class="compile-overlay">${overlayText}</div>
+        <div class="compile-real">
         <span class="project-icon">${p.icon}</span>
         <div class="project-name">${p.name}</div>
         ${buildsBadge}
@@ -787,6 +945,7 @@ function render() {
         </div>
         ${links}
         <div class="swap-hint">↑ set as featured</div>
+        </div>
       </div>`;
   }).join('');
 
@@ -848,39 +1007,8 @@ function setFeatured(idx) {
   }, 220);
 }
 
-// Cursor
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top = my + 'px';
-});
-
-function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  ring.style.left = rx + 'px';
-  ring.style.top = ry + 'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-
 function setupHovers() {
-  document.querySelectorAll('a, button, .project-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      ring.style.width = '44px';
-      ring.style.height = '44px';
-      ring.style.borderColor = 'rgba(77,217,240,0.7)';
-    });
-    el.addEventListener('mouseleave', () => {
-      ring.style.width = '28px';
-      ring.style.height = '28px';
-      ring.style.borderColor = 'rgba(77,217,240,0.4)';
-    });
-  });
+  // hovers handled by initEffects
 }
 
 const observer = new IntersectionObserver(entries => {
@@ -889,10 +1017,18 @@ const observer = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.1 });
 
+const compileObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); compileObs.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+
 window.addEventListener('load', () => {
   render();
   setupHovers();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  // compile-cards are injected by render() above
+  document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
   typeStream(document.querySelector('.page-header h1'));
 });
 </script>
