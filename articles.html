@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.clarity.ms; connect-src 'self' https://cloudflareinsights.com https://www.clarity.ms; base-uri 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>~/user — articles</title>
 <style>
@@ -65,7 +65,7 @@
     transition: all 0.15s ease;
   }
 
-  #rain-cv { position: fixed; inset: 0; z-index: 0; opacity: 0.055; pointer-events: none; }
+  #rain-cv { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 1; pointer-events: none; }
   #illus-cv { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #illus-cv.show { opacity: 1; }
   #dot-field { position: fixed; inset: 0; z-index: 2; pointer-events: none;
@@ -188,7 +188,9 @@
 
   .page-header {
     margin-bottom: 60px;
+    animation: phIn 0.6s ease 0.05s both;
   }
+  @keyframes phIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 
   .page-header h1 {
     font-family: var(--font-display);
@@ -377,6 +379,24 @@
 
   @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
 
+  /* ── SCROLL PROGRESS ── */
+  #scroll-prog { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: rgba(77,217,240,0.08); z-index: 10000; pointer-events: none; }
+  #scroll-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--green)); transition: width 0.1s linear; }
+
+  /* ── TERMINAL STATUS BAR ── */
+  #term-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 28px;
+    background: rgba(10,11,13,0.92); border-top: 1px solid rgba(77,217,240,0.1);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    color: rgba(200,207,232,0.35); letter-spacing: 0.08em;
+    z-index: 200; pointer-events: none;
+  }
+  #term-path { color: rgba(77,217,240,0.5); }
+  #term-right { color: rgba(61,255,160,0.4); }
+  @media (max-width: 768px) { #term-bar, #scroll-prog { display: none; } }
+
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -459,6 +479,7 @@
   .article-card { cursor: pointer; }
   .article-card.hidden { display: none; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/animejs@4/lib/anime.iife.min.js"></script>
 <!-- ░░ Analytics — fill in IDs after account setup ░░ -->
 <!-- Cloudflare Web Analytics: https://dash.cloudflare.com → Analytics & Logs → Web Analytics -->
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
@@ -499,7 +520,7 @@
 </nav>
 
 <main>
-  <div class="page-header fade-up">
+  <div class="page-header">
     <div class="breadcrumb"><a href="index.html">~</a> / articles</div>
     <h1>Articles & <em>Writing.</em></h1>
     <p class="subtitle">Thoughts on AI engineering, LLMOps, agentic systems, and building intelligent applications.</p>
@@ -643,8 +664,7 @@ function render() {
     const slug = a.title ? a.title.toLowerCase().replace(/\s+/g,'-') : 'entry';
     const overlayText = `// loading article...\ncat articles/${slug}.md`;
     return `
-    <div class="article-card compile-card fade-up" data-categories="${(a.categories||[]).join(',')}"
-         style="transition-delay:${0.15 + i * 0.05}s"
+    <div class="article-card compile-card" data-categories="${(a.categories||[]).join(',')}"
          onclick="toggleArticle(event, null, ${i})">
       <div class="compile-overlay">${overlayText}</div>
       <div class="compile-real">
@@ -736,15 +756,42 @@ function typeStream(el, speed) {
 
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.25 });
 
 window.addEventListener('load', () => {
   render();
-  document.querySelectorAll('.fade-up, .compile-card').forEach(el => observer.observe(el));
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  document.querySelectorAll('.compile-card').forEach(el => observer.observe(el));
   typeStream(document.querySelector('.page-header h1'));
 });
+
+// ── SCROLL PROGRESS + STATUS BAR ──
+(function() {
+  const fill = document.getElementById('scroll-fill');
+  const pctEl = document.getElementById('term-pct');
+  window.addEventListener('scroll', () => {
+    const pct = Math.min(100, (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+    if (fill) fill.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+  }, { passive: true });
+  function updateClock() {
+    const el = document.getElementById('term-clock');
+    if (!el) return;
+    const n = new Date();
+    el.textContent = [n.getHours(), n.getMinutes(), n.getSeconds()].map(v => String(v).padStart(2,'0')).join(':');
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+})();
 </script>
+
+<div id="scroll-prog"><div id="scroll-fill"></div></div>
+<div id="term-bar">
+  <span id="term-path">~/roshan/<span id="term-page">articles</span></span>
+  <span id="term-center">roshan.dev · ai solutions consultant</span>
+  <span id="term-right"><span id="term-pct">0%</span> · <span id="term-clock"></span></span>
+</div>
 </body>
 </html>
