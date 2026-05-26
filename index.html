@@ -1108,9 +1108,13 @@ const ZONES = [
   if (hexCv) {
     const hCtx = hexCv.getContext('2d');
     hexCv.width = rainCv.width; hexCv.height = rainCv.height;
-    window.addEventListener('resize', () => { hexCv.width = rainCv.width; hexCv.height = rainCv.height; });
-    const hexCols = Math.floor(hexCv.width / 56);
+    let hexCols = Math.floor(hexCv.width / 56);
     let hexVals = Array(hexCols).fill(0).map(() => Math.floor(Math.random() * 0xFFFF));
+    window.addEventListener('resize', () => {
+      hexCv.width = rainCv.width; hexCv.height = rainCv.height;
+      hexCols = Math.floor(hexCv.width / 56);
+      hexVals = Array(hexCols).fill(0).map(() => Math.floor(Math.random() * 0xFFFF));
+    });
     setInterval(() => {
       hCtx.fillStyle = 'rgba(6,7,9,0.03)'; hCtx.fillRect(0, 0, hexCv.width, hexCv.height);
       hCtx.font = '9px "Share Tech Mono", monospace';
@@ -1620,9 +1624,10 @@ function heroNameScramble() {
 // Spring hover setup
 function setupSpringHovers() {
   if (typeof anime === 'undefined') return;
+  const sp = anime.createSpring({ mass: 1, stiffness: 80, damping: 10 });
   document.querySelectorAll('.node-card, .project-card, .article-item').forEach(el => {
-    el.addEventListener('mouseenter', () => anime({ targets: el, translateY: -6, duration: 400, easing: 'spring(1, 80, 10, 0)' }));
-    el.addEventListener('mouseleave', () => anime({ targets: el, translateY: 0, duration: 500, easing: 'spring(1, 80, 10, 0)' }));
+    el.addEventListener('mouseenter', () => anime({ targets: el, translateY: -6, ease: sp }));
+    el.addEventListener('mouseleave', () => anime({ targets: el, translateY: 0, ease: sp }));
   });
 }
 
@@ -1937,19 +1942,20 @@ window.addEventListener('resize', drawConnections);
     { icon:'↗', title:'HuggingFace', sub:'huggingface.co/dweebster', url:'https://huggingface.co/dweebster' },
   ];
   let selected = 0, filtered = [...ITEMS];
+  let palOpen = false;
   const pal = document.getElementById('cmd-palette');
   const input = document.getElementById('cmd-input');
   const results = document.getElementById('cmd-results');
   if (!pal || !input || !results) return;
 
   function open() {
+    palOpen = true;
     pal.style.display = '';
     pal.style.opacity = '0'; pal.style.transition = 'opacity 0.15s';
     requestAnimationFrame(() => { pal.style.opacity = '1'; });
     input.value = ''; filter(''); input.focus();
   }
-  function close() { pal.style.opacity = '0'; setTimeout(() => { pal.style.display = 'none'; }, 150); }
-  function isOpen() { return pal.style.display !== 'none' && pal.style.opacity !== '0'; }
+  function close() { palOpen = false; pal.style.opacity = '0'; setTimeout(() => { pal.style.display = 'none'; }, 150); }
 
   function filter(q) {
     const lq = q.toLowerCase();
@@ -1974,11 +1980,11 @@ window.addEventListener('resize', drawConnections);
         ((e.ctrlKey || e.metaKey) && e.key === 'k')) {
       e.preventDefault(); open(); return;
     }
-    if (!isOpen()) return;
+    if (!palOpen) return;
     if (e.key === 'Escape') { close(); return; }
     if (e.key === 'ArrowDown') { e.preventDefault(); selected = (selected + 1) % (filtered.length || 1); renderResults(); return; }
     if (e.key === 'ArrowUp') { e.preventDefault(); selected = (selected - 1 + (filtered.length || 1)) % (filtered.length || 1); renderResults(); return; }
-    if (e.key === 'Enter') { navigate(selected); return; }
+    if (e.key === 'Enter') { if (input.value.trim() !== 'sudo') navigate(selected); return; }
   });
   input.addEventListener('input', e => filter(e.target.value));
   document.getElementById('cmd-overlay').addEventListener('click', close);
