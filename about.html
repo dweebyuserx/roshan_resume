@@ -365,7 +365,6 @@
     border-radius: 2px;
     transform-origin: left;
     transform: scaleX(0);
-    transition: transform 1s cubic-bezier(0.4,0,0.2,1);
   }
   .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
   .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
@@ -443,6 +442,15 @@
   #term-path { color: rgba(77,217,240,0.5); }
   #term-right { color: rgba(61,255,160,0.4); }
   @media (max-width: 768px) { #term-bar, #scroll-prog { display: none; } }
+
+  #uptime-widget { position:fixed; bottom:30px; right:20px; font-family:'Share Tech Mono',monospace; font-size:9px; color:rgba(61,255,160,0.3); letter-spacing:0.08em; z-index:199; pointer-events:none; }
+  @media (max-width:768px) { #uptime-widget { display:none; } }
+
+  .diff-skill-block { background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:24px; font-family:var(--font-mono); font-size:12px; line-height:2; }
+  .ds-add { color:var(--green); }
+  .ds-del { color:var(--red); opacity:0.6; }
+  .ds-hunk { color:var(--purple); font-size:10px; }
+  .ds-file { color:var(--cyan); font-size:11px; letter-spacing:0.05em; }
 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
@@ -603,6 +611,22 @@
   .hobby-label { font-size: 12px; font-weight: 600; color: var(--bright); }
   .hobby-desc { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: 2px; }
 
+  /* ─── COMMAND PALETTE ────────────────────────────────────── */
+  #cmd-palette { position:fixed; inset:0; z-index:9000; }
+  #cmd-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); }
+  #cmd-modal { position:absolute; top:20%; left:50%; transform:translateX(-50%); width:min(600px,90vw); background:var(--bg2); border:1px solid var(--cyan); border-radius:6px; box-shadow:0 0 60px rgba(77,217,240,0.2); overflow:hidden; font-family:var(--font-mono); }
+  #cmd-input-row { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--border); }
+  #cmd-prompt { color:var(--cyan); font-size:14px; }
+  #cmd-input { flex:1; background:transparent; border:none; outline:none; color:var(--bright); font-size:13px; font-family:var(--font-mono); cursor:text; }
+  #cmd-input::placeholder { color:var(--dim); }
+  #cmd-results { max-height:320px; overflow-y:auto; padding:8px 0; }
+  .cmd-item { display:flex; align-items:center; gap:12px; padding:10px 20px; transition:background 0.1s; }
+  .cmd-item:hover, .cmd-item.selected { background:rgba(77,217,240,0.08); }
+  .cmd-item-icon { color:var(--muted); font-size:12px; min-width:20px; }
+  .cmd-item-title { color:var(--bright); font-size:12px; }
+  .cmd-item-sub { color:var(--muted); font-size:11px; margin-left:auto; }
+  #cmd-footer { padding:8px 20px; font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--dim); border-top:1px solid var(--border); letter-spacing:0.1em; }
+
   /* Touch: hide custom cursor */
   @media (hover: none) {
     body { cursor: auto; }
@@ -710,6 +734,12 @@
   <section class="hobbies-section fade-up" style="transition-delay:0.15s">
     <div class="section-label" data-n="08">hobbies & interests</div>
     <div class="hobby-grid" id="hobbiesGrid"></div>
+  </section>
+
+  <!-- Diff Skill Section -->
+  <section class="diff-section fade-up" style="transition-delay:0.15s;margin-top:80px;width:100%">
+    <div class="section-label" data-n="09">git diff 2022..2026</div>
+    <div class="diff-skill-block"></div>
   </section>
 </main>
 
@@ -1146,18 +1176,6 @@ function renderTimeline() {
       </div>`;
   }).join('');
 
-  // Animate bars on scroll
-  const tlObs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.querySelectorAll('.tl-bar').forEach((bar, i) => {
-          setTimeout(() => bar.classList.add('animate'), i * 150);
-        });
-        tlObs.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.2 });
-  tlObs.observe(tracks);
 }
 
 // ── Certifications ───────────────────────────────────────────
@@ -1327,6 +1345,20 @@ function renderHobbies() {
     </div>`).join('');
 }
 
+// ── Char Stagger Heading ──────────────────────────────────────
+function charStagger(el, delay) {
+  if (!el) return;
+  const text = el.textContent;
+  el.innerHTML = '';
+  [...text].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.style.cssText = 'display:inline-block;opacity:0;transform:translateY(18px);transition:opacity 0.35s ease,transform 0.35s cubic-bezier(0.34,1.56,0.64,1)';
+    s.textContent = ch === ' ' ? ' ' : ch;
+    el.appendChild(s);
+    setTimeout(() => { s.style.opacity = '1'; s.style.transform = 'none'; }, delay + i * 38);
+  });
+}
+
 // Terminal streaming text
 function typeStream(el, speed) {
   if (!el) return;
@@ -1342,13 +1374,31 @@ function typeStream(el, speed) {
 }
 
 function hlDomain(id) {
-  document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('dim', l.dataset.dom !== id));
-  document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('hl', l.dataset.dom === id));
-  document.querySelectorAll('.leaf-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
-  document.querySelectorAll('.domain-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
+  if (typeof anime === 'undefined') {
+    document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('dim', l.dataset.dom !== id));
+    document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('hl', l.dataset.dom === id));
+    document.querySelectorAll('.leaf-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
+    document.querySelectorAll('.domain-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
+    return;
+  }
+  document.querySelectorAll('.tree-line[data-dom]').forEach(line => {
+    anime({ targets: line, opacity: line.dataset.dom === id ? 1 : 0.04, duration: 250, easing: 'easeOutQuad' });
+  });
+  document.querySelectorAll('.leaf-group[data-dom]').forEach(g => {
+    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.08, duration: 250, easing: 'easeOutQuad' });
+  });
+  document.querySelectorAll('.domain-group[data-dom]').forEach(g => {
+    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.12, duration: 250, easing: 'easeOutQuad' });
+  });
 }
 function hlReset() {
-  document.querySelectorAll('.tree-line, .leaf-group, .domain-group').forEach(el => el.classList.remove('dim','hl'));
+  if (typeof anime === 'undefined') {
+    document.querySelectorAll('.tree-line, .leaf-group, .domain-group').forEach(el => el.classList.remove('dim','hl'));
+    return;
+  }
+  anime({ targets: '.tree-line', opacity: 0.35, duration: 300, easing: 'easeOutQuad' });
+  anime({ targets: '.leaf-group', opacity: 1, duration: 300, easing: 'easeOutQuad' });
+  anime({ targets: '.domain-group', opacity: 1, duration: 300, easing: 'easeOutQuad' });
 }
 
 
@@ -1358,9 +1408,21 @@ const observer = new IntersectionObserver(entries => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
       e.target.querySelectorAll('.skill-fill').forEach((bar, i) => {
-        setTimeout(() => {
-          bar.style.transform = `scaleX(${parseFloat(bar.style.width)/100})`;
-        }, i * 80 + 200);
+        const target = parseFloat(bar.style.width) / 100;
+        bar.style.transition = 'none';
+        if (typeof anime !== 'undefined') {
+          anime({
+            targets: bar,
+            scaleX: [0, target * 1.06, target],
+            duration: 900,
+            easing: 'easeOutElastic(1, .5)',
+            delay: i * 80
+          });
+        } else {
+          setTimeout(() => {
+            bar.style.transform = `scaleX(${target})`;
+          }, i * 80 + 200);
+        }
       });
     }
   });
@@ -1368,18 +1430,80 @@ const observer = new IntersectionObserver(entries => {
 
 const compileObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      compileObs.unobserve(e.target);
-    }
+    if (!e.isIntersecting) return;
+    const card = e.target;
+    const overlay = card.querySelector('.compile-overlay');
+    if (!overlay) { card.classList.add('visible'); compileObs.unobserve(card); return; }
+    const progLine = document.createElement('div');
+    progLine.style.cssText = 'margin-top:6px;color:#4dd9f0;font-size:9px;font-family:monospace';
+    progLine.textContent = '[□□□□□□ 0%]  errors: 0  warnings: 0';
+    overlay.appendChild(progLine);
+    let pct = 0;
+    const iv = setInterval(() => {
+      pct = Math.min(pct + 4, 100);
+      const filled = Math.round(pct / 100 * 6);
+      progLine.textContent = `[${'■'.repeat(filled)}${'□'.repeat(6 - filled)} ${pct}%]  errors: 0  warnings: 0`;
+      if (pct >= 100) { clearInterval(iv); setTimeout(() => { card.classList.add('visible'); compileObs.unobserve(card); }, 180); }
+    }, 14);
   });
 }, { threshold: 0.25 });
+
+function setupSpringHovers() {
+  if (typeof anime === 'undefined') return;
+  const sp = anime.createSpring({ mass: 1, stiffness: 80, damping: 10 });
+  document.querySelectorAll('.cert-card, .experience-item').forEach(el => {
+    el.addEventListener('mouseenter', () => anime({ targets: el, translateY: -6, ease: sp }));
+    el.addEventListener('mouseleave', () => anime({ targets: el, translateY: 0, ease: sp }));
+  });
+}
+
+function initTimelineScrub() {
+  const section = document.querySelector('.timeline-section');
+  const bars = document.querySelectorAll('.tl-bar');
+  if (!section || !bars.length) return;
+  bars.forEach(b => { b.style.transform = 'scaleX(0)'; b.style.transition = 'none'; });
+  window.addEventListener('scroll', () => {
+    const rect = section.getBoundingClientRect(), wh = window.innerHeight;
+    const raw = -(rect.top - wh) / (rect.bottom - rect.top + wh);
+    const progress = Math.max(0, Math.min(1, raw));
+    const N = bars.length;
+    bars.forEach((bar, i) => {
+      bar.style.transform = `scaleX(${Math.max(0, Math.min(1, progress * (N + 1) - i))})`;
+    });
+  }, { passive: true });
+}
+
+function renderDiffSection() {
+  const diffBlock = document.querySelector('.diff-skill-block');
+  if (!diffBlock) return;
+  const diffs = [
+    { type:'file', text:'--- a/skills/2022.yaml\n+++ b/skills/2026.yaml' },
+    { type:'hunk', text:'@@ MLOps proficiency @@' },
+    { type:'del', text:'-  MLflow: basic pipeline tracking' },
+    { type:'add', text:'+  MLflow: production registry, A/B deployment gates' },
+    { type:'hunk', text:'@@ LLM capabilities @@' },
+    { type:'del', text:'-  GPT APIs: simple prompt-response' },
+    { type:'add', text:'+  LLMOps: fine-tuning, RLHF, eval harnesses, RAGAS' },
+    { type:'add', text:'+  ADK Orchestration: multi-agent, tool-use, MCP integration' },
+    { type:'add', text:'+  RAG v4: agentic retrieval, hybrid search, prompt caching' },
+    { type:'hunk', text:'@@ Cloud @@' },
+    { type:'del', text:'-  GCP: basic Vertex AI experiments' },
+    { type:'add', text:'+  GCP: Vertex AI production, Firebase, GKE, scheduled pipelines' },
+    { type:'add', text:'+  RunPod: low-VRAM fine-tuning deployments' },
+  ];
+  diffBlock.innerHTML = diffs.map(d =>
+    `<div class="ds-${d.type}">${d.text.replace(/\n/g, '<br>')}</div>`
+  ).join('');
+}
 
 window.addEventListener('load', () => {
   render();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
-  typeStream(document.querySelector('.page-header h1'));
+  charStagger(document.querySelector('.page-header h1'), 120);
+  setupSpringHovers();
+  initTimelineScrub();
+  renderDiffSection();
 });
 
 // ── SCROLL PROGRESS + STATUS BAR ──
@@ -1399,6 +1523,28 @@ window.addEventListener('load', () => {
   }
   updateClock();
   setInterval(updateClock, 1000);
+  (function typewriterPath() {
+    const el = document.getElementById('term-path');
+    if (!el) return;
+    const finalHTML = el.innerHTML, text = el.textContent;
+    el.textContent = ''; let i = 0;
+    (function t() {
+      if (i <= text.length) { el.textContent = text.slice(0, i++); setTimeout(t, 28); }
+      else el.innerHTML = finalHTML;
+    })();
+  })();
+  (function uptimeWidget() {
+    const el = document.getElementById('uptime-widget');
+    if (!el) return;
+    const base = { days: 2190, load: 0.04, mem: 42 };
+    function update() {
+      const d = base.days + Math.floor(Date.now() / 86400000) % 7;
+      const load = (base.load + Math.sin(Date.now() / 8000) * 0.02).toFixed(2);
+      const mem = Math.round(base.mem + Math.sin(Date.now() / 12000) * 3);
+      el.textContent = `uptime: ${d}d  load: ${load}  mem: ${mem}%`;
+    }
+    update(); setInterval(update, 3000);
+  })();
 })();
 </script>
 
@@ -1408,5 +1554,107 @@ window.addEventListener('load', () => {
   <span id="term-center">roshan.dev · ai solutions consultant</span>
   <span id="term-right"><span id="term-pct">0%</span> · <span id="term-clock"></span></span>
 </div>
+<div id="uptime-widget"></div>
+
+<div id="cmd-palette" style="display:none">
+  <div id="cmd-overlay"></div>
+  <div id="cmd-modal">
+    <div id="cmd-input-row">
+      <span id="cmd-prompt">❯</span>
+      <input id="cmd-input" type="text" autocomplete="off" spellcheck="false" placeholder="search pages, projects, articles...">
+    </div>
+    <div id="cmd-results"></div>
+    <div id="cmd-footer">↑↓ navigate  ⏎ open  esc close</div>
+  </div>
+</div>
+
+<script>
+(function cmdPalette() {
+  const ITEMS = [
+    { icon:'~', title:'Home', sub:'index', url:'index.html' },
+    { icon:'◈', title:'About', sub:'about', url:'about.html' },
+    { icon:'◉', title:'Articles', sub:'articles', url:'articles.html' },
+    { icon:'⚡', title:'Projects', sub:'projects', url:'projects.html' },
+    { icon:'◆', title:'Connect', sub:'connect', url:'connect.html' },
+    { icon:'↗', title:'GitHub', sub:'github.com/dweebyuserx', url:'https://github.com/dweebyuserx' },
+    { icon:'↗', title:'LinkedIn', sub:'roshan-abraham', url:'https://www.linkedin.com/in/roshan-abraham-187474138/' },
+    { icon:'↗', title:'HuggingFace', sub:'huggingface.co/dweebster', url:'https://huggingface.co/dweebster' },
+  ];
+  let selected = 0, filtered = [...ITEMS], palOpen = false;
+  const pal = document.getElementById('cmd-palette');
+  const input = document.getElementById('cmd-input');
+  const results = document.getElementById('cmd-results');
+  if (!pal || !input || !results) return;
+
+  function open() {
+    palOpen = true;
+    pal.style.display = '';
+    pal.style.opacity = '0'; pal.style.transition = 'opacity 0.15s';
+    requestAnimationFrame(() => { pal.style.opacity = '1'; });
+    input.value = ''; filter(''); input.focus();
+  }
+  function close() {
+    palOpen = false;
+    pal.style.opacity = '0';
+    setTimeout(() => { pal.style.display = 'none'; }, 150);
+  }
+
+  function filter(q) {
+    const lq = q.toLowerCase();
+    filtered = q ? ITEMS.filter(i => i.title.toLowerCase().includes(lq) || i.sub.toLowerCase().includes(lq)) : [...ITEMS];
+    selected = 0; renderResults();
+  }
+  function renderResults() {
+    results.innerHTML = filtered.map((item, i) => `
+      <div class="cmd-item${i === selected ? ' selected' : ''}" data-idx="${i}">
+        <span class="cmd-item-icon">${item.icon}</span>
+        <span class="cmd-item-title">${item.title}</span>
+        <span class="cmd-item-sub">${item.sub}</span>
+      </div>`).join('');
+    results.querySelectorAll('.cmd-item').forEach(el => {
+      el.addEventListener('click', () => navigate(+el.dataset.idx));
+    });
+  }
+  function navigate(idx) { const item = filtered[idx]; if (item) window.location.href = item.url; close(); }
+
+  document.addEventListener('keydown', e => {
+    if ((e.key === '/' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') ||
+        ((e.ctrlKey || e.metaKey) && e.key === 'k')) {
+      e.preventDefault(); open(); return;
+    }
+    if (!palOpen) return;
+    if (e.key === 'Escape') { close(); return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); selected = (selected + 1) % (filtered.length || 1); renderResults(); return; }
+    if (e.key === 'ArrowUp') { e.preventDefault(); selected = (selected - 1 + (filtered.length || 1)) % (filtered.length || 1); renderResults(); return; }
+    if (e.key === 'Enter') { if (input.value.trim() !== 'sudo') navigate(selected); return; }
+  });
+  input.addEventListener('input', e => filter(e.target.value));
+  document.getElementById('cmd-overlay').addEventListener('click', close);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && input.value.trim() === 'sudo') { triggerGlitchEgg(); close(); }
+  });
+})();
+
+function triggerGlitchEgg() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;pointer-events:none;font-family:"Share Tech Mono",monospace;font-size:12px;color:#3dffa0;overflow:hidden;background:rgba(0,0,0,0.92);padding:40px';
+  const lines = ['ACCESS GRANTED','sudo: Roshan is not in the sudoers file.','This incident will be reported.','...just kidding.','rm -rf /restrictions','[ ██████████ ] 100%','welcome, root.'];
+  let i = 0;
+  const iv = setInterval(() => {
+    overlay.innerHTML += `<div style="padding:2px 0">&gt; ${lines[i] || ''}</div>`;
+    if (++i >= lines.length) { clearInterval(iv); setTimeout(() => overlay.remove(), 2000); }
+  }, 350);
+  document.body.appendChild(overlay);
+}
+
+(function konamiEgg() {
+  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let idx = 0;
+  document.addEventListener('keydown', e => {
+    if (e.key === seq[idx]) { idx++; if (idx === seq.length) { triggerGlitchEgg(); idx = 0; } }
+    else idx = 0;
+  });
+})();
+</script>
 </body>
 </html>
