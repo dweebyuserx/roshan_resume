@@ -1144,7 +1144,7 @@ function setupFeatTabs() {
   });
 }
 
-(function initCounters() {
+function initCounters() {
   const els = document.querySelectorAll('[data-target]');
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -1161,13 +1161,14 @@ function setupFeatTabs() {
     });
   }, { threshold: 0.5 });
   els.forEach(el => obs.observe(el));
-})();
+}
 
 window.addEventListener('load', () => {
   render();
   charStagger(document.querySelector('.page-header h1'), 120);
   setupSpringHovers();
   setupFeatTabs();
+  initCounters();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
 });
