@@ -703,6 +703,8 @@ function render() {
   // Re-observe new elements
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
+  setTimeout(staggerAccents, 300);
+  setupSpringHovers();
 }
 
 function toggleArticle(e, closeBtn, idx) {
@@ -821,10 +823,7 @@ function setupSpringHovers() {
 window.addEventListener('load', () => {
   render();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
   charStagger(document.querySelector('.page-header h1'), 120);
-  setTimeout(staggerAccents, 300);
-  setupSpringHovers();
 });
 
 // ── SCROLL PROGRESS + STATUS BAR ──
