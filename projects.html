@@ -950,7 +950,7 @@ function render() {
   document.getElementById('featuredProject').innerHTML = `
     <div class="featured-project">
       <div class="feat-tabs">
-        <button class="feat-tab active" data-tab="info">info</button>
+        <button class="feat-tab active" data-tab="info">[info]</button>
         <button class="feat-tab" data-tab="diff">[diff]</button>
       </div>
       <div class="featured-swap" id="featuredSwap">
@@ -1069,6 +1069,12 @@ function setFeatured(idx) {
       <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
     `;
     swap.classList.remove('fading');
+    // Reset tabs to info state
+    document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'info'));
+    const infoEl = document.getElementById('featuredSwap');
+    const diffEl = document.querySelector('.feat-diff-view');
+    if (infoEl) infoEl.style.display = '';
+    if (diffEl) diffEl.style.display = 'none';
     typeStream(document.getElementById('featTitle'), 22);
     document.querySelectorAll('.project-card').forEach((card, i) => {
       card.classList.toggle('active', i === idx);
@@ -1129,18 +1135,16 @@ function setupSpringHovers() {
 }
 
 function setupFeatTabs() {
-  const tabs = document.querySelector('.feat-tabs');
-  if (!tabs) return;
-  const info = document.querySelector('#featuredSwap');
-  const diff = document.querySelector('.feat-diff-view');
-  tabs.addEventListener('click', e => {
+  document.querySelector('.feat-tabs')?.addEventListener('click', e => {
     const tab = e.target.closest('.feat-tab');
     if (!tab) return;
-    tabs.querySelectorAll('.feat-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.feat-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     const show = tab.dataset.tab;
-    if (info) info.style.display = show === 'info' ? '' : 'none';
-    if (diff) diff.style.display = show === 'diff' ? '' : 'none';
+    const infoEl = document.getElementById('featuredSwap');
+    const diffEl = document.querySelector('.feat-diff-view');
+    if (infoEl) infoEl.style.display = show === 'info' ? '' : 'none';
+    if (diffEl) diffEl.style.display = show === 'diff' ? '' : 'none';
   });
 }
 
