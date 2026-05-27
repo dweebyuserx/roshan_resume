@@ -1382,13 +1382,13 @@ function hlDomain(id) {
     return;
   }
   document.querySelectorAll('.tree-line[data-dom]').forEach(line => {
-    anime({ targets: line, opacity: line.dataset.dom === id ? 1 : 0.04, duration: 250, easing: 'easeOutQuad' });
+    anime({ targets: line, opacity: line.dataset.dom === id ? 1 : 0.04, duration: 250, ease: 'outQuad' });
   });
   document.querySelectorAll('.leaf-group[data-dom]').forEach(g => {
-    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.08, duration: 250, easing: 'easeOutQuad' });
+    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.08, duration: 250, ease: 'outQuad' });
   });
   document.querySelectorAll('.domain-group[data-dom]').forEach(g => {
-    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.12, duration: 250, easing: 'easeOutQuad' });
+    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.12, duration: 250, ease: 'outQuad' });
   });
 }
 function hlReset() {
@@ -1396,9 +1396,9 @@ function hlReset() {
     document.querySelectorAll('.tree-line, .leaf-group, .domain-group').forEach(el => el.classList.remove('dim','hl'));
     return;
   }
-  anime({ targets: '.tree-line', opacity: 0.35, duration: 300, easing: 'easeOutQuad' });
-  anime({ targets: '.leaf-group', opacity: 1, duration: 300, easing: 'easeOutQuad' });
-  anime({ targets: '.domain-group', opacity: 1, duration: 300, easing: 'easeOutQuad' });
+  anime({ targets: '.tree-line', opacity: 0.35, duration: 300, ease: 'outQuad' });
+  anime({ targets: '.leaf-group', opacity: 1, duration: 300, ease: 'outQuad' });
+  anime({ targets: '.domain-group', opacity: 1, duration: 300, ease: 'outQuad' });
 }
 
 
@@ -1415,7 +1415,7 @@ const observer = new IntersectionObserver(entries => {
             targets: bar,
             scaleX: [0, target * 1.06, target],
             duration: 900,
-            easing: 'easeOutElastic(1, .5)',
+            ease: 'outElastic(1, .5)',
             delay: i * 80
           });
         } else {
@@ -1424,6 +1424,7 @@ const observer = new IntersectionObserver(entries => {
           }, i * 80 + 200);
         }
       });
+      observer.unobserve(e.target);
     }
   });
 }, { threshold: 0.1 });
