@@ -459,15 +459,7 @@
     color: var(--muted);
   }
 
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
-  }
+  .fade-up.visible { }
 
   @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
 
@@ -989,10 +981,29 @@ const compileObs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.1 });
 
+function charStagger(el, delay) {
+  if (!el) return;
+  const text = el.textContent;
+  el.innerHTML = '';
+  [...text].forEach((ch, i) => {
+    const s = document.createElement('span');
+    s.style.cssText = 'display:inline-block;opacity:0;transform:translateX(-10px);color:#4dd9f0;transition:opacity 0.3s ease,transform 0.4s cubic-bezier(0.22,1,0.36,1),color 0.6s ease';
+    s.textContent = ch === ' ' ? ' ' : ch;
+    el.appendChild(s);
+    setTimeout(() => { s.style.opacity = '1'; s.style.transform = 'none'; s.style.color = ''; }, delay + i * 40);
+  });
+}
+
 window.addEventListener('load', () => {
+  if (typeof anime === 'object' && typeof anime.animate === 'function') {
+    const _a = anime.animate.bind(anime), _o = anime;
+    window.anime = function(o) { const t = o.targets, p = Object.assign({}, o); delete p.targets; if (p.update) { p.onUpdate = p.update; delete p.update; } if (p.complete) { p.onComplete = p.complete; delete p.complete; } return _a(t, p); };
+    Object.assign(window.anime, _o);
+  }
   render();
   setupHovers();
   setupSpringHovers();
+  charStagger(document.querySelector('.page-header h1'), 700);
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   // Observe compile-card elements (rendered dynamically)
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));

@@ -489,15 +489,7 @@
     color: var(--muted);
   }
 
-  .fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-  .fade-up.visible {
-    opacity: 1;
-    transform: none;
-  }
+  .fade-up.visible { }
 
   @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
 
@@ -534,8 +526,9 @@
 
   /* Active card */
   .project-card.active {
-    border-color: var(--accent, var(--cyan));
-    box-shadow: 0 0 20px rgba(77,217,240,0.12);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), inset 0 0 24px rgba(0,0,0,0.3);
+    transform: translateY(-2px);
   }
 
   /* Click-to-feature hint */
@@ -597,6 +590,18 @@
   .diff-add { color:var(--green); }
   .diff-del { color:var(--red); }
   .diff-hunk { color:var(--purple); font-size:10px; }
+
+  /* ── FEAT STATS + ASCII ── */
+  .feat-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:16px 0; }
+  .feat-stat-box { background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:10px 6px; text-align:center; }
+  .feat-stat-num { font-family:var(--font-display); font-size:22px; line-height:1; }
+  .feat-stat-lbl { font-size:8px; color:var(--dim); margin-top:3px; letter-spacing:.1em; }
+  .feat-ascii { margin:12px 0; }
+  .feat-ascii-row { display:flex; align-items:baseline; gap:0; margin-bottom:5px; font-family:var(--font-mono); font-size:11px; opacity:0; }
+  .feat-ascii-key { color:var(--dim); width:90px; flex-shrink:0; }
+  .feat-ascii-bar { color:var(--green); white-space:pre; }
+  .feat-ascii-tag { font-size:9px; margin-left:8px; }
+  @media (max-width:600px) { .feat-stats { grid-template-columns:repeat(2,1fr); } }
 
   /* ── COMMAND PALETTE ── */
   #cmd-palette { position:fixed; inset:0; z-index:9000; }
@@ -792,7 +797,9 @@ const CONFIG = {
     tech: ["ADK", "Gemma / Claude", "FastAPI", "GCP", "Firebase", "MCP"],
     links: [
       { text: "Contact for Demo", url: 'mailto:' + _em }
-    ]
+    ],
+    stats: [{v:9,l:'AGENTS',c:'var(--cyan)'},{v:'<3s',l:'LATENCY',c:'var(--green)'},{v:'1st',l:'HACKATHON',c:'var(--orange)'},{v:'100%',l:'PR COVERAGE',c:'var(--purple)'}],
+    ascii: [{k:'complexity',n:20,t:'high',c:'var(--cyan)'},{k:'scale',n:15,t:'govt',c:'var(--muted)'},{k:'novelty',n:18,t:'agentic',c:'var(--orange)'},{k:'impact',n:20,t:'winner',c:'var(--green)'}]
   },
 
   projects: [
@@ -804,7 +811,9 @@ const CONFIG = {
       accent: "green",
       links: [
         { text: "Discuss Project", url: 'mailto:' + _em + '?subject=Medical AI Infrastructure Inquiry' }
-      ]
+      ],
+      stats: [{v:'100+',l:'GB TRAINED',c:'var(--green)'},{v:2,l:'INTEGRATIONS',c:'var(--cyan)'},{v:'100%',l:'FHIR COMPLY',c:'var(--orange)'},{v:'NER',l:'PIPELINE',c:'var(--purple)'}],
+      ascii: [{k:'data scale',n:20,t:'100+ GB',c:'var(--green)'},{k:'accuracy',n:18,t:'high',c:'var(--cyan)'},{k:'compliance',n:20,t:'ABHA',c:'var(--orange)'},{k:'complexity',n:16,t:'medical',c:'var(--muted)'}]
     },
     {
       icon: "⚡",
@@ -815,7 +824,9 @@ const CONFIG = {
       links: [
         { text: "HuggingFace Profile", url: "https://huggingface.co/dweebster" },
         { text: "Discuss", url: 'mailto:' + _em + '?subject=LLM Foundry Inquiry' }
-      ]
+      ],
+      stats: [{v:'vLLM',l:'SERVING',c:'var(--cyan)'},{v:'LoRA',l:'ADAPTERS',c:'var(--green)'},{v:'W&B',l:'EVAL',c:'var(--orange)'},{v:'low',l:'VRAM OPT',c:'var(--purple)'}],
+      ascii: [{k:'efficiency',n:19,t:'unsloth',c:'var(--green)'},{k:'coverage',n:17,t:'full pipe',c:'var(--cyan)'},{k:'eval depth',n:16,t:'W&B+HF',c:'var(--orange)'},{k:'portability',n:18,t:'Docker',c:'var(--muted)'}]
     },
     {
       icon: "🔗",
@@ -832,7 +843,9 @@ const CONFIG = {
       ],
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=RAG System Inquiry' }
-      ]
+      ],
+      stats: [{v:4,l:'BUILDS',c:'var(--purple)'},{v:'RAGAS',l:'EVAL',c:'var(--cyan)'},{v:'hybrid',l:'SEARCH',c:'var(--green)'},{v:'multi',l:'AGENT',c:'var(--orange)'}],
+      ascii: [{k:'retrieval',n:18,t:'hybrid',c:'var(--cyan)'},{k:'eval rigor',n:16,t:'RAGAS',c:'var(--green)'},{k:'scale',n:17,t:'enterprise',c:'var(--orange)'},{k:'iterations',n:20,t:'4 builds',c:'var(--purple)'}]
     },
     {
       icon: "🔄",
@@ -842,7 +855,9 @@ const CONFIG = {
       accent: "orange",
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=MLOps Engine Inquiry' }
-      ]
+      ],
+      stats: [{v:'BQ',l:'BIGQUERY',c:'var(--orange)'},{v:'auto',l:'RETRAIN',c:'var(--green)'},{v:'reg',l:'REGISTRY',c:'var(--cyan)'},{v:'sched',l:'PIPELINE',c:'var(--purple)'}],
+      ascii: [{k:'automation',n:18,t:'full',c:'var(--green)'},{k:'scale',n:15,t:'BQ',c:'var(--orange)'},{k:'coverage',n:16,t:'class+reg',c:'var(--cyan)'},{k:'reliability',n:17,t:'scheduled',c:'var(--muted)'}]
     },
     {
       icon: "🐄",
@@ -852,7 +867,9 @@ const CONFIG = {
       accent: "yellow",
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=Cattle Detection Project Inquiry' }
-      ]
+      ],
+      stats: [{v:'<200ms',l:'LATENCY',c:'var(--yellow)'},{v:'CCTV',l:'MONITOR',c:'var(--green)'},{v:'OCR',l:'EAR TAG',c:'var(--cyan)'},{v:'auto',l:'ALERT',c:'var(--orange)'}],
+      ascii: [{k:'speed',n:18,t:'<200ms',c:'var(--yellow)'},{k:'accuracy',n:17,t:'seasonal',c:'var(--green)'},{k:'coverage',n:15,t:'CCTV',c:'var(--cyan)'},{k:'reliability',n:16,t:'scheduled',c:'var(--muted)'}]
     },
     {
       icon: "🌿",
@@ -862,7 +879,9 @@ const CONFIG = {
       accent: "green",
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=IoT Garden Inquiry' }
-      ]
+      ],
+      stats: [{v:'<200ms',l:'EDGE INFER',c:'var(--green)'},{v:'YOLO',l:'MODEL',c:'var(--cyan)'},{v:'WiFi',l:'STREAM',c:'var(--orange)'},{v:'Pi',l:'DEPLOY',c:'var(--purple)'}],
+      ascii: [{k:'inference',n:18,t:'<200ms',c:'var(--green)'},{k:'power eff',n:16,t:'edge',c:'var(--cyan)'},{k:'coverage',n:14,t:'sensors',c:'var(--orange)'},{k:'portability',n:15,t:'Pi-native',c:'var(--muted)'}]
     },
     {
       icon: "🎨",
@@ -872,7 +891,9 @@ const CONFIG = {
       accent: "pink",
       links: [
         { text: "HuggingFace", url: "https://huggingface.co/dweebster" }
-      ]
+      ],
+      stats: [{v:'LoRA',l:'ADAPTERS',c:'var(--pink)'},{v:'DB',l:'DREAMBOOTH',c:'var(--cyan)'},{v:'CN',l:'CONTROLNET',c:'var(--purple)'},{v:'QR',l:'TEXT2IMG',c:'var(--green)'}],
+      ascii: [{k:'quality',n:18,t:'fine-tuned',c:'var(--pink)'},{k:'control',n:17,t:'ControlNet',c:'var(--cyan)'},{k:'flexibility',n:16,t:'LoRA',c:'var(--purple)'},{k:'throughput',n:14,t:'HF Spaces',c:'var(--muted)'}]
     },
     {
       icon: "🔁",
@@ -882,7 +903,9 @@ const CONFIG = {
       accent: "cyan",
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=Code Conversion Agent Inquiry' }
-      ]
+      ],
+      stats: [{v:'multi',l:'AGENT',c:'var(--cyan)'},{v:'min',l:'TOKENS',c:'var(--green)'},{v:'auto',l:'TESTS',c:'var(--orange)'},{v:'MCP',l:'TOOLS',c:'var(--purple)'}],
+      ascii: [{k:'efficiency',n:20,t:'cached',c:'var(--cyan)'},{k:'coverage',n:18,t:'full suite',c:'var(--green)'},{k:'automation',n:19,t:'multi-agent',c:'var(--orange)'},{k:'reliability',n:17,t:'dynamic',c:'var(--muted)'}]
     },
     {
       icon: "🎓",
@@ -892,7 +915,9 @@ const CONFIG = {
       accent: "green",
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=Education Pipeline Inquiry' }
-      ]
+      ],
+      stats: [{v:'WHO',l:'STANDARDS',c:'var(--green)'},{v:'KT',l:'REPORTS',c:'var(--cyan)'},{v:'LLM',l:'PIPELINE',c:'var(--orange)'},{v:'RAG',l:'BACKBONE',c:'var(--purple)'}],
+      ascii: [{k:'personalize',n:18,t:'adaptive',c:'var(--green)'},{k:'accuracy',n:17,t:'WHO-aligned',c:'var(--cyan)'},{k:'coverage',n:16,t:'full KT',c:'var(--orange)'},{k:'impact',n:15,t:'student',c:'var(--muted)'}]
     },
     {
       icon: "🗺️",
@@ -902,7 +927,9 @@ const CONFIG = {
       accent: "purple",
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=Navigation Agent Inquiry' }
-      ]
+      ],
+      stats: [{v:'NX',l:'GRAPH',c:'var(--purple)'},{v:'NLP',l:'ROUTING',c:'var(--cyan)'},{v:'aisle',l:'LEVEL',c:'var(--green)'},{v:'conv',l:'AGENT',c:'var(--orange)'}],
+      ascii: [{k:'spatial',n:17,t:'graph-based',c:'var(--purple)'},{k:'accuracy',n:16,t:'aisle-level',c:'var(--cyan)'},{k:'coverage',n:15,t:'full store',c:'var(--green)'},{k:'latency',n:16,t:'real-time',c:'var(--muted)'}]
     },
     {
       icon: "💬",
@@ -918,7 +945,9 @@ const CONFIG = {
       ],
       links: [
         { text: "Discuss", url: 'mailto:' + _em + '?subject=ChatBot Systems Inquiry' }
-      ]
+      ],
+      stats: [{v:3,l:'BUILDS',c:'var(--yellow)'},{v:'multi',l:'CHANNEL',c:'var(--cyan)'},{v:'RAG',l:'BACKEND',c:'var(--green)'},{v:'NLU',l:'INTENT',c:'var(--orange)'}],
+      ascii: [{k:'versatility',n:18,t:'3 stacks',c:'var(--yellow)'},{k:'scale',n:17,t:'enterprise',c:'var(--cyan)'},{k:'coverage',n:16,t:'full NLU',c:'var(--green)'},{k:'iterations',n:17,t:'3 builds',c:'var(--muted)'}]
     }
   ],
 
@@ -958,10 +987,12 @@ function render() {
           <span class="featured-icon">${fp.icon}</span>
           <div>
             <div class="featured-title" id="featTitle">${fp.name}</div>
-            <div class="featured-tagline">${fp.tagline}</div>
+            <div class="featured-tagline">${fp.tagline || ''}</div>
           </div>
         </div>
         <div class="featured-desc">${fp.desc}</div>
+        ${fp.stats ? `<div id="featStats" class="feat-stats">${buildStatsHtml(fp.stats)}</div>` : ''}
+        ${fp.ascii ? `<div id="featAscii" class="feat-ascii">${buildAsciiHtml(fp.ascii)}</div>` : ''}
         <div class="featured-tech">
           ${fp.tech.map(t => `<span class="tech-pill tech-pill-cyan">${t}</span>`).join('')}
         </div>
@@ -1013,7 +1044,7 @@ function render() {
           ${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}
         </div>
         ${links}
-        <div class="swap-hint">↑ set as featured</div>
+        <div class="swap-hint">→ select</div>
         </div>
       </div>`;
   }).join('');
@@ -1039,47 +1070,139 @@ function typeStream(el, speed) {
   })();
 }
 
+function buildStatsHtml(stats) {
+  return stats.map(s => `
+    <div class="feat-stat-box">
+      <div class="feat-stat-num" style="color:${s.c}">${typeof s.v === 'number' ? '0' : s.v}</div>
+      <div class="feat-stat-lbl">${s.l}</div>
+    </div>`).join('');
+}
+
+function buildAsciiHtml(ascii) {
+  return ascii.map((r, i) => `
+    <div class="feat-ascii-row" id="far${i}">
+      <span class="feat-ascii-key">${r.k}</span><span class="feat-ascii-bar" id="fab${i}"></span><span class="feat-ascii-tag" style="color:${r.c}">${r.t}</span>
+    </div>`).join('');
+}
+
+function animateFeatPanel(p, animatePills) {
+  if (typeof anime === 'undefined') return;
+  const statsEl = document.getElementById('featStats');
+  const asciiEl = document.getElementById('featAscii');
+
+  if (statsEl && p.stats) {
+    p.stats.forEach((s, i) => {
+      const el = statsEl.querySelectorAll('.feat-stat-num')[i];
+      if (!el) return;
+      if (typeof s.v === 'number' && s.v > 0) {
+        const obj = {val: 0};
+        anime({ targets: obj, val: s.v, duration: 600, ease: 'outQuart', delay: i * 80,
+          update() { el.textContent = Math.round(obj.val); },
+          complete() { el.textContent = s.v; }
+        });
+      } else {
+        anime({ targets: el, opacity: [0, 1], duration: 250, delay: i * 80, ease: 'outQuad' });
+      }
+    });
+  }
+
+  if (asciiEl && p.ascii) {
+    p.ascii.forEach((r, i) => {
+      const row = document.getElementById('far'+i);
+      const bar = document.getElementById('fab'+i);
+      if (!row || !bar) return;
+      anime({ targets: row, opacity: [0, 1], duration: 180, delay: 300 + i * 90, ease: 'outQuad',
+        complete() {
+          const full = '█'.repeat(r.n) + '░'.repeat(20 - r.n);
+          let ci = 0;
+          const iv = setInterval(() => {
+            if (ci <= full.length) { bar.textContent = full.slice(0, ci++); }
+            else clearInterval(iv);
+          }, 16);
+        }
+      });
+    });
+  }
+
+  if (animatePills) {
+    const sp = anime.createSpring({ mass: 1, stiffness: 130, damping: 11 });
+    anime({ targets: '#featuredSwap .tech-pill', opacity: [0, 1], translateY: [5, 0], duration: 400, ease: sp,
+      delay: anime.stagger(30, { start: 500 }) });
+  }
+}
+
 // Swap featured project
 function setFeatured(idx) {
   const swap = document.getElementById('featuredSwap');
   if (!swap) return;
-  swap.classList.add('fading');
-  setTimeout(() => {
-    const p = CONFIG.projects[idx];
-    const tagline = p.tagline || '';
-    const variantsHtml = p.variants ? `
-      <div class="feat-variants">
-        ${p.variants.map(v => `
-          <div class="feat-variant-row">
-            <span class="feat-variant-label">${v.label}</span>
-            <span class="feat-variant-text">${v.text} <span class="feat-variant-tech">· ${v.tech}</span></span>
-          </div>`).join('')}
-      </div>` : '';
-    swap.innerHTML = `
-      <div class="featured-header">
-        <span class="featured-icon">${p.icon}</span>
-        <div>
-          <div class="featured-title" id="featTitle">${p.name}</div>
-          ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
-        </div>
-      </div>
-      <div class="featured-desc">${p.desc}</div>
-      ${variantsHtml}
-      <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}</div>
-      <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
-    `;
-    swap.classList.remove('fading');
-    // Reset tabs to info state
-    document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'info'));
-    const infoEl = document.getElementById('featuredSwap');
-    const diffEl = document.querySelector('.feat-diff-view');
-    if (infoEl) infoEl.style.display = '';
-    if (diffEl) diffEl.style.display = 'none';
-    typeStream(document.getElementById('featTitle'), 22);
-    document.querySelectorAll('.project-card').forEach((card, i) => {
-      card.classList.toggle('active', i === idx);
+  const p = CONFIG.projects[idx];
+  const tagline = p.tagline || '';
+  const variantsHtml = p.variants ? `
+    <div class="feat-variants">
+      ${p.variants.map(v => `
+        <div class="feat-variant-row">
+          <span class="feat-variant-label">${v.label}</span>
+          <span class="feat-variant-text">${v.text} <span class="feat-variant-tech">· ${v.tech}</span></span>
+        </div>`).join('')}
+    </div>` : '';
+
+  if (typeof anime !== 'undefined') {
+    anime({ targets: swap, opacity: [1, 0], translateY: [0, 5], duration: 120, ease: 'outQuad',
+      complete() {
+        swap.innerHTML = `
+          <div class="featured-header">
+            <span class="featured-icon">${p.icon}</span>
+            <div>
+              <div class="featured-title" id="featTitle">${p.name}</div>
+              ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
+            </div>
+          </div>
+          <div class="featured-desc">${p.desc}</div>
+          ${p.stats ? `<div id="featStats" class="feat-stats">${buildStatsHtml(p.stats)}</div>` : ''}
+          ${p.ascii ? `<div id="featAscii" class="feat-ascii">${buildAsciiHtml(p.ascii)}</div>` : ''}
+          ${variantsHtml}
+          <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}" style="opacity:0;transform:translateY(5px)">${t}</span>`).join('')}</div>
+          <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
+        `;
+        document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'info'));
+        const diffEl = document.querySelector('.feat-diff-view');
+        if (diffEl) diffEl.style.display = 'none';
+        anime({ targets: swap, opacity: [0, 1], translateY: [6, 0], duration: 180, ease: 'outQuad',
+          complete() { animateFeatPanel(p, true); }
+        });
+        typeStream(document.getElementById('featTitle'), 22);
+        document.querySelectorAll('.project-card').forEach((card, i) => {
+          card.classList.toggle('active', i === idx);
+        });
+      }
     });
-  }, 220);
+  } else {
+    swap.classList.add('fading');
+    setTimeout(() => {
+      swap.innerHTML = `
+        <div class="featured-header">
+          <span class="featured-icon">${p.icon}</span>
+          <div>
+            <div class="featured-title" id="featTitle">${p.name}</div>
+            ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
+          </div>
+        </div>
+        ${p.stats ? `<div id="featStats" class="feat-stats">${buildStatsHtml(p.stats)}</div>` : ''}
+        <div class="featured-desc">${p.desc}</div>
+        ${variantsHtml}
+        <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}</div>
+        <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
+      `;
+      swap.classList.remove('fading');
+      document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'info'));
+      const diffEl = document.querySelector('.feat-diff-view');
+      if (diffEl) diffEl.style.display = 'none';
+      typeStream(document.getElementById('featTitle'), 22);
+      document.querySelectorAll('.project-card').forEach((card, i) => {
+        card.classList.toggle('active', i === idx);
+      });
+    }, 220);
+  }
 }
 
 function setupHovers() {
@@ -1118,10 +1241,10 @@ function charStagger(el, delay) {
   el.innerHTML = '';
   [...text].forEach((ch, i) => {
     const s = document.createElement('span');
-    s.style.cssText = 'display:inline-block;opacity:0;transform:translateY(18px);transition:opacity 0.35s ease,transform 0.35s cubic-bezier(0.34,1.56,0.64,1)';
+    s.style.cssText = 'display:inline-block;opacity:0;transform:translateX(-10px);color:#4dd9f0;transition:opacity 0.3s ease,transform 0.4s cubic-bezier(0.22,1,0.36,1),color 0.6s ease';
     s.textContent = ch === ' ' ? ' ' : ch;
     el.appendChild(s);
-    setTimeout(() => { s.style.opacity = '1'; s.style.transform = 'none'; }, delay + i * 38);
+    setTimeout(() => { s.style.opacity = '1'; s.style.transform = 'none'; s.style.color = ''; }, delay + i * 40);
   });
 }
 
@@ -1167,14 +1290,21 @@ function initCounters() {
   els.forEach(el => obs.observe(el));
 }
 
+charStagger(document.querySelector('.page-header h1'), 700);
+
 window.addEventListener('load', () => {
+  if (typeof anime === 'object' && typeof anime.animate === 'function') {
+    const _a = anime.animate.bind(anime), _o = anime;
+    window.anime = function(o) { const t = o.targets, p = Object.assign({}, o); delete p.targets; if (p.update) { p.onUpdate = p.update; delete p.update; } if (p.complete) { p.onComplete = p.complete; delete p.complete; } return _a(t, p); };
+    Object.assign(window.anime, _o);
+  }
   render();
-  charStagger(document.querySelector('.page-header h1'), 120);
   setupSpringHovers();
   setupFeatTabs();
   initCounters();
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
+  setTimeout(() => animateFeatPanel(CONFIG.featuredProject), 400);
 });
 
 // ── SCROLL PROGRESS + STATUS BAR ──
