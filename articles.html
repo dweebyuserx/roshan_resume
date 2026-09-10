@@ -184,6 +184,7 @@
     padding: 120px 60px 80px;
     max-width: 900px;
     margin: 0 auto;
+    position: relative;
   }
 
   .page-header {
@@ -354,7 +355,6 @@
     color: var(--muted);
   }
 
-  .fade-up.visible { }
 
   @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
 
@@ -394,8 +394,10 @@
 
   /* Nav overflow on small phones */
   @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    nav { padding: 14px 16px; }
+    .nav-logo { font-size: 11px; }
+    .nav-links { gap: 10px; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.02em; }
     .nav-status { display: none; }
   }
 
@@ -525,7 +527,7 @@
     <p class="subtitle">Thoughts on AI engineering, LLMOps, agentic systems, and building intelligent applications.</p>
   </div>
 
-  <div class="filter-bar fade-up" style="transition-delay:0.1s" id="filterBar">
+  <div class="filter-bar" id="filterBar">
     <button class="filter-btn active" data-filter="all">All</button>
     <button class="filter-btn" data-filter="Ethics">Ethics</button>
     <button class="filter-btn" data-filter="AI Security">AI Security</button>
@@ -693,7 +695,6 @@ function render() {
   `;
 
   // Re-observe new elements
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
   setTimeout(staggerAccents, 300);
   setupSpringHovers();
@@ -757,12 +758,6 @@ function typeStream(el, speed) {
 }
 
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
-  });
-}, { threshold: 0.25 });
-
 const compileObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (!e.isIntersecting) return;
@@ -812,6 +807,7 @@ function setupSpringHovers() {
   });
 }
 
+
 charStagger(document.querySelector('.page-header h1'), 700);
 
 window.addEventListener('load', () => {
@@ -821,7 +817,6 @@ window.addEventListener('load', () => {
     Object.assign(window.anime, _o);
   }
   render();
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 });
 
 // ── SCROLL PROGRESS + STATUS BAR ──

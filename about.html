@@ -194,6 +194,7 @@
     padding: 120px 60px 80px;
     max-width: 1200px;
     margin: 0 auto;
+    position: relative;
   }
 
   .page-header {
@@ -403,7 +404,6 @@
     color: var(--muted);
   }
 
-  .fade-up.visible { }
 
   @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
 
@@ -449,7 +449,7 @@
   .timeline-section { margin-top: 80px; width: 100%; }
   .tl-ruler {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    grid-template-columns: repeat(9, 1fr);
     margin-bottom: 8px;
     padding: 0 2px;
   }
@@ -471,6 +471,7 @@
   .tl-bar {
     position: absolute;
     top: 6px; height: 32px;
+    min-width: 90px;
     border-radius: 16px;
     display: flex; align-items: center;
     padding: 0 14px;
@@ -617,8 +618,10 @@
 
   /* Nav overflow on small phones */
   @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    nav { padding: 14px 16px; }
+    .nav-logo { font-size: 11px; }
+    .nav-links { gap: 10px; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.02em; }
     .nav-status { display: none; }
   }
 </style>
@@ -679,7 +682,7 @@
       </div>
     </div>
 
-    <div class="skills-column fade-up" style="transition-delay:0.2s">
+    <div class="skills-column">
       <div class="section-label" data-n="03">skills</div>
       <div class="skills-section" id="skillsSection"></div>
 
@@ -698,13 +701,13 @@
   </section>
 
   <!-- Certifications -->
-  <section class="cert-section fade-up" style="transition-delay:0.15s">
+  <section class="cert-section">
     <div class="section-label" data-n="06">certifications</div>
     <div class="cert-grid" id="certCards"></div>
   </section>
 
   <!-- Skill Tree -->
-  <section class="tree-section fade-up" style="transition-delay:0.15s">
+  <section class="tree-section">
     <div class="section-label" data-n="07">ai discipline skill tree</div>
     <div class="tree-container">
       <svg id="skillTreeSvg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -713,13 +716,13 @@
   </section>
 
   <!-- Hobbies & Interests -->
-  <section class="hobbies-section fade-up" style="transition-delay:0.15s">
+  <section class="hobbies-section">
     <div class="section-label" data-n="08">hobbies & interests</div>
     <div class="hobby-grid" id="hobbiesGrid"></div>
   </section>
 
   <!-- Diff Skill Section -->
-  <section class="diff-section fade-up" style="transition-delay:0.15s;margin-top:80px;width:100%">
+  <section class="diff-section" style="margin-top:80px;width:100%">
     <div class="section-label" data-n="09">git diff 2022..2026</div>
     <div class="diff-skill-block"></div>
   </section>
@@ -1125,7 +1128,7 @@ function render() {
 
 // ── Timeline ────────────────────────────────────────────────
 function renderTimeline() {
-  const YEAR_START = 2019, YEAR_END = 2026, SPAN = YEAR_END - YEAR_START;
+  const YEAR_START = 2018, YEAR_END = 2026, SPAN = YEAR_END - YEAR_START;
   const pct = y => ((y - YEAR_START) / SPAN * 100).toFixed(3);
 
   // Ruler
@@ -1245,7 +1248,10 @@ function renderSkillTree() {
     // Leaves
     const leaves = dom.leaves;
     const leafCount = leaves.length;
-    const spread = Math.min(40, 80 / leafCount);
+    // Keep each domain's leaf fan within its own angular slice so neighboring
+    // domains' leaf pills never overlap, regardless of how many domains/leaves exist.
+    const maxHalfSpread = angleStep * 0.42;
+    const spread = leafCount > 1 ? Math.min(40, 80 / leafCount, (2 * maxHalfSpread) / (leafCount - 1)) : 0;
     leaves.forEach((leaf, li) => {
       const offset = (li - (leafCount - 1) / 2) * spread;
       const leafAngle = domAngle + offset;
@@ -1364,27 +1370,23 @@ function hlReset() {
 }
 
 
-// Fade in
-const observer = new IntersectionObserver(entries => {
+const revealObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      if (typeof anime !== 'undefined') {
-        ['cy','gr','or'].forEach((cls, gi) => {
-          const segs = e.target.querySelectorAll('.seg.'+cls);
-          segs.forEach(s => { s.style.opacity = 0; s.style.transform = 'scaleX(0)'; s.style.transformOrigin = 'left'; });
-          if (segs.length) anime({ targets: segs, opacity: [0,1], scaleX: [0,1], duration: 220, ease: 'outQuart', delay: anime.stagger(8, {start: gi*80}) });
-        });
-      }
-      // Skill tree entrance
+    if (!e.isIntersecting) return;
+    if (typeof anime !== 'undefined') {
+      ['cy','gr','or'].forEach((cls, gi) => {
+        const segs = e.target.querySelectorAll('.seg.'+cls);
+        segs.forEach(s => { s.style.opacity = 0; s.style.transform = 'scaleX(0)'; s.style.transformOrigin = 'left'; });
+        if (segs.length) anime({ targets: segs, opacity: [0,1], scaleX: [0,1], duration: 220, ease: 'outQuart', delay: anime.stagger(8, {start: gi*80}) });
+      });
       const domainGroups = e.target.querySelectorAll('.domain-group');
       const treeLines = e.target.querySelectorAll('.tree-line');
-      if (treeLines.length && typeof anime !== 'undefined') {
+      if (treeLines.length) {
         anime({ targets: treeLines, opacity: [0, 0.35], duration: 600, delay: anime.stagger(25), ease: 'outCubic' });
         anime({ targets: domainGroups, opacity: [0, 1], scale: [0.7, 1], duration: 500, delay: anime.stagger(55, { start: 180 }), ease: 'outBack' });
       }
-      observer.unobserve(e.target);
     }
+    revealObs.unobserve(e.target);
   });
 }, { threshold: 0.1 });
 
@@ -1468,11 +1470,14 @@ window.addEventListener('load', () => {
     Object.assign(window.anime, _o);
   }
   render();
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  renderDiffSection();
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
+  const skillsSection = document.getElementById('skillsSection');
+  const treeSection = document.querySelector('.tree-section');
+  if (skillsSection) revealObs.observe(skillsSection);
+  if (treeSection) revealObs.observe(treeSection);
   setupSpringHovers();
   initTimelineScrub();
-  renderDiffSection();
 });
 
 // ── SCROLL PROGRESS + STATUS BAR ──

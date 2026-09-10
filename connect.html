@@ -224,6 +224,7 @@
     max-width: 1000px;
     margin: 0 auto;
     min-height: calc(100vh - 100px);
+    position: relative;
   }
 
   .page-header {
@@ -459,7 +460,6 @@
     color: var(--muted);
   }
 
-  .fade-up.visible { }
 
   @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(61,255,160,0.4); } 50% { box-shadow: 0 0 0 5px rgba(61,255,160,0); } }
 
@@ -503,8 +503,10 @@
   }
 
   @media (max-width: 520px) {
-    .nav-links { gap: 16px; }
-    .nav-links a { font-size: 10px; letter-spacing: 0.06em; }
+    nav { padding: 14px 16px; }
+    .nav-logo { font-size: 11px; }
+    .nav-links { gap: 10px; }
+    .nav-links a { font-size: 9px; letter-spacing: 0.02em; }
     .nav-status { display: none; }
   }
 
@@ -578,16 +580,16 @@
   <div class="connections-wrapper">
     <svg class="connection-svg" id="connSvg"></svg>
 
-    <div class="center-card fade-up" style="transition-delay:0.1s" id="centerCard">
+    <div class="center-card" id="centerCard">
       <div class="center-label">YOU ARE HERE</div>
       <div class="center-name" id="centerName"></div>
       <div class="center-email" id="centerEmail"></div>
     </div>
 
-    <div class="nodes-grid fade-up" style="transition-delay:0.2s" id="nodesGrid"></div>
+    <div class="nodes-grid" id="nodesGrid"></div>
   </div>
 
-  <div class="cta-section fade-up" style="transition-delay:0.3s">
+  <div class="cta-section">
     <div class="cta-title">Work Together?</div>
     <div class="cta-text" id="ctaText"></div>
     <div class="cta-buttons">
@@ -950,17 +952,6 @@ function drawConnections() {
   });
 }
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      if (e.target.classList.contains('connections-wrapper') || e.target.closest('.connections-wrapper')) {
-        setTimeout(drawConnections, 100);
-      }
-    }
-  });
-}, { threshold: 0.1 });
-
 const compileObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (!e.isIntersecting) return;
@@ -988,7 +979,7 @@ function charStagger(el, delay) {
   [...text].forEach((ch, i) => {
     const s = document.createElement('span');
     s.style.cssText = 'display:inline-block;opacity:0;transform:translateX(-10px);color:#4dd9f0;transition:opacity 0.3s ease,transform 0.4s cubic-bezier(0.22,1,0.36,1),color 0.6s ease';
-    s.textContent = ch === ' ' ? ' ' : ch;
+    if (ch === ' ') s.innerHTML = '&nbsp;'; else s.textContent = ch;
     el.appendChild(s);
     setTimeout(() => { s.style.opacity = '1'; s.style.transform = 'none'; s.style.color = ''; }, delay + i * 40);
   });
@@ -1004,8 +995,6 @@ window.addEventListener('load', () => {
   setupHovers();
   setupSpringHovers();
   charStagger(document.querySelector('.page-header h1'), 700);
-  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  // Observe compile-card elements (rendered dynamically)
   document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
   setTimeout(drawConnections, 500);
 });
