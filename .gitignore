@@ -13,9 +13,12 @@ Thumbs.db
 *.tmp
 *.temp
 .claude
-CLAUDE.md
 
 # Superpowers and environment
 .superpowers/
 .env
 *.local
+
+# QA/browser-testing artifacts (regenerated locally, not shipped content)
+/*.png
+.playwright-mcp/
