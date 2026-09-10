@@ -40,7 +40,26 @@ Color tokens (defined in `:root` in every page):
 - `--bg: #0a0b0d` — main background
 - `--text: #c8cfe8` — body text, `--bright: #e8eeff` — headings
 
-Fonts: **JetBrains Mono** (body/code) and **Syne** (display headings), both loaded from Google Fonts.
+Font tokens (same `:root` block, same Google Fonts `@import` on all five pages):
+- `--font-mono: 'JetBrains Mono', monospace` — body and code
+- `--font-display: 'Oxanium', sans-serif` — display headings
+- `--font-label: 'Share Tech Mono', monospace` — small HUD labels, widgets, overlays
+
+Spacing scale: `--s1: 8px` through `--s6: 64px`.
+
+### Effect-layer parity (all five pages must match)
+
+The `#rain-cv → #illus-label` CSS block, the `.particle-trail` / `pt-fade` keyframe, the `.compile-*` rules, the mobile `@media (max-width: 768px)` disable rule, and the `body::before` scanline are **one canonical block duplicated verbatim** across all five pages. `about.html` is the reference copy.
+
+The scanline value is exactly:
+
+```css
+repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.09) 3px, rgba(0,0,0,0.09) 4px)
+```
+
+A 1px line on a 4px period. Widening the period (e.g. `... 3px, 6px`) turns it into a 3px dark band that darkens roughly half the viewport and visibly dims the page relative to the others.
+
+These blocks drifted apart once already — `connect.html` had a separately-written stack (no dot-grid background-image, `#vign` at `z-index: 1` instead of `5`, its own `particleFade` keyframe, no `.compile-card::after`, and a mobile rule that forgot `#vign`), and the scanline period differed on three of five pages. When changing any effect layer, apply the identical change to all five files and diff them afterwards to confirm.
 
 ## Build & Deployment
 

@@ -65,96 +65,67 @@
     transition: all 0.15s ease;
   }
 
-  #rain-cv {
-    position: fixed; inset: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 0; opacity: 1;
-  }
-  #illus-cv {
-    position: fixed; inset: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 2; opacity: 0;
-    transition: opacity 0.4s ease;
-  }
+  /* ── EFFECT LAYERS ── */
+  #rain-cv { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 1; pointer-events: none; }
+  #illus-cv { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #illus-cv.show { opacity: 1; }
-  #dot-field {
-    position: fixed; inset: 0;
-    pointer-events: none; z-index: 1;
-  }
-  #cur-glow {
-    position: fixed; width: 0; height: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(77,217,240,0.06) 0%, transparent 70%);
+  #dot-field { position: fixed; inset: 0; z-index: 2; pointer-events: none;
+    background-image: radial-gradient(circle, var(--dim) 1px, transparent 1px);
+    background-size: 28px 28px; }
+  #cur-glow { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%;
+    width: 0; height: 0;
+    background: radial-gradient(circle, rgba(77,217,240,0.06) 0%, transparent 65%);
     transform: translate(-50%, -50%);
-    pointer-events: none; z-index: 3;
-    transition: width 0.6s ease, height 0.6s ease;
-  }
-  #vign {
-    position: fixed; inset: 0;
-    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
-    pointer-events: none; z-index: 1;
-  }
-  #illus-label {
-    position: fixed;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: rgba(77,217,240,0.7);
-    letter-spacing: 0.1em;
-    pointer-events: none;
-    z-index: 6;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    white-space: nowrap;
-  }
+    transition: left 0.06s linear, top 0.06s linear, width 0.4s ease, height 0.4s ease; }
+  #vign { position: fixed; inset: 0; z-index: 5; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%); }
+  #illus-label { position: fixed; z-index: 50; font-family: var(--font-label); font-size: 9px;
+    letter-spacing: 1.5px; color: var(--cyan); background: rgba(6,7,9,0.85);
+    border: 1px solid rgba(77,217,240,0.25); border-radius: 3px; padding: 4px 10px;
+    pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
   #illus-label.show { opacity: 1; }
-  .particle-trail {
-    position: fixed;
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9997;
-    transform: translate(-50%, -50%);
-    animation: particleFade 0.7s ease-out forwards;
-  }
-  @keyframes particleFade {
-    0% { opacity: 0.9; transform: translate(-50%,-50%) translate(0,0) scale(1); }
-    100% { opacity: 0; transform: translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(0.3); }
-  }
+
+  /* ── UPDATED CURSOR ── */
+  .cursor { box-shadow: 0 0 10px var(--cyan); }
+  .cursor-ring { transition: width 0.15s, height 0.15s, border-color 0.15s; }
+
+  /* ── PARTICLE TRAIL ── */
+  .particle-trail { position: fixed; pointer-events: none; z-index: 9997; border-radius: 50%;
+    width: 3px; height: 3px; animation: pt-fade 0.7s ease-out forwards; }
+  @keyframes pt-fade { to { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); } }
+
+  /* ── COMPILE-REVEAL ── */
   .compile-card { position: relative; overflow: hidden; }
   .compile-overlay {
-    position: absolute; inset: 0;
-    background: var(--bg2);
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: flex-start;
-    padding: 16px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    color: var(--cyan);
-    line-height: 1.6;
-    letter-spacing: 0.04em;
-    opacity: 1;
-    transition: opacity 0.5s ease 0.6s;
-    z-index: 2;
-    pointer-events: none;
-    white-space: pre;
+    position: absolute; inset: 0; padding: 14px 16px;
+    font-size: 9px; line-height: 1.5; color: var(--dim);
+    white-space: pre; pointer-events: none;
+    background: inherit; z-index: 1;
+    opacity: 1; transition: opacity 0.25s ease;
   }
-  .compile-card.visible .compile-overlay { opacity: 0; }
-  .compile-real {
-    opacity: 0;
-    transition: opacity 0.4s ease 0.7s;
-  }
+  .compile-card.visible .compile-overlay { opacity: 0; transition-delay: 0.2s; }
+  .compile-real { opacity: 0; transition: opacity 0.3s ease 0.35s; }
   .compile-card.visible .compile-real { opacity: 1; }
-  @keyframes compileReveal {
-    0% { opacity: 0; transform: translateY(6px); }
-    100% { opacity: 1; transform: none; }
+  .compile-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.5s ease 0.15s; z-index: 2;
   }
+  .compile-card.visible::after { transform: scaleX(1); }
+
+  /* ── MOBILE: disable effects ── */
   @media (max-width: 768px) {
-    #rain-cv, #illus-cv, #dot-field, #cur-glow, #illus-label { display: none; }
+    #rain-cv, #illus-cv, #dot-field, #cur-glow, #vign, #illus-label { display: none; }
+    .cursor, .cursor-ring { display: none; }
+    body { cursor: auto; }
   }
 
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.09) 3px, rgba(0,0,0,0.09) 6px);
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.09) 3px, rgba(0,0,0,0.09) 4px);
     pointer-events: none;
     z-index: 4;
   }

@@ -21,4 +21,5 @@ Thumbs.db
 
 # QA/browser-testing artifacts (regenerated locally, not shipped content)
 /*.png
+/*-snapshot.yml
 .playwright-mcp/
