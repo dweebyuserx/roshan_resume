@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio Design Reference v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cy:#4dd9f0;--gr:#3dffa0;--or:#ff9f4a;--pu:#a78bfa;
+  --bg:#0a0b0d;--bg2:#0f1117;--bg3:#141720;
+  --bd:rgba(77,217,240,0.12);--tx:#c8cfe8;--br:#e8eeff;
+  --mu:rgba(200,207,232,0.42);--di:rgba(200,207,232,0.22);
+  --m:'Share Tech Mono',monospace;--d:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--m);padding:24px 24px 60px;font-size:12px}
+
+.lbl{font-size:9px;color:var(--cy);letter-spacing:.18em;margin-bottom:16px}
+.rule{border:none;border-top:1px solid var(--bd);margin-bottom:14px}
+section{margin-bottom:48px}
+
+/* ── SKILL BARS ── */
+.sg{margin-bottom:18px}
+.sg-lbl{font-size:9px;color:var(--di);letter-spacing:.14em;margin-bottom:8px}
+.sr{display:grid;grid-template-columns:148px 1fr 30px;align-items:center;gap:10px;margin-bottom:7px}
+.sn{font-size:11px;color:var(--tx)}
+.sb{display:flex;gap:2px}
+.seg{height:11px;flex:1;border-radius:1px;background:rgba(77,217,240,0.07)}
+.c{background:var(--cy)}.g{background:var(--gr)}.o{background:var(--or)}
+.sp{font-size:10px;color:var(--di);text-align:right}
+
+/* ── PROJECT PANEL ── */
+.pl{display:grid;grid-template-columns:176px 1fr;gap:10px}
+.cl{display:flex;flex-direction:column;gap:6px}
+.pc{background:var(--bg2);border:1px solid var(--bd);border-left:2px solid transparent;border-radius:4px;padding:10px 12px;cursor:pointer;transition:border-color .12s}
+.pc:hover,.pc.active{border-color:rgba(77,217,240,.3)}
+.pc.active{border-left-color:var(--cy)}
+.pi{font-size:15px;margin-bottom:3px}
+.pn{font-size:11px;color:var(--br);line-height:1.3}
+.pt{font-size:9px;color:var(--di);margin-top:2px}
+
+.dp{background:var(--bg2);border:1px solid var(--bd);border-radius:6px;overflow:hidden}
+.dh{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px}
+.di-ico{font-size:26px;line-height:1}
+.dt{font-family:var(--d);font-size:15px;color:var(--br)}
+.dg{font-size:9px;color:var(--cy);margin-top:3px;letter-spacing:.07em}
+
+.st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 18px;border-bottom:1px solid var(--bd)}
+.sb2{background:var(--bg3);border:1px solid var(--bd);border-radius:4px;padding:10px 6px;text-align:center}
+.sn2{font-family:var(--d);font-size:22px;line-height:1}
+.sl{font-size:8px;color:var(--di);margin-top:3px;letter-spacing:.1em}
+
+.ab{padding:12px 18px;border-bottom:1px solid var(--bd)}
+.ar{display:flex;align-items:baseline;gap:0;margin-bottom:5px;overflow:hidden;opacity:0}
+.ak{color:var(--di);width:86px;flex-shrink:0;font-size:11px}
+.af{color:var(--gr);white-space:pre;font-size:11px}
+.at{font-size:9px;margin-left:8px}
+
+.mr{display:flex;flex-wrap:wrap;gap:0;padding:10px 18px;border-bottom:1px solid var(--bd)}
+.mi{margin-right:22px;margin-bottom:4px;opacity:0}
+.mk{font-size:8px;color:var(--di);letter-spacing:.1em}
+.mv{font-size:11px;color:var(--br);margin-top:1px}
+
+.tr{display:flex;flex-wrap:wrap;gap:5px;padding:10px 18px}
+.tg{font-size:9px;padding:3px 8px;border-radius:2px;background:var(--bg3);border:1px solid var(--bd);color:var(--mu);opacity:0;transform:translateY(5px)}
+</style>
+</head>
+<body>
+
+<!-- SKILLS -->
+<section id="sec-skills">
+<div class="lbl">01 · SKILL MODULES</div>
+<hr class="rule">
+<div class="sg" id="sg0">
+  <div class="sg-lbl">// AI &amp; LLMOPS</div>
+  <div class="sr"><span class="sn">LlamaIndex / ADK</span><div class="sb" data-p="95" data-c="c"></div><span class="sp">95%</span></div>
+  <div class="sr"><span class="sn">Advance RAG / Vector DBs</span><div class="sb" data-p="92" data-c="c"></div><span class="sp">92%</span></div>
+  <div class="sr"><span class="sn">Model Steering / Aligning</span><div class="sb" data-p="88" data-c="c"></div><span class="sp">88%</span></div>
+  <div class="sr"><span class="sn">LLM Fine-tuning</span><div class="sb" data-p="75" data-c="c"></div><span class="sp">75%</span></div>
+  <div class="sr"><span class="sn">NumPy / JAX / TensorFlow</span><div class="sb" data-p="45" data-c="c"></div><span class="sp">45%</span></div>
+</div>
+<div class="sg" id="sg1">
+  <div class="sg-lbl">// CLOUD &amp; MLOPS</div>
+  <div class="sr"><span class="sn">GCP Vertex AI</span><div class="sb" data-p="95" data-c="g"></div><span class="sp">95%</span></div>
+  <div class="sr"><span class="sn">Docker / VM Serving</span><div class="sb" data-p="75" data-c="g"></div><span class="sp">75%</span></div>
+  <div class="sr"><span class="sn">AWS Bedrock / Textract</span><div class="sb" data-p="65" data-c="g"></div><span class="sp">65%</span></div>
+</div>
+<div class="sg" id="sg2">
+  <div class="sg-lbl">// DATA &amp; BACKEND</div>
+  <div class="sr"><span class="sn">Python / FastAPI</span><div class="sb" data-p="95" data-c="o"></div><span class="sp">95%</span></div>
+  <div class="sr"><span class="sn">PostgreSQL / BigQuery</span><div class="sb" data-p="80" data-c="o"></div><span class="sp">80%</span></div>
+  <div class="sr"><span class="sn">FHIR / Medical AI</span><div class="sb" data-p="60" data-c="o"></div><span class="sp">60%</span></div>
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="sec-proj">
+<div class="lbl">02 · PROJECT DETAIL</div>
+<hr class="rule">
+<div class="pl">
+  <div class="cl">
+    <div class="pc active" onclick="pick(0,this)"><div class="pi">🤖</div><div class="pn">Agentic PR Platform</div><div class="pt">ADK · Gemma · GCP</div></div>
+    <div class="pc" onclick="pick(1,this)"><div class="pi">🏥</div><div class="pn">Medical AI Infra</div><div class="pt">FHIR · Doc AI · GCP</div></div>
+    <div class="pc" onclick="pick(2,this)"><div class="pi">⚡</div><div class="pn">Custom LLM Foundry</div><div class="pt">Gemma · vLLM · HF</div></div>
+    <div class="pc" onclick="pick(3,this)"><div class="pi">🔗</div><div class="pn">RAG Systems</div><div class="pt">Weaviate · ADK · RAGAS</div></div>
+    <div class="pc" onclick="pick(4,this)"><div class="pi">🔄</div><div class="pn">MLOps Engine</div><div class="pt">BigQuery · TFX · GCP</div></div>
+  </div>
+  <div class="dp" id="dp">
+    <div class="dh" id="dh"><span class="di-ico" id="ico">🤖</span><div><div class="dt" id="dtitle">—</div><div class="dg" id="dtag">—</div></div></div>
+    <div class="st" id="dst"></div>
+    <div class="ab" id="dab"></div>
+    <div class="mr" id="dmr"></div>
+    <div class="tr" id="dtr"></div>
+  </div>
+</div>
+</section>
+
+<!-- anime.js loaded last so it's definitely available before our script runs -->
+<script src="https://cdn.jsdelivr.net/npm/animejs@4.0.2/lib/anime.iife.min.js"></script>
+<script>
+const BLK='█', EMP='░';
+const bar=n=>BLK.repeat(n)+EMP.repeat(20-n);
+
+const P=[
+  {ico:'🤖',title:'Agentic PR Platform',tag:'AI Hackathon Winner · Deloitte USI 2025',
+   stats:[{v:9,fmt:v=>v,l:'AGENTS',c:'var(--cy)'},{v:3,fmt:v=>'<'+v+'s',l:'LATENCY',c:'var(--gr)'},{v:1,fmt:()=>'1st',l:'HACKATHON',c:'var(--or)'},{v:100,fmt:v=>v+'%',l:'PR COVERAGE',c:'var(--pu)'}],
+   asc:[{k:'complexity',n:20,t:'high',c:'var(--cy)'},{k:'scale',n:15,t:'govt',c:'var(--mu)'},{k:'novelty',n:18,t:'agentic',c:'var(--or)'},{k:'impact',n:20,t:'winner',c:'var(--gr)'}],
+   meta:[{k:'arch',v:'multi-agent'},{k:'infra',v:'GCP / ADK'},{k:'model',v:'Gemma + Claude'},{k:'status',v:'production',hi:1}],
+   tech:['ADK','Gemma','FastAPI','GCP','Firebase','MCP','Claude']},
+  {ico:'🏥',title:'Medical AI Infrastructure',tag:'Project Lead · MyDiGiRecords 2022–23',
+   stats:[{v:100,fmt:v=>v+'+',l:'GB TRAINED',c:'var(--gr)'},{v:2,fmt:v=>v,l:'INTEGRATIONS',c:'var(--cy)'},{v:100,fmt:v=>v+'%',l:'FHIR COMPLY',c:'var(--or)'},{v:0,fmt:()=>'NER',l:'PIPELINE',c:'var(--pu)'}],
+   asc:[{k:'data scale',n:20,t:'100+ GB',c:'var(--gr)'},{k:'accuracy',n:18,t:'high',c:'var(--cy)'},{k:'compliance',n:20,t:'ABHA',c:'var(--or)'},{k:'complexity',n:16,t:'medical',c:'var(--di)'}],
+   meta:[{k:'arch',v:'OCR→NER→FHIR'},{k:'infra',v:'GCP Doc AI'},{k:'standard',v:'ABHA/FHIR'},{k:'status',v:'shipped',hi:1}],
+   tech:['Document AI','FHIR','NER','GCP','ML Pipeline','EPIC','Cerner']},
+  {ico:'⚡',title:'Custom LLM Foundry',tag:'End-to-end fine-tuning pipeline',
+   stats:[{v:0,fmt:()=>'vLLM',l:'SERVING',c:'var(--cy)'},{v:0,fmt:()=>'LoRA',l:'ADAPTERS',c:'var(--gr)'},{v:0,fmt:()=>'W&B',l:'EVAL',c:'var(--or)'},{v:0,fmt:()=>'low',l:'VRAM OPT',c:'var(--pu)'}],
+   asc:[{k:'efficiency',n:19,t:'unsloth',c:'var(--gr)'},{k:'coverage',n:17,t:'full pipe',c:'var(--cy)'},{k:'eval depth',n:16,t:'W&B+HF',c:'var(--or)'},{k:'portability',n:18,t:'Docker',c:'var(--di)'}],
+   meta:[{k:'arch',v:'fine-tune pipe'},{k:'infra',v:'RunPod/Docker'},{k:'framework',v:'unsloth'},{k:'status',v:'active',hi:1}],
+   tech:['Gemma','Qwen2.5','vLLM','unsloth','W&B','HuggingFace','Docker']},
+  {ico:'🔗',title:'RAG Systems',tag:'4 production builds across scales',
+   stats:[{v:4,fmt:v=>v,l:'BUILDS',c:'var(--pu)'},{v:0,fmt:()=>'RAGAS',l:'EVAL',c:'var(--cy)'},{v:0,fmt:()=>'hybrid',l:'SEARCH',c:'var(--gr)'},{v:0,fmt:()=>'multi',l:'AGENT',c:'var(--or)'}],
+   asc:[{k:'retrieval',n:18,t:'hybrid',c:'var(--cy)'},{k:'eval rigor',n:16,t:'RAGAS',c:'var(--gr)'},{k:'scale',n:17,t:'enterprise',c:'var(--or)'},{k:'iterations',n:20,t:'4 builds',c:'var(--pu)'}],
+   meta:[{k:'arch',v:'agentic RAG'},{k:'dbs',v:'Weaviate·Milvus'},{k:'eval',v:'RAGAS'},{k:'status',v:'production',hi:1}],
+   tech:['Weaviate','Milvus','Pinecone','Redis','ADK','RAGAS','LlamaIndex']},
+  {ico:'🔄',title:'MLOps Engine',tag:'Dynamic trainer + evaluator · BigQuery',
+   stats:[{v:0,fmt:()=>'BQ',l:'BIGQUERY',c:'var(--or)'},{v:0,fmt:()=>'auto',l:'RETRAIN',c:'var(--gr)'},{v:0,fmt:()=>'reg',l:'REGISTRY',c:'var(--cy)'},{v:0,fmt:()=>'sched',l:'PIPELINE',c:'var(--pu)'}],
+   asc:[{k:'automation',n:18,t:'full',c:'var(--gr)'},{k:'scale',n:15,t:'BQ',c:'var(--or)'},{k:'coverage',n:16,t:'class+reg',c:'var(--cy)'},{k:'reliability',n:17,t:'scheduled',c:'var(--di)'}],
+   meta:[{k:'arch',v:'trainer+eval'},{k:'infra',v:'GCP BigQuery'},{k:'pipeline',v:'TFX'},{k:'status',v:'production',hi:1}],
+   tech:['BigQuery','Model Registry','TFX','GCP Scheduler','Python']}
+];
+
+// Build segment bars
+document.querySelectorAll('.sb[data-p]').forEach(el=>{
+  const filled=Math.round(+el.dataset.p/5), cls=el.dataset.c;
+  for(let i=0;i<20;i++){
+    const s=document.createElement('div');
+    s.className='seg'+(i<filled?' '+cls:'');
+    el.appendChild(s);
+  }
+});
+
+// Skill bar stagger animation
+function animSkills(){
+  ['c','g','o'].forEach((cls,gi)=>{
+    const segs=document.querySelectorAll('.seg.'+cls);
+    segs.forEach(s=>{s.style.opacity=0;s.style.transform='scaleX(0)';s.style.transformOrigin='left';});
+    anime({targets:segs,opacity:[0,1],scaleX:[0,1],duration:280,ease:'outQuart',delay:anime.stagger(16,{start:gi*100})});
+  });
+}
+
+// Project swap
+let cur=-1;
+function pick(idx,card){
+  if(idx===cur)return;
+  cur=idx;
+  document.querySelectorAll('.pc').forEach(c=>c.classList.remove('active'));
+  card.classList.add('active');
+  const p=P[idx], panel=document.getElementById('dp');
+
+  anime({targets:panel,opacity:[1,0],translateY:[0,5],duration:120,ease:'outQuad',complete(){
+    // fill header
+    document.getElementById('ico').textContent=p.ico;
+    document.getElementById('dtitle').textContent=p.title;
+    document.getElementById('dtag').textContent=p.tag;
+
+    // stats
+    document.getElementById('dst').innerHTML=p.stats.map((s,i)=>
+      `<div class="sb2"><div class="sn2" style="color:${s.c}" id="sn${i}">0</div><div class="sl">${s.l}</div></div>`
+    ).join('');
+
+    // ascii rows
+    document.getElementById('dab').innerHTML=p.asc.map((r,i)=>
+      `<div class="ar" id="ar${i}"><span class="ak">${r.k}</span><span class="af" id="af${i}"></span><span class="at" style="color:${r.c}">${r.t}</span></div>`
+    ).join('');
+
+    // meta
+    document.getElementById('dmr').innerHTML=p.meta.map((m,i)=>
+      `<div class="mi" id="mi${i}"><div class="mk">${m.k}</div><div class="mv"${m.hi?' style="color:var(--gr)"':''}>${m.v}</div></div>`
+    ).join('');
+
+    // tech
+    document.getElementById('dtr').innerHTML=p.tech.map(t=>`<span class="tg">${t}</span>`).join('');
+
+    // fade panel in
+    anime({targets:panel,opacity:[0,1],translateY:[6,0],duration:180,ease:'outQuad',complete(){
+
+      // 1. count-up stats
+      p.stats.forEach((s,i)=>{
+        const el=document.getElementById('sn'+i);
+        if(!el)return;
+        if(s.v>0){
+          const obj={val:0};
+          anime({targets:obj,val:s.v,duration:650,ease:'outQuart',delay:i*70,
+            update(){el.textContent=Math.round(obj.val)},
+            complete(){el.innerHTML=s.fmt(s.v)}});
+        } else {
+          el.innerHTML=s.fmt(0);
+          anime({targets:el,opacity:[0,1],duration:250,delay:i*70,ease:'outQuad'});
+        }
+      });
+
+      // 2. ASCII rows: fade in then type bar
+      p.asc.forEach((r,i)=>{
+        const row=document.getElementById('ar'+i);
+        const fill=document.getElementById('af'+i);
+        if(!row||!fill)return;
+        anime({targets:row,opacity:[0,1],duration:180,delay:280+i*90,ease:'outQuad',
+          complete(){
+            const full=bar(r.n); let ci=0;
+            const iv=setInterval(()=>{
+              if(ci<=full.length){fill.textContent=full.slice(0,ci++);}
+              else clearInterval(iv);
+            },16);
+          }});
+      });
+
+      // 3. meta stagger
+      anime({targets:'.mi',opacity:[0,1],translateX:[-6,0],duration:250,
+        delay:anime.stagger(50,{start:620}),ease:'outQuad'});
+
+      // 4. tech tags spring
+      const sp=anime.createSpring({mass:1,stiffness:130,damping:11});
+      anime({targets:'.tg',opacity:[0,1],translateY:[5,0],duration:450,ease:sp,
+        delay:anime.stagger(35,{start:780})});
+    }});
+  }});
+}
+
+// Init
+animSkills();
+cur=-1;
+pick(0,document.querySelector('.pc'));
+</script>
+</body>
+</html>
