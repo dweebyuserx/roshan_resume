@@ -226,7 +226,7 @@
     min-height: 100vh;
     padding-top: 60px;
     display: grid;
-    grid-template-columns: 1fr 460px;
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 40vw, 460px);
     grid-template-rows: 1fr auto;
     gap: 0 52px;
   }
@@ -246,30 +246,11 @@
     padding: 0 0 var(--s4) var(--s5);
   }
 
-  /* ASCII name stage */
-  .ascii-stage { position: relative; height: 110px; overflow: hidden; margin-bottom: 22px; }
-  .ascii-frame {
-    position: absolute; inset: 0;
-    font-family: var(--font-mono);
-    font-size: clamp(5px, 0.75vw, 6.8px);
-    line-height: 1.22; white-space: pre; letter-spacing: 0;
-    text-shadow: 0 0 8px rgba(77,217,240,0.3);
-    opacity: 0; transition: opacity 0.1s;
-  }
-  .ascii-frame.show { opacity: 1; }
-  .ascii-frame.split-r { transform: translateX(2px); }
-  .ascii-frame.split-l { transform: translateX(-2px); }
-  .orb {
-    position: absolute; font-family: var(--font-mono); pointer-events: none;
-    color: rgba(77,217,240,0.3);
-    animation: orb-drift linear infinite;
-  }
-  @keyframes orb-drift {
-    0%   { opacity: 0.1; transform: translate(0,0); }
-    25%  { opacity: 0.45; }
-    75%  { opacity: 0.5; }
-    100% { opacity: 0.05; transform: translate(var(--ex), var(--ey)); }
-  }
+  /* Hero name FX (canvas) — h1 stays as the no-JS / screen-reader fallback */
+  .name-fx { position: relative; width: 100%; margin: 0 0 6px; }
+  .name-fx canvas { display: block; width: 100%; filter: drop-shadow(0 0 12px rgba(77,217,240,0.28)); touch-action: manipulation; }
+  .hero-main:not(.fx-on) .name-fx { display: none; }
+  .hero-main.fx-on h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
   .hero-eyebrow {
     font-family: var(--font-label);
@@ -302,7 +283,7 @@
 
   /* Stats row */
   .stats-row {
-    display: flex; gap: 40px;
+    display: flex; flex-wrap: wrap; gap: 16px 40px;
     padding: 20px 0; border-top: 1px solid var(--border);
   }
   .stat-num {
@@ -714,14 +695,15 @@
 
   /* Mobile */
   @media (max-width: 900px) {
-    #hero { grid-template-columns: 1fr; grid-template-rows: auto; }
+    #hero { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
     .hero-aside { display: none; }
     .hero-main { padding: 80px var(--s3) var(--s3); }
     .hero-bottom { padding: 0 var(--s3) var(--s4); }
     .about-grid { grid-template-columns: 1fr; }
     nav { padding: 16px 24px; }
     section { padding: 100px 24px 60px; }
-    .nodes-grid { grid-template-columns: 1fr 1fr; }
+    .nodes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 560px) { .nodes-grid { grid-template-columns: minmax(0, 1fr); } .node-card { padding: 22px; } }
     footer { flex-direction: column; gap: 12px; text-align: center; }
     .article-item { grid-template-columns: 1fr; gap: 8px; }
     .article-date { padding-top: 0; }
@@ -805,40 +787,7 @@
 <!-- HERO -->
 <section id="hero">
   <div class="hero-main">
-    <!-- ASCII name stage — 4 glitch frames, JS-controlled -->
-    <div class="ascii-stage" id="asciiStage">
-      <div class="ascii-frame show" id="asciiFrame0" style="color:var(--cyan)">
- ██████╗  ██████╗ ███████╗██╗  ██╗ █████╗ ███╗   ██╗
- ██╔══██╗██╔═══██╗██╔════╝██║  ██║██╔══██╗████╗  ██║
- ██████╔╝██║   ██║███████╗███████║███████║██╔██╗ ██║
- ██╔══██╗██║   ██║╚════██║██╔══██║██╔══██║██║╚██╗██║
- ██║  ██║╚██████╔╝███████║██║  ██║██║  ██║██║ ╚████║
- ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝</div>
-      <div class="ascii-frame" id="asciiFrame1" style="color:var(--green)">
- ╔════════════════════════════════════════════════════╗
- ║  SERVER: roshan-prod-01    STATUS: ● ONLINE        ║
- ╠════════╦══════════╦═════════════╦══════════════════╣
- ║ CPU 3% ║ RAM 12GB ║ DISK 240GB  ║ NET ▲ 1.2GB/s   ║
- ╠════════╩══════════╩═════════════╩══════════════════╣
- ╚════════════════════════════════════════════════════╝</div>
-      <div class="ascii-frame" id="asciiFrame2" style="color:var(--orange)">
-          /\    /\    /\    /\    /\    /\    /\
-         /  \  /██\  /  \  /██\  /  \  /██\  /  \
-        / RA \/ ██ \/ SH \/ ██ \/ AN \/ ██ \/    \
-       /──────────────────────────────────────────\
-      |  ┌──┐        ┌──────────────┐        ┌──┐  |
-      |  │  │ OPEN   │  roshan.dev  │ ALWAYS │  │  |
-      |  └──┘        └──────────────┘        └──┘  |</div>
-      <div class="ascii-frame" id="asciiFrame3" style="color:var(--purple)">
- INPUT          HIDDEN                        OUTPUT
-  ◉ ──────────── ◉ ──── ◉ ──────────────────── ◉
-   \   ╲        / \ ╲  / \                    /
-    ◉   ╲──── ◉    ╲◉╱   ◉ ── ◉ ── [ROSHAN] ◉
-   /     ╲  /       X    /       ╲            \
-  ◉       ◉         ◉  ◉    ◉    ◉─────────── ◉
-   \     / \       / \/      \  /
-    ◉ ─── ◉ ╲─── ◉  /\   ◉──◉ ──────────────  ◉</div>
-    </div>
+    <div class="name-fx"><canvas id="nameFx" aria-hidden="true"></canvas></div>
 
     <p class="hero-eyebrow" id="heroEyebrow">AI Solutions Consultant · roshan.dev</p>
     <h1 id="heroName"></h1>
@@ -1190,46 +1139,220 @@ const ZONES = [
 
 })(typeof ZONES !== 'undefined' ? ZONES : []);
 
-// ── ASCII NAME GLITCH CYCLE ──
-(function initGlitch() {
-  const frames = [0,1,2,3].map(i => document.getElementById('asciiFrame' + i));
-  if (!frames[0]) return;
-  let cf = 0;
+// ── HERO NAME FX ──
+// Particle name that assembles on a scan sweep, repels from the cursor, bursts on click,
+// RGB-splits + slice-tears every few seconds, with the stack's logos orbiting in 3D-ish depth.
+// Decorative only: the real <h1> stays in the DOM (shown if this fails, hidden once active).
+(function nameFx() {
+  const cv = document.getElementById('nameFx');
+  if (!cv || !cv.getContext) return;
+  const host = cv.parentElement, heroMain = cv.closest('.hero-main');
+  const ctx = cv.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const LINES = ['ROSHAN', 'ABRAHAM'];
+  const PAL = ['#4dd9f0', '#3dffa0', '#ff9f4a', '#a78bfa'];
+  const mouse = { x: -999, y: -999 };
+  let W = 0, H = 0, dpr = 1, N = 0;
+  let hx, hy, px, py, vx, vy, dl, ci;               // particle typed arrays
+  let t0 = 0, running = false, visible = true, glitchEnd = 0, nextGlitch = 0, scanStart = 0;
+  const hot = [];
 
-  function switchTo(n) {
-    const cur = frames[cf], nxt = frames[n];
-    cur.classList.add('split-r');
-    setTimeout(() => { cur.classList.remove('split-r'); cur.classList.add('split-l'); }, 60);
-    setTimeout(() => { cur.classList.remove('split-l', 'show'); nxt.classList.add('show'); cf = n; }, 120);
-  }
+  const RINGS = [
+    { tilt: -0.22, ry: 0.34, sp: 0.00022, n: 3, c: '77,217,240' },
+    { tilt: 0.30, ry: 0.26, sp: -0.00031, n: 2, c: '61,255,160' }
+  ];
+  let mesh = [], pulses = [], nextPulse = 0;
 
-  // Cycle every 8s
-  setInterval(() => switchTo((cf + 1) % 4), 8000);
+  function build() {
+    const r = host.getBoundingClientRect();
+    W = Math.max(280, Math.floor(r.width));
+    H = W < 520 ? 220 : Math.min(320, Math.round(W * 0.4));
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr; cv.style.height = H + 'px';
 
-  // Micro-glitch on frame 0 every 3.2s (no swap)
-  setInterval(() => {
-    if (cf === 0) {
-      frames[0].classList.add('split-r');
-      setTimeout(() => frames[0].classList.remove('split-r'), 80);
-      setTimeout(() => { frames[0].classList.add('split-l'); setTimeout(() => frames[0].classList.remove('split-l'), 80); }, 100);
+    const fs = Math.min(H * 0.3, (W * 0.74) / 4.9);
+    const o = document.createElement('canvas'); o.width = W; o.height = H;
+    const c = o.getContext('2d', { willReadFrequently: true });
+    c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = `800 ${fs}px Oxanium, "JetBrains Mono", sans-serif`;
+    if ('letterSpacing' in c) c.letterSpacing = Math.round(fs * 0.04) + 'px';
+    c.fillText(LINES[0], W / 2, H / 2 - fs * 0.5);
+    c.fillText(LINES[1], W / 2, H / 2 + fs * 0.5);
+    const d = c.getImageData(0, 0, W, H).data;
+    const gap = 3, pts = [];
+    for (let y = 0; y < H; y += gap)
+      for (let x = 0; x < W; x += gap)
+        if (d[(y * W + x) * 4 + 3] > 128) {
+          const rnd = Math.random();
+          const col = rnd < 0.05 ? 2 : rnd < 0.09 ? 3 : (x / W + Math.random() * 0.15 > 0.5 ? 1 : 0);
+          pts.push([x + (Math.random() - 0.5), y + (Math.random() - 0.5), col]);
+        }
+    pts.sort((a, b) => a[2] - b[2]);                 // grouped by colour => one fillStyle switch per colour
+    N = pts.length;
+    hx = new Float32Array(N); hy = new Float32Array(N); px = new Float32Array(N); py = new Float32Array(N);
+    vx = new Float32Array(N); vy = new Float32Array(N); dl = new Float32Array(N); ci = new Uint8Array(N);
+    for (let i = 0; i < N; i++) {
+      hx[i] = pts[i][0]; hy[i] = pts[i][1]; ci[i] = pts[i][2];
+      px[i] = Math.random() * W; py[i] = H * (0.1 + Math.random() * 0.8);
+      dl[i] = (hx[i] / W) * 900 + Math.random() * 250;           // left→right scan-in
+      if (reduce) { px[i] = hx[i]; py[i] = hy[i]; dl[i] = 0; }
     }
-  }, 3200);
-
-  // Orbital characters
-  const stage = document.getElementById('asciiStage');
-  if (stage) {
-    '<>{}[]|/\\*@#$%^&~;:=+-×÷≠∞∑░▒▓│─╭╮╰╯'.split('').forEach(c => {
-      const o = document.createElement('div');
-      o.className = 'orb';
-      o.textContent = c;
-      const l = Math.random() * 100, t = Math.random() * 100;
-      const dur = 3 + Math.random() * 6, del = Math.random() * 4;
-      const ex = (Math.random() - 0.5) * 80, ey = (Math.random() - 0.5) * 60;
-      o.style.cssText = `left:${l}%;top:${t}%;font-size:${8 + Math.random()*5}px;` +
-        `--ex:${ex}px;--ey:${ey}px;animation-duration:${dur}s;animation-delay:-${del}s`;
-      stage.appendChild(o);
-    });
+    t0 = performance.now(); nextGlitch = t0 + 2600; scanStart = t0 + 1700;
+    mesh = Array.from({ length: W < 520 ? 16 : 30 }, () => ({
+      x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2, g: 0 }));
+    pulses = []; nextPulse = t0 + 1200;
+    heroMain && heroMain.classList.add('fx-on');
+    if (reduce) frame(performance.now()); else start();
   }
+
+  // Orbital ring point at angle a: returns screen x/y and depth z (-1 back … +1 front)
+  function ringPt(R, a) {
+    const rx = W / 2 - 24, ry = H * R.ry * 1.45;
+    const ex = Math.cos(a) * rx, ey = Math.sin(a) * ry;
+    return { x: W / 2 + ex * Math.cos(R.tilt) - ey * Math.sin(R.tilt), y: H / 2 + ex * Math.sin(R.tilt) + ey * Math.cos(R.tilt), z: Math.sin(a) };
+  }
+
+  // Rings + comet-trail satellites. front=false draws the far half (behind the name), true the near half.
+  function drawRings(now, front) {
+    for (const R of RINGS) {
+      const SEG = 72;
+      for (let i = 0; i < SEG; i++) {
+        const a0 = (i / SEG) * Math.PI * 2, a1 = ((i + 1) / SEG) * Math.PI * 2;
+        const m = ringPt(R, (a0 + a1) / 2);
+        if ((m.z >= 0) !== front) continue;
+        const p0 = ringPt(R, a0), p1 = ringPt(R, a1);
+        ctx.strokeStyle = `rgba(${R.c},${0.07 + 0.2 * (m.z + 1) / 2})`; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+      }
+      for (let k = 0; k < R.n; k++) {
+        const base = (k / R.n) * Math.PI * 2 + (reduce ? 0 : now * R.sp);
+        for (let t = 0; t < 14; t++) {                       // comet tail, newest first
+          const p = ringPt(R, base - Math.sign(R.sp || 1) * t * 0.045);
+          if ((p.z >= 0) !== front) continue;
+          const dep = (p.z + 1) / 2, fade = 1 - t / 14;
+          ctx.fillStyle = `rgba(${R.c},${(0.25 + 0.7 * dep) * fade})`;
+          if (t === 0) { ctx.shadowColor = `rgba(${R.c},.9)`; ctx.shadowBlur = 12; }
+          ctx.beginPath(); ctx.arc(p.x, p.y, (1.2 + 2.4 * dep) * (0.4 + 0.6 * fade), 0, 6.283); ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+    }
+  }
+
+  // Neural mesh: drifting nodes, proximity edges, pulses that hop edges, cursor excites nearby nodes
+  function stepMesh(now) {
+    for (const n of mesh) {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+      if (Math.hypot(n.x - mouse.x, n.y - mouse.y) < 110) n.g = 1;
+      n.g *= 0.95;
+    }
+    if (now > nextPulse) {
+      nextPulse = now + 450 + Math.random() * 600;
+      const a = mesh[(Math.random() * mesh.length) | 0];
+      const near = mesh.filter(b => b !== a && Math.hypot(a.x - b.x, a.y - b.y) < 110);
+      if (near.length) pulses.push({ a, b: near[(Math.random() * near.length) | 0], t: 0 });
+    }
+    for (const p of pulses) { p.t += 0.03; if (p.t >= 1) p.b.g = 1; }
+    pulses = pulses.filter(p => p.t < 1);
+  }
+  function drawMesh() {
+    for (let i = 0; i < mesh.length; i++) for (let j = i + 1; j < mesh.length; j++) {
+      const a = mesh[i], b = mesh[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d > 100) continue;
+      ctx.strokeStyle = `rgba(77,217,240,${(1 - d / 100) * 0.16 + (a.g + b.g) * 0.2})`; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+    for (const n of mesh) {
+      ctx.fillStyle = `rgba(${n.g > 0.3 ? '61,255,160' : '77,217,240'},${0.3 + n.g * 0.65})`;
+      ctx.beginPath(); ctx.arc(n.x, n.y, 1.5 + n.g * 2.5, 0, 6.283); ctx.fill();
+    }
+    ctx.fillStyle = '#fff';
+    for (const p of pulses) { ctx.beginPath(); ctx.arc(p.a.x + (p.b.x - p.a.x) * p.t, p.a.y + (p.b.y - p.a.y) * p.t, 2.2, 0, 6.283); ctx.fill(); }
+  }
+
+  function drawParticles(now, ox, colorOverride, sizeBoost) {
+    const e = now - t0, S = 2.1 + sizeBoost;
+    const scanX = ((now - scanStart) % 9000) / 1100 * W - W * 0.15;   // sweeps once per 9s
+    hot.length = 0;
+    let last = -1;
+    for (let i = 0; i < N; i++) {
+      if (e < dl[i]) continue;
+      if (!colorOverride && ci[i] !== last) { last = ci[i]; ctx.fillStyle = PAL[last]; }
+      if (!colorOverride && Math.abs(px[i] - scanX) < 22) { hot.push(i); continue; }
+      ctx.fillRect(px[i] + ox, py[i], S, S);
+    }
+    if (!colorOverride && hot.length) {
+      ctx.fillStyle = '#ffffff';
+      for (const i of hot) ctx.fillRect(px[i], py[i] - 2, S + 1, S + 1);
+    }
+  }
+
+  function step(now) {
+    stepMesh(now);
+    const e = now - t0, R = 74;
+    for (let i = 0; i < N; i++) {
+      if (e < dl[i]) continue;
+      let ax = (hx[i] - px[i]) * 0.07, ay = (hy[i] - py[i]) * 0.07;
+      const dx = px[i] - mouse.x, dy = py[i] - mouse.y, d2 = dx * dx + dy * dy;
+      if (d2 < R * R) { const d = Math.sqrt(d2) || 1, f = (1 - d / R); ax += (dx / d) * f * f * 9; ay += (dy / d) * f * f * 9; }
+      vx[i] = (vx[i] + ax) * 0.8; vy[i] = (vy[i] + ay) * 0.8;
+      px[i] += vx[i]; py[i] += vy[i];
+    }
+  }
+
+  function frame(now) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    drawMesh();
+    drawRings(now, false);
+    const glitching = !reduce && now < glitchEnd;
+    if (glitching) {
+      const g = 1 + Math.random() * 2.5;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = '#ff2e63'; drawParticles(now, g * 3, true, 0);
+      ctx.fillStyle = '#00e5ff'; drawParticles(now, -g * 3, true, 0);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);                       // slice-tear in device pixels
+      for (let k = 0; k < 5; k++) {
+        const sy = Math.floor(Math.random() * H * 0.9 * dpr), sh = Math.ceil((5 + Math.random() * 20) * dpr);
+        ctx.drawImage(cv, 0, sy, cv.width, sh, (Math.random() - 0.5) * 46 * dpr, sy, cv.width, sh);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    } else {
+      drawParticles(now, 0, false, 0);
+    }
+    drawRings(now, true);
+  }
+
+  function loop(now) {
+    if (!visible || document.hidden) { running = false; return; }
+    if (now > nextGlitch) { glitchEnd = now + 240 + Math.random() * 120; nextGlitch = now + 3200 + Math.random() * 3800; }
+    step(now); frame(now);
+    requestAnimationFrame(loop);
+  }
+  function start() { if (!running && !reduce) { running = true; requestAnimationFrame(loop); } }
+
+  // interaction
+  window.addEventListener('pointermove', e => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; }, { passive: true });
+  document.addEventListener('pointerleave', () => { mouse.x = mouse.y = -999; });
+  cv.addEventListener('pointerdown', e => {
+    if (reduce) return;
+    const r = cv.getBoundingClientRect(), cx = e.clientX - r.left, cy = e.clientY - r.top;
+    for (let i = 0; i < N; i++) {
+      const dx = px[i] - cx, dy = py[i] - cy, d = Math.hypot(dx, dy);
+      if (d < 170) { const f = (1 - d / 170) * 22 + 4; vx[i] += (dx / (d || 1)) * f; vy[i] += (dy / (d || 1)) * f; }
+    }
+    glitchEnd = performance.now() + 300;
+  });
+  cv.addEventListener('pointerenter', () => { glitchEnd = performance.now() + 260; });
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) start(); }).observe(cv);
+  document.addEventListener('visibilitychange', start);
+  let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(() => { if (Math.abs(host.clientWidth - W) > 2) build(); }, 150); }).observe(host);
+
+  const fontReady = document.fonts && document.fonts.load ? document.fonts.load('800 80px Oxanium') : Promise.resolve();
+  Promise.race([fontReady, new Promise(r => setTimeout(r, 1500))]).catch(() => {}).then(build);
 })();
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1590,29 +1713,6 @@ function render() {
   `;
 }
 
-// Hero name scramble
-function heroNameScramble() {
-  const el = document.getElementById('heroName');
-  if (!el) return;
-  const finalHTML = el.innerHTML;
-  const target = 'ROSHAN ABRAHAM.';
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%';
-  let frame = 0; const total = 60;
-  const t = setInterval(() => {
-    const reveal = Math.floor((frame / total) * target.length);
-    el.textContent = target.split('').map((ch, i) =>
-      ch === ' ' ? ' ' : i < reveal ? ch : chars[Math.floor(Math.random() * chars.length)]
-    ).join('');
-    frame++;
-    if (frame > total) {
-      clearInterval(t);
-      el.style.opacity = '0';
-      el.style.transition = 'opacity 0.15s';
-      setTimeout(() => { el.innerHTML = finalHTML; el.style.opacity = '1'; }, 150);
-    }
-  }, 25);
-}
-
 // Cyberpunk horizontal-scan char entrance
 function charStagger(el, delay) {
   if (!el) return;
@@ -1810,8 +1910,6 @@ window.addEventListener('load', () => {
   setupCursorHovers();
   setupObservers();
   setupSpringHovers();
-
-  heroNameScramble();
 
   // Connection lines
   const connSec = document.getElementById('connections');

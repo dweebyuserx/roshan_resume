@@ -26,7 +26,7 @@ The primary content-bearing object in `index.html` is `CONFIG` (line ~737). It d
 
 **`PORTFOLIO_ARCH.md`** is the strategic reference layer on top of that: audience routing (recruiter / technical peer / article reader), content curation rationale (project ordering, why things are shown/hidden), and a running list of known content discrepancies between `ROSHAN_ABRAHAM.md` and the HTML `CONFIG` objects that still need reconciling. Check it before restructuring any page's content hierarchy.
 
-**`docs/`** holds process reference, not shipped content: `docs/animejs-v4-catalog.md` (v3→v4 API differences, useful when touching any `anime()` call), `docs/mockups/portfolio-v3.html` (a standalone design mockup, not wired into the live pages), and `docs/superpowers/` (the spec and plan from the terminal-aesthetic redesign — historical context for why the current structure looks the way it does).
+**`docs/`** holds process reference, not shipped content: `docs/animejs-v4-catalog.md` (v3→v4 API differences, useful when touching any `anime()` call), `docs/superpowers/` (the spec and plan from the terminal-aesthetic redesign — historical context for why the current structure looks the way it does).
 
 ## Design System
 
@@ -78,6 +78,7 @@ Placeholders in HTML: `CLOUDFLARE_TOKEN_HERE` (Cloudflare Web Analytics) and `CL
 
 ## Key Conventions
 
+- **NEVER put keys, tokens, passwords or credentials anywhere in this repo or its git config** (not in files, remote URLs, scripts, docs, commit messages or `.claude/` settings). Secrets live only in the Cloudflare Pages dashboard / env vars. `.git/hooks/pre-commit` blocks credential-like strings; if it fires, remove the secret, don't bypass the hook. Analytics IDs are injected by `build.sh` from env vars only.
 - **No shared JS or CSS files** — each page is fully self-contained. Avoid creating external `.css` or `.js` files; keep changes inline.
 - The custom cursor (`.cursor` + `.cursor-ring`) and CRT scanline overlay (`body::before`) appear on every page — preserve these when editing layout.
 - The PDF CV (`roshan-abraham-cv.pdf`) is served with `Content-Disposition: attachment` via `_headers` — don't rename it without updating that rule.

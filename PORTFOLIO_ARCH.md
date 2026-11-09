@@ -156,37 +156,7 @@ All animations follow these rules:
 
 ---
 
-## 5. Three Design Options
-
-Three complete redesign concepts have been designed and are available for implementation. Each is a full ground-up rework of all five pages.
-
-### Option A — HYPERTERM (ANSI/BBS Terminal)
-**Aesthetic:** Authentic ANSI BBS bulletin board from the future. Box-drawing borders (`┌─┬─┐`), Unicode block-art hero name, scrolling ticker, `ls -la` project listings, `man` page articles, `finger` command connect page.
-**Signature:** "ROSHAN" name reveals column-by-column in ANSI block characters, single CRT flicker on completion.
-**Game:** ASCII Snake in a `<dialog>` window (triple-Escape trigger).
-**Best for:** Technical credibility, uniqueness, clean recruiter scan.
-**CDN needed:** None. **CSP changes:** None.
-**Effort:** ~4,500 lines across 5 files.
-
-### Option B — CYBERNOIR (Cyberpunk Holographic)
-**Aesthetic:** Cinematic, restrained. `#030014` void backgrounds, precision neon glow. Per-page dominant neon color (`--page-color`). SVG hex grid via CSS data URI. Vapor cursor trail on canvas. City skyline skills visualization. Holographic flip-cards for projects.
-**Signature:** RGB-channel glitch on hero name every 8s (pure CSS `::before`/`::after` with `mix-blend-mode: screen`).
-**Game:** Neon Pong with Web Audio API synthesized sounds.
-**Best for:** Premium visual impression, recruiter + technical balance.
-**CDN needed:** None. **CSP changes:** None.
-**Effort:** ~5,200 lines across 5 files.
-
-### Option C — PIXEL QUEST (Retro Platformer)
-**Aesthetic:** The portfolio IS a side-scrolling game. CSS box-shadow pixel-art character. Five canvas worlds (one per site section). `requestAnimationFrame` game loop, tile-based collision, Web Audio synthesized sounds. Strategy Guide toggle for recruiter-mode.
-**Signature:** Jump into `?` block in World 1 → coin sound plays → typewriter dialog prints "ROSHAN ABRAHAM — AI SOLUTIONS CONSULTANT".
-**Game:** The whole site. Time Trial mode tracks how fast you activate all 11 project terminals.
-**Best for:** Maximum memorability, technical proof-of-skill, unforgettable first impression.
-**CDN needed:** `Press Start 2P` font (Google Fonts, no CSP change). **CSP changes:** None.
-**Effort:** ~3,590 lines in `index.html` (hardest per line).
-
----
-
-## 6. Maintenance Guide
+## 5. Maintenance Guide
 
 ### Adding a New Project
 1. Add entry to `ROSHAN_ABRAHAM.md` first
@@ -223,7 +193,7 @@ Both must match. The `_headers` CSP is authoritative for Cloudflare Pages deploy
 
 ---
 
-## 7. File Map
+## 6. File Map
 
 ```
 /

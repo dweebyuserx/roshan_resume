@@ -23,3 +23,9 @@ Thumbs.db
 /*.png
 /*-snapshot.yml
 .playwright-mcp/
+
+# Secrets: never commit
+.env*
+!.env.example
+*.pem
+*.key
