@@ -230,8 +230,8 @@
   .projects-stats {
     display: flex;
     gap: 48px;
-    margin: 48px 0;
-    padding: 24px 0;
+    margin: 28px 0;
+    padding: 16px 0;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
   }
@@ -278,13 +278,13 @@
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 48px;
-    margin-bottom: 48px;
+    padding: 28px;
+    margin-bottom: 40px;
     position: relative;
     overflow: hidden;
   }
   .featured-project::before {
-    content: 'FEATURED';
+    content: 'SELECTED';
     position: absolute;
     top: 16px;
     right: 16px;
@@ -325,8 +325,7 @@
     font-size: 14px;
     color: var(--text);
     line-height: 1.9;
-    margin-bottom: 24px;
-    max-width: 700px;
+    margin-bottom: 18px;
   }
 
   .featured-tech {
@@ -378,16 +377,15 @@
 
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    align-items: start;
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 10px;
   }
 
   .project-card {
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 28px;
+    padding: 12px 14px;
     position: relative;
     cursor: none;
     overflow: hidden;
@@ -410,18 +408,19 @@
   }
   .project-card:hover::after { transform: scaleX(1); }
 
-  .project-icon {
-    font-size: 24px;
-    margin-bottom: 16px;
-    display: block;
-  }
+  .project-icon { font-size: 20px; line-height: 1; }
+  .tile-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .tile-no { font-family: var(--font-label); font-size: 9px; letter-spacing: .12em; color: var(--dim); }
+  .project-card.active .tile-no { color: var(--accent); }
 
   .project-name {
     font-family: var(--font-display);
-    font-size: 17px;
+    font-size: 13px;
     font-weight: 700;
+    line-height: 1.3;
     color: var(--bright);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
 
   .project-desc {
@@ -434,9 +433,11 @@
   .project-tech {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 20px;
+    gap: 4px;
+    margin-bottom: 0;
   }
+  .project-tech { flex-wrap: nowrap; overflow: hidden; }
+  .project-tech .tech-pill { font-size: 9px; padding: 2px 6px; white-space: nowrap; flex-shrink: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
 
   .project-links {
     display: flex;
@@ -520,7 +521,7 @@
     nav { padding: 16px 24px; }
     main { padding: 100px 24px 60px; }
     .projects-stats { flex-wrap: wrap; gap: 24px; }
-    .featured-project { padding: 24px; }
+    .featured-project { padding: 18px; }
     .featured-header { flex-direction: column; gap: 16px; }
     footer { flex-direction: column; gap: 12px; text-align: center; }
   }
@@ -529,8 +530,7 @@
   .project-card.active {
     border-color: var(--accent);
     box-shadow: 0 0 0 1px var(--accent), inset 0 0 24px rgba(0,0,0,0.3);
-    transform: translateY(-2px);
-  }
+    }
 
   /* Click-to-feature hint */
   .swap-hint {
@@ -570,7 +570,8 @@
   }
 
   /* 1-col grid on small phones */
-  @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .project-tech .tech-pill:nth-child(n+2) { display: none; } }
 
   /* Nav overflow on small phones */
   @media (max-width: 520px) {
@@ -605,6 +606,24 @@
   .feat-ascii-bar { color:var(--green); white-space:pre; }
   .feat-ascii-tag { font-size:9px; margin-left:8px; }
   @media (max-width:600px) { .feat-stats { grid-template-columns:repeat(2,1fr); } }
+
+  /* ── DETAIL PANEL: content + blueprint ── */
+  .proj-wrap { position: relative; }
+  #conn { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; }
+  .conn-flow { animation: connflow 1.2s linear infinite; }
+  @keyframes connflow { to { stroke-dashoffset: -20; } }
+  .feat-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr); gap: 28px; align-items: stretch; }
+  .bp-wrap { position: relative; min-height: 320px; border: 1px solid color-mix(in srgb, var(--accent, #4dd9f0) 35%, transparent); border-radius: 4px; background: radial-gradient(circle at 50% 45%, rgba(20,45,80,.45), #060d18 75%); overflow: hidden; }
+  .bp-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
+  .feat-meters { display: grid; gap: 7px; margin: 14px 0 16px; }
+  .meter { display: grid; grid-template-columns: 84px 1fr auto; gap: 10px; align-items: center; font-size: 10px; }
+  .meter-k { color: var(--dim); }
+  .meter-track { height: 6px; background: rgba(255,255,255,.04); border-radius: 3px; overflow: hidden; }
+  .meter-track i { display: block; height: 100%; width: 0; border-radius: 3px; transition: width .7s cubic-bezier(.22,1,.36,1) var(--d, 0ms); }
+  .go .meter-track i { width: var(--w); }
+  .meter-t { font-size: 9px; letter-spacing: .05em; min-width: 64px; text-align: right; }
+  @media (max-width: 900px) { .feat-body { grid-template-columns: 1fr; } .bp-wrap { min-height: 280px; } }
+  @media (prefers-reduced-motion: reduce) { .conn-flow { animation: none; } .meter-track i { transition: none; } }
 
   /* ── COMMAND PALETTE ── */
   #cmd-palette { position:fixed; inset:0; z-index:9000; }
@@ -663,11 +682,14 @@
 
   <div class="projects-stats" id="statsSection"></div>
 
-  <div class="section-label" data-n="01">featured</div>
-  <div id="featuredProject"></div>
+  <div class="section-label" data-n="01">selected project</div>
+  <div class="proj-wrap" id="projWrap">
+    <svg id="conn" aria-hidden="true"></svg>
+    <div id="featuredProject"></div>
 
-  <div class="section-label" data-n="02">all projects</div>
-  <div class="projects-grid" id="projectsGrid"></div>
+    <div class="section-label" data-n="02">all projects · click a tile to inspect</div>
+    <div class="projects-grid" id="projectsGrid"></div>
+  </div>
 </main>
 
 <footer id="footer"></footer>
@@ -950,6 +972,10 @@ const CONFIG = {
   lastUpdated: "Feb 2025"
 };
 
+const ALL = [Object.assign({}, CONFIG.featuredProject, { accent: 'cyan', featured: true }), ...CONFIG.projects];
+const HEX = { cyan:'#4dd9f0', green:'#3dffa0', orange:'#ff9f4a', purple:'#a78bfa', pink:'#f472b6', yellow:'#fbbf24', red:'#f87171' };
+let curIdx = 0;
+
 function render() {
   document.title = `~/${CONFIG.handle} — projects`;
   document.getElementById('navHandle').textContent = CONFIG.handle;
@@ -970,32 +996,16 @@ function render() {
     </div>
   `;
 
-  const fp = CONFIG.featuredProject;
   document.getElementById('featuredProject').innerHTML = `
-    <div class="featured-project">
-      <div class="feat-tabs">
+    <div class="featured-project" id="detail">
+      <div class="feat-tabs" id="featTabs">
         <button class="feat-tab active" data-tab="info">[info]</button>
-        <button class="feat-tab" data-tab="diff">[diff]</button>
+        <button class="feat-tab" data-tab="diff" id="diffTab">[diff]</button>
       </div>
-      <div class="featured-swap" id="featuredSwap">
-        <div class="featured-header">
-          <span class="featured-icon">${fp.icon}</span>
-          <div>
-            <div class="featured-title" id="featTitle">${fp.name}</div>
-            <div class="featured-tagline">${fp.tagline || ''}</div>
-          </div>
-        </div>
-        <div class="featured-desc">${fp.desc}</div>
-        ${fp.stats ? `<div id="featStats" class="feat-stats">${buildStatsHtml(fp.stats)}</div>` : ''}
-        ${fp.ascii ? `<div id="featAscii" class="feat-ascii">${buildAsciiHtml(fp.ascii)}</div>` : ''}
-        <div class="featured-tech">
-          ${fp.tech.map(t => `<span class="tech-pill tech-pill-cyan">${t}</span>`).join('')}
-        </div>
-        <div class="featured-links">
-          ${fp.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
-        </div>
-      </div>
-      <div class="feat-diff-view">
+      <div class="feat-body">
+        <div class="feat-main">
+          <div class="featured-swap" id="featuredSwap"></div>
+          <div class="feat-diff-view">
         <div class="diff-hunk">@@ class PRWorkflow @@</div>
         <div class="diff-del">-  def handle_request(self, req):</div>
         <div class="diff-del">-    return simple_response(req)</div>
@@ -1010,39 +1020,28 @@ function render() {
         <div class="diff-add">+  def plan(self, ctx: Context) -&gt; ExecutionPlan:</div>
         <div class="diff-add">+    cot = self.model.think(ctx)            # +CoT reasoning</div>
         <div class="diff-add">+    return ExecutionPlan(tasks=cot.steps)  # +task decomposition</div>
+          </div>
+        </div>
+        <div class="bp-wrap" aria-hidden="true"><canvas id="bp"></canvas></div>
       </div>
-    </div>
-  `;
+    </div>`;
 
-  document.getElementById('projectsGrid').innerHTML = CONFIG.projects.map((p, i) => {
-    const buildsBadge = p.builds ? `<div class="builds-badge">× <span>${p.builds}</span> builds &nbsp;·&nbsp; multiple calibrations</div>` : '';
-    const variantsList = p.variants ? `
-      <div class="variants-list">
-        ${p.variants.map(v => `
-          <div class="variant-row">
-            <span class="variant-label">${v.label}</span>
-            <span class="variant-text">${v.text} <span class="variant-tech">· ${v.tech}</span></span>
-          </div>`).join('')}
-      </div>` : '';
-    const links = p.links.length ? `<div class="project-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>` : '';
-    const overlayText = `// building project component...\nconst proj = {\n  name: "${p.name}",\n  stack: [${p.tech ? p.tech.slice(0,3).map(t=>`"${t}"`).join(', ') : ''}]\n}`;
-    return `
-      <div class="project-card compile-card${i === 0 ? ' active' : ''}" style="--accent:var(--${p.accent})" data-idx="${i}" onclick="setFeatured(+this.dataset.idx)">
-        <div class="compile-overlay">${overlayText}</div>
-        <div class="compile-real">
+  document.getElementById('projectsGrid').innerHTML = ALL.map((p, i) => `
+    <div class="project-card" role="button" tabindex="0" title="${p.name}" aria-pressed="${i === 0}" style="--accent:var(--${p.accent})" data-idx="${i}">
+      <div class="tile-top">
         <span class="project-icon">${p.icon}</span>
-        <div class="project-name">${p.name}</div>
-        ${buildsBadge}
-        <div class="project-desc">${p.desc}</div>
-        ${variantsList}
-        <div class="project-tech">
-          ${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}
-        </div>
-        ${links}
-        <div class="swap-hint">→ select</div>
-        </div>
-      </div>`;
-  }).join('');
+        <span class="tile-no">${String(i + 1).padStart(2, '0')}${p.builds ? ` · ×${p.builds}` : ''}${p.featured ? ' · ★' : ''}</span>
+      </div>
+      <div class="project-name">${p.name}</div>
+      <div class="project-tech">${p.tech.slice(0, 2).map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}${p.tech.length > 2 ? `<span class="tech-pill">+${p.tech.length - 2}</span>` : ''}</div>
+    </div>`).join('');
+
+  const grid = document.getElementById('projectsGrid');
+  grid.addEventListener('click', e => { const c = e.target.closest('.project-card'); if (c) setFeatured(+c.dataset.idx, true); });
+  grid.addEventListener('keydown', e => {
+    const c = e.target.closest('.project-card');
+    if (c && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setFeatured(+c.dataset.idx, true); }
+  });
 
   document.getElementById('footer').innerHTML = `
     <div style="color:var(--dim)"><span style="color:var(--cyan)">❯</span> built with HTML, CSS & vanilla JS</div>
@@ -1055,14 +1054,10 @@ function render() {
 function typeStream(el, speed) {
   if (!el) return;
   speed = speed || 30;
-  const finalHTML = el.innerHTML;
   const text = el.textContent;
   el.textContent = '';
   let i = 0;
-  (function tick() {
-    if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); }
-    else { el.innerHTML = finalHTML; }
-  })();
+  (function tick() { if (i < text.length) { el.textContent = text.slice(0, ++i); setTimeout(tick, speed); } })();
 }
 
 function buildStatsHtml(stats) {
@@ -1073,65 +1068,36 @@ function buildStatsHtml(stats) {
     </div>`).join('');
 }
 
-function buildAsciiHtml(ascii) {
-  return ascii.map((r, i) => `
-    <div class="feat-ascii-row" id="far${i}">
-      <span class="feat-ascii-key">${r.k}</span><span class="feat-ascii-bar" id="fab${i}"></span><span class="feat-ascii-tag" style="color:${r.c}">${r.t}</span>
+// Gradient meters (replaces the old ASCII bars): width = n/20, animated by CSS transition
+function buildMetersHtml(rows) {
+  return rows.map((r, i) => `
+    <div class="meter" style="--w:${Math.round(r.n / 20 * 100)}%;--d:${i * 90}ms">
+      <span class="meter-k">${r.k}</span>
+      <span class="meter-track"><i style="background:linear-gradient(90deg,transparent,${r.c})"></i></span>
+      <span class="meter-t" style="color:${r.c}">${r.t}</span>
     </div>`).join('');
 }
 
-function animateFeatPanel(p, animatePills) {
-  if (typeof anime === 'undefined') return;
+function animateFeatPanel(p) {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const statsEl = document.getElementById('featStats');
-  const asciiEl = document.getElementById('featAscii');
-
   if (statsEl && p.stats) {
     p.stats.forEach((s, i) => {
       const el = statsEl.querySelectorAll('.feat-stat-num')[i];
-      if (!el) return;
-      if (typeof s.v === 'number' && s.v > 0) {
-        const obj = {val: 0};
-        anime({ targets: obj, val: s.v, duration: 600, ease: 'outQuart', delay: i * 80,
-          update() { el.textContent = Math.round(obj.val); },
-          complete() { el.textContent = s.v; }
-        });
-      } else {
-        anime({ targets: el, opacity: [0, 1], duration: 250, delay: i * 80, ease: 'outQuad' });
-      }
+      if (!el || typeof s.v !== 'number' || reduce || typeof anime === 'undefined') { if (el) el.textContent = s.v; return; }
+      const obj = { val: 0 };
+      anime({ targets: obj, val: s.v, duration: 600, ease: 'outQuart', delay: i * 80,
+        update() { el.textContent = Math.round(obj.val); }, complete() { el.textContent = s.v; } });
     });
   }
-
-  if (asciiEl && p.ascii) {
-    p.ascii.forEach((r, i) => {
-      const row = document.getElementById('far'+i);
-      const bar = document.getElementById('fab'+i);
-      if (!row || !bar) return;
-      anime({ targets: row, opacity: [0, 1], duration: 180, delay: 300 + i * 90, ease: 'outQuad',
-        complete() {
-          const full = '█'.repeat(r.n) + '░'.repeat(20 - r.n);
-          let ci = 0;
-          const iv = setInterval(() => {
-            if (ci <= full.length) { bar.textContent = full.slice(0, ci++); }
-            else clearInterval(iv);
-          }, 16);
-        }
-      });
-    });
-  }
-
-  if (animatePills) {
-    const sp = anime.createSpring({ mass: 1, stiffness: 130, damping: 11 });
-    anime({ targets: '#featuredSwap .tech-pill', opacity: [0, 1], translateY: [5, 0], duration: 400, ease: sp,
-      delay: anime.stagger(30, { start: 500 }) });
-  }
+  requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById('featuredSwap')?.classList.add('go')));
 }
 
-// Swap featured project
-function setFeatured(idx) {
+function setFeatured(idx, user) {
   const swap = document.getElementById('featuredSwap');
   if (!swap) return;
-  const p = CONFIG.projects[idx];
-  const tagline = p.tagline || '';
+  curIdx = idx;
+  const p = ALL[idx];
   const variantsHtml = p.variants ? `
     <div class="feat-variants">
       ${p.variants.map(v => `
@@ -1140,64 +1106,159 @@ function setFeatured(idx) {
           <span class="feat-variant-text">${v.text} <span class="feat-variant-tech">· ${v.tech}</span></span>
         </div>`).join('')}
     </div>` : '';
-
-  if (typeof anime !== 'undefined') {
-    anime({ targets: swap, opacity: [1, 0], translateY: [0, 5], duration: 120, ease: 'outQuad',
-      complete() {
-        swap.innerHTML = `
-          <div class="featured-header">
-            <span class="featured-icon">${p.icon}</span>
-            <div>
-              <div class="featured-title" id="featTitle">${p.name}</div>
-              ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
-            </div>
-          </div>
-          <div class="featured-desc">${p.desc}</div>
-          ${p.stats ? `<div id="featStats" class="feat-stats">${buildStatsHtml(p.stats)}</div>` : ''}
-          ${p.ascii ? `<div id="featAscii" class="feat-ascii">${buildAsciiHtml(p.ascii)}</div>` : ''}
-          ${variantsHtml}
-          <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}" style="opacity:0;transform:translateY(5px)">${t}</span>`).join('')}</div>
-          <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
-        `;
-        document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'info'));
-        const diffEl = document.querySelector('.feat-diff-view');
-        if (diffEl) diffEl.style.display = 'none';
-        anime({ targets: swap, opacity: [0, 1], translateY: [6, 0], duration: 180, ease: 'outQuad',
-          complete() { animateFeatPanel(p, true); }
-        });
-        typeStream(document.getElementById('featTitle'), 22);
-        document.querySelectorAll('.project-card').forEach((card, i) => {
-          card.classList.toggle('active', i === idx);
-        });
-      }
-    });
-  } else {
-    swap.classList.add('fading');
-    setTimeout(() => {
-      swap.innerHTML = `
-        <div class="featured-header">
-          <span class="featured-icon">${p.icon}</span>
-          <div>
-            <div class="featured-title" id="featTitle">${p.name}</div>
-            ${tagline ? `<div class="featured-tagline">${tagline}</div>` : ''}
-          </div>
-        </div>
-        ${p.stats ? `<div id="featStats" class="feat-stats">${buildStatsHtml(p.stats)}</div>` : ''}
-        <div class="featured-desc">${p.desc}</div>
-        ${variantsHtml}
-        <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}</div>
-        <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
-      `;
-      swap.classList.remove('fading');
-      document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'info'));
-      const diffEl = document.querySelector('.feat-diff-view');
-      if (diffEl) diffEl.style.display = 'none';
-      typeStream(document.getElementById('featTitle'), 22);
-      document.querySelectorAll('.project-card').forEach((card, i) => {
-        card.classList.toggle('active', i === idx);
-      });
-    }, 220);
+  swap.classList.remove('go');
+  swap.innerHTML = `
+    <div class="featured-header">
+      <span class="featured-icon">${p.icon}</span>
+      <div>
+        <div class="featured-title" id="featTitle">${p.name}</div>
+        ${p.tagline ? `<div class="featured-tagline">${p.tagline}</div>` : ''}
+      </div>
+    </div>
+    <div class="featured-desc">${p.desc}</div>
+    ${variantsHtml}
+    ${p.stats ? `<div id="featStats" class="feat-stats">${buildStatsHtml(p.stats)}</div>` : ''}
+    ${p.ascii ? `<div class="feat-meters">${buildMetersHtml(p.ascii)}</div>` : ''}
+    <div class="featured-tech">${p.tech.map(t => `<span class="tech-pill tech-pill-${p.accent}">${t}</span>`).join('')}</div>
+    <div class="featured-links">${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}</div>
+  `;
+  // [diff] only exists for the featured platform
+  document.getElementById('diffTab').style.display = idx === 0 ? '' : 'none';
+  document.querySelectorAll('.feat-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === 'info'));
+  swap.style.display = '';
+  const diffEl = document.querySelector('.feat-diff-view');
+  if (diffEl) diffEl.style.display = 'none';
+  document.querySelectorAll('.project-card').forEach((c, i) => {
+    c.classList.toggle('active', i === idx);
+    c.setAttribute('aria-pressed', i === idx);
+  });
+  document.getElementById('detail').style.setProperty('--accent', HEX[p.accent]);
+  typeStream(document.getElementById('featTitle'), 18);
+  animateFeatPanel(p);
+  Blueprint.set(p, HEX[p.accent], idx);
+  drawConn();
+  if (user) {
+    const d = document.getElementById('detail').getBoundingClientRect();
+    if (d.top < 70) document.getElementById('detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+}
+
+// ── Connector: animated trace from the active tile to the detail panel ──
+function drawConn() {
+  const wrap = document.getElementById('projWrap'), svg = document.getElementById('conn');
+  const tile = document.querySelector('.project-card.active'), panel = document.getElementById('detail');
+  if (!wrap || !svg || !tile || !panel) return;
+  const w = wrap.getBoundingClientRect(), t = tile.getBoundingClientRect(), p = panel.getBoundingClientRect();
+  const tx = t.left + t.width / 2 - w.left, ty = t.top - w.top - 5;
+  const rx = -12, py = p.bottom - w.top - 22, px = p.left - w.left;
+  const col = HEX[ALL[curIdx].accent];
+  svg.innerHTML = `
+    <path d="M${tx} ${t.top - w.top} V${ty} H${rx} V${py} H${px}" fill="none" stroke="${col}" stroke-opacity=".25" stroke-width="1"/>
+    <path class="conn-flow" d="M${tx} ${t.top - w.top} V${ty} H${rx} V${py} H${px}" fill="none" stroke="${col}" stroke-width="1.5" stroke-dasharray="3 7"/>
+    <circle cx="${tx}" cy="${t.top - w.top}" r="3" fill="${col}"/><circle cx="${px}" cy="${py}" r="3" fill="${col}"/>`;
+}
+
+// ── Rotating 3D blueprint: one node per tech, layered like the real data flow ──
+let Blueprint;
+function initBlueprint() {
+  const cv = document.getElementById('bp');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let c, W = 0, H = 0, dpr = 1, ang = 0.7, tilt = 0.5, color = '#4dd9f0', nodes = [], edges = [], L = 2, title = '', raf = 0, last = 0, drag = null, visible = true;
+  const LAYER = { 2: ['CORE', 'DELIVERY'], 3: ['INPUT', 'CORE', 'OUTPUT'] };
+
+  function resize() {
+    const r = cv.getBoundingClientRect(); if (!r.width) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 2); W = r.width; H = r.height;
+    cv.width = W * dpr; cv.height = H * dpr; draw(performance.now());
+  }
+  function set(p, hex, idx) {
+    color = hex; title = `${String(idx + 1).padStart(2, '0')} · ${p.name}`;
+    const t = p.tech.slice(0, 6); L = t.length <= 3 ? 2 : 3;
+    const per = Math.ceil(t.length / L); nodes = []; edges = [];
+    t.forEach((label, i) => {
+      const l = Math.floor(i / per), k = i % per, cnt = Math.min(per, t.length - l * per);
+      nodes.push({ l, label, x: (k - (cnt - 1) / 2) * 1.15, y: (l - (L - 1) / 2) * 1.15, z: k % 2 ? 0.38 : -0.38 });
+    });
+    nodes.forEach(a => {
+      nodes.filter(b => b.l === a.l + 1).sort((m, n) => Math.abs(m.x - a.x) - Math.abs(n.x - a.x)).slice(0, 2).forEach(b => edges.push([a, b]));
+    });
+    if (reduce) draw(performance.now());
+  }
+  function P(x, y, z) {
+    const ca = Math.cos(ang), sa = Math.sin(ang), ct = Math.cos(tilt), st = Math.sin(tilt);
+    const X = x * ca + z * sa, Z = -x * sa + z * ca;
+    const Y = y * ct + Z * st, D = Z * ct - y * st;
+    const s = 7 / (7 + D), k = Math.min(W, H) * 0.17;
+    return [W / 2 + X * s * k, H * 0.5 - Y * s * k, D];
+  }
+  function line(a, b, alpha, dash) {
+    const A = P(...a), B = P(...b);
+    c.globalAlpha = alpha; c.setLineDash(dash || []); c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.stroke();
+  }
+  function draw(now) {
+    if (!W) return;
+    c = c || cv.getContext('2d');
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+    c.lineWidth = 1; c.strokeStyle = color; c.fillStyle = color;
+    // floor grid
+    const fy = -(L - 1) / 2 * 1.15 - 0.9;
+    for (let i = -4; i <= 4; i++) { line([i * 0.5, fy, -2], [i * 0.5, fy, 2], 0.1); line([-2, fy, i * 0.5], [2, fy, i * 0.5], 0.1); }
+    // layer slabs + corner pillars
+    const hx = 2, hz = 1.2;
+    for (let l = 0; l < L; l++) {
+      const y = (l - (L - 1) / 2) * 1.15, q = [[-hx, y, -hz], [hx, y, -hz], [hx, y, hz], [-hx, y, hz]];
+      c.globalAlpha = 0.05; c.beginPath(); q.forEach((v, i) => { const p = P(...v); i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); }); c.closePath(); c.fill();
+      for (let i = 0; i < 4; i++) line(q[i], q[(i + 1) % 4], 0.45);
+      const lp = P(-hx, y, hz); c.globalAlpha = 0.6; c.font = '9px "Share Tech Mono", monospace'; c.fillText(LAYER[L][l], lp[0] - 4, lp[1] + 13);
+    }
+    [[-hx, -hz], [hx, -hz], [hx, hz], [-hx, hz]].forEach(([x, z]) => line([x, fy, z], [x, ((L - 1) / 2) * 1.15, z], 0.18, [3, 4]));
+    // data links + travelling pulses
+    const tt = now / 1000;
+    edges.forEach(([a, b], i) => {
+      line([a.x, a.y, a.z], [b.x, b.y, b.z], 0.5, [5, 4]);
+      const u = (tt * 0.45 + i * 0.27) % 1, p = P(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u, a.z + (b.z - a.z) * u);
+      c.globalAlpha = 0.95; c.setLineDash([]); c.beginPath(); c.arc(p[0], p[1], 2.2, 0, 7); c.fill();
+    });
+    // nodes: wire cubes + callout labels
+    c.setLineDash([]);
+    nodes.forEach(n => {
+      const s = 0.2, v = [];
+      for (let i = 0; i < 8; i++) v.push([n.x + (i & 1 ? s : -s), n.y + (i & 2 ? s : -s), n.z + (i & 4 ? s : -s)]);
+      [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(([i, j]) => line(v[i], v[j], 0.95));
+      const p = P(n.x, n.y, n.z), depth = Math.max(0.35, Math.min(1, 0.8 - p[2] * 0.2));
+      c.globalAlpha = 0.5 * depth; c.beginPath(); c.moveTo(p[0] + 6, p[1] - 6); c.lineTo(p[0] + 18, p[1] - 18); c.lineTo(p[0] + 26, p[1] - 18); c.stroke();
+      c.globalAlpha = depth; c.font = '10px "Share Tech Mono", monospace'; c.fillText(n.label, p[0] + 29, p[1] - 15);
+    });
+    // dimension line along the front of the base slab
+    const dy = -(L - 1) / 2 * 1.15, a = [-hx, dy, hz + 0.35], b = [hx, dy, hz + 0.35];
+    line(a, b, 0.6); line([-hx, dy, hz + 0.2], [-hx, dy, hz + 0.5], 0.6); line([hx, dy, hz + 0.2], [hx, dy, hz + 0.5], 0.6);
+    const m = P(0, dy, hz + 0.35); c.globalAlpha = 0.7; c.font = '9px "Share Tech Mono", monospace'; c.fillText(`${nodes.length} COMPONENTS · ${edges.length} LINKS`, m[0] - 52, m[1] + 14);
+    // title block + registration marks
+    c.globalAlpha = 0.55; c.strokeRect(8.5, 8.5, W - 17, H - 17);
+    c.globalAlpha = 0.85; c.font = '9px "Share Tech Mono", monospace'; c.fillText('BLUEPRINT · REV A · DRAG TO ROTATE', 16, 24);
+    c.globalAlpha = 0.6; c.fillText(title.toUpperCase().slice(0, 46), 16, H - 16);
+    c.globalAlpha = 1;
+  }
+  function frame(now) {
+    raf = 0;
+    if (!visible || document.hidden) return;
+    const dt = Math.min(now - (last || now), 50); last = now;
+    if (!drag) ang += dt * 0.00035 * 2.2;
+    draw(now); raf = requestAnimationFrame(frame);
+  }
+  function kick() { if (!reduce && !raf && visible && !document.hidden) { last = 0; raf = requestAnimationFrame(frame); } }
+  cv.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
+  cv.addEventListener('pointermove', e => {
+    if (!drag) return;
+    ang += (e.clientX - drag.x) * 0.012; tilt = Math.max(0.1, Math.min(1.1, tilt + (e.clientY - drag.y) * 0.006));
+    drag = { x: e.clientX, y: e.clientY }; if (reduce) draw(performance.now());
+  });
+  const end = () => { drag = null; cv.style.cursor = ''; };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; kick(); }).observe(cv);
+  document.addEventListener('visibilitychange', kick);
+  new ResizeObserver(resize).observe(cv);
+  return { set, kick };
 }
 
 function setupHovers() {
@@ -1241,7 +1302,7 @@ function setupSpringHovers() {
   if (typeof anime === 'undefined') return;
   const sp = anime.createSpring({ mass: 1, stiffness: 80, damping: 10 });
   document.querySelectorAll('.project-card').forEach(el => {
-    el.addEventListener('mouseenter', () => anime({ targets: el, translateY: -6, ease: sp }));
+    el.addEventListener('mouseenter', () => anime({ targets: el, translateY: -3, ease: sp }));
     el.addEventListener('mouseleave', () => anime({ targets: el, translateY: 0, ease: sp }));
   });
 }
@@ -1289,11 +1350,13 @@ window.addEventListener('load', () => {
     Object.assign(window.anime, _o);
   }
   render();
+  Blueprint = initBlueprint();
   setupSpringHovers();
   setupFeatTabs();
   initCounters();
-  document.querySelectorAll('.compile-card').forEach(el => compileObs.observe(el));
-  setTimeout(() => animateFeatPanel(CONFIG.featuredProject), 400);
+  setFeatured(0);
+  addEventListener('resize', drawConn);
+  new ResizeObserver(drawConn).observe(document.getElementById('projWrap'));
 });
 
 // ── SCROLL PROGRESS + STATUS BAR ──
