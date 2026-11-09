@@ -14,8 +14,8 @@
     --bg2: #0f1117;
     --bg3: #141720;
     --border: #1e2230;
-    --dim: #3a4055;
-    --muted: #5a6380;
+    --dim: #7d87a6;
+    --muted: #98a2c0;
     --text: #c8cfe8;
     --bright: #e8eeff;
     --cyan: #4dd9f0;
@@ -506,11 +506,11 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 20px;
     font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    color: rgba(200,207,232,0.35); letter-spacing: 0.08em;
+    color: rgba(200,207,232,0.7); letter-spacing: 0.08em;
     z-index: 200; pointer-events: none;
   }
-  #term-path { color: rgba(77,217,240,0.5); }
-  #term-right { color: rgba(61,255,160,0.4); }
+  #term-path { color: rgba(77,217,240,0.85); }
+  #term-right { color: rgba(61,255,160,0.8); }
   @media (max-width: 768px) { #term-bar, #scroll-prog { display: none; } }
 
   ::-webkit-scrollbar { width: 4px; }
@@ -583,7 +583,7 @@
   }
 
   /* ── UPTIME WIDGET ── */
-  #uptime-widget { position:fixed; bottom:30px; right:20px; font-family:'Share Tech Mono',monospace; font-size:9px; color:rgba(61,255,160,0.3); letter-spacing:0.08em; z-index:199; pointer-events:none; }
+  #uptime-widget { position:fixed; bottom:30px; right:20px; font-family:'Share Tech Mono',monospace; font-size:9px; color:rgba(61,255,160,0.65); letter-spacing:0.08em; z-index:199; pointer-events:none; }
   @media (max-width:768px) { #uptime-widget { display:none; } }
 
   /* ── GIT DIFF TAB ── */
@@ -599,7 +599,7 @@
   .feat-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:16px 0; }
   .feat-stat-box { background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:10px 6px; text-align:center; }
   .feat-stat-num { font-family:var(--font-display); font-size:22px; line-height:1; }
-  .feat-stat-lbl { font-size:8px; color:var(--dim); margin-top:3px; letter-spacing:.1em; }
+  .feat-stat-lbl { font-size:9px; color:var(--dim); margin-top:3px; letter-spacing:.1em; }
   .feat-ascii { margin:12px 0; }
   .feat-ascii-row { display:flex; align-items:baseline; gap:0; margin-bottom:5px; font-family:var(--font-mono); font-size:11px; opacity:0; }
   .feat-ascii-key { color:var(--dim); width:90px; flex-shrink:0; }
@@ -972,6 +972,7 @@ const CONFIG = {
   lastUpdated: "Feb 2025"
 };
 
+const BP = {"Agentic PR Platform":{"layers":["INPUT","ROUTING","AGENTS","SERVING"],"nodes":[{"id":"a","label":"PR Brief","layer":0,"col":0},{"id":"b","label":"Firebase","layer":0,"col":1},{"id":"c","label":"ADK router","layer":1,"col":0},{"id":"d","label":"CoT prompts","layer":1,"col":1},{"id":"e","label":"Gemma/Claude","layer":2,"col":0},{"id":"f","label":"MCP tools","layer":2,"col":1},{"id":"g","label":"FastAPI","layer":3,"col":0},{"id":"h","label":"GCP","layer":3,"col":1}],"edges":[["a","c"],["b","c"],["c","d"],["d","e"],["c","f"],["e","g"],["f","g"],["g","h"]]},"Medical AI Infrastructure":{"layers":["INGEST","EXTRACT","TRANSLATE","SERVING"],"nodes":[{"id":"a","label":"Med Documents","layer":0,"col":0},{"id":"b","label":"Doc AI OCR","layer":1,"col":0},{"id":"c","label":"NER","layer":1,"col":1},{"id":"d","label":"FHIR","layer":2,"col":0},{"id":"e","label":"LLM KB","layer":2,"col":1},{"id":"f","label":"ABHA","layer":3,"col":0},{"id":"g","label":"EPIC","layer":3,"col":1},{"id":"h","label":"Cerner","layer":3,"col":2}],"edges":[["a","b"],["b","c"],["c","d"],["c","e"],["d","f"],["e","f"],["d","g"],["d","h"]]},"Custom LLM Foundry":{"layers":["DATA","TRAIN","EVAL","SERVING"],"nodes":[{"id":"a","label":"Data Scrape","layer":0,"col":0},{"id":"b","label":"Injection Gen","layer":0,"col":1},{"id":"c","label":"Instr Tuning","layer":1,"col":0},{"id":"d","label":"unsloth LoRA","layer":1,"col":1},{"id":"e","label":"HF Eval","layer":2,"col":0},{"id":"f","label":"W&B","layer":2,"col":1},{"id":"g","label":"Registry","layer":2,"col":2},{"id":"h","label":"vLLM","layer":3,"col":0},{"id":"i","label":"Docker/RunPod","layer":3,"col":1}],"edges":[["a","b"],["a","c"],["b","c"],["c","d"],["d","e"],["d","f"],["e","g"],["f","g"],["g","h"],["g","i"]]},"RAG Systems":{"layers":["SOURCES","INDEX","RETRIEVE","SERVE"],"nodes":[{"id":"a","label":"GOVT DOCS","layer":0,"col":0},{"id":"b","label":"CHUNKING","layer":1,"col":0},{"id":"c","label":"WEAVIATE","layer":1,"col":1},{"id":"d","label":"MILVUS","layer":1,"col":2},{"id":"e","label":"HYBRID+RERANK","layer":2,"col":0},{"id":"f","label":"ADK ROUTER","layer":2,"col":1},{"id":"g","label":"REDIS CACHE","layer":2,"col":2},{"id":"h","label":"RAGAS EVAL","layer":3,"col":0},{"id":"i","label":"VERTEX AI","layer":3,"col":1}],"edges":[["a","b"],["b","c"],["b","d"],["c","e"],["d","f"],["d","g"],["e","h"],["f","i"],["g","i"],["f","h"]]},"MLOps Engine":{"layers":["DATA","TRAIN","REGISTRY","SERVE"],"nodes":[{"id":"a","label":"BIGQUERY","layer":0,"col":0},{"id":"b","label":"GCP SCHEDULER","layer":1,"col":0},{"id":"c","label":"TFX TRAINER","layer":1,"col":1},{"id":"d","label":"EVALUATOR","layer":1,"col":2},{"id":"e","label":"MODEL REGISTRY","layer":2,"col":0},{"id":"f","label":"AUTO PROMOTE","layer":2,"col":1},{"id":"g","label":"INFERENCE API","layer":3,"col":0}],"edges":[["a","c"],["b","c"],["c","d"],["d","e"],["d","f"],["e","g"],["f","g"]]},"Disease Detection in Cattle":{"layers":["INGEST","MODEL","ACTION","ALERT"],"nodes":[{"id":"a","label":"CCTV","layer":0,"col":0},{"id":"b","label":"SCHEDULER","layer":0,"col":1},{"id":"c","label":"TFX SERVING","layer":1,"col":0},{"id":"d","label":"MODEL REGISTRY","layer":1,"col":1},{"id":"e","label":"SEASONAL CLF","layer":1,"col":2},{"id":"f","label":"EAR TAG OCR","layer":2,"col":0},{"id":"g","label":"SERVERLESS","layer":2,"col":1},{"id":"h","label":"ZAPIER","layer":3,"col":0},{"id":"i","label":"RANCHER","layer":3,"col":1}],"edges":[["a","c"],["b","c"],["d","e"],["c","e"],["e","f"],["e","g"],["f","h"],["g","h"],["h","i"]]},"IoT Garden":{"layers":["SENSE","EDGE","LINK","APP"],"nodes":[{"id":"a","label":"PI CAMERA","layer":0,"col":0},{"id":"b","label":"SENSORS","layer":0,"col":2},{"id":"c","label":"YOLOv5","layer":1,"col":0},{"id":"d","label":"PYTHON CTRL","layer":1,"col":2},{"id":"e","label":"LIFE SUPPORT","layer":2,"col":0},{"id":"f","label":"WIFI STREAM","layer":2,"col":2},{"id":"g","label":"PHONE APP","layer":3,"col":1}],"edges":[["a","c"],["b","d"],["c","d"],["d","e"],["d","f"],["f","g"]]},"Stable Diffusion Pipeline":{"layers":["DATA","TRAIN","CONTROL","SERVE"],"nodes":[{"id":"a","label":"DATASET CURATE","layer":0,"col":1},{"id":"b","label":"DREAMBOOTH","layer":1,"col":0},{"id":"c","label":"LoRA ADAPTERS","layer":1,"col":2},{"id":"d","label":"DIFFUSERS","layer":2,"col":0},{"id":"e","label":"CONTROLNET","layer":2,"col":2},{"id":"f","label":"HF SPACES","layer":3,"col":0},{"id":"g","label":"QR / TXT2IMG","layer":3,"col":2}],"edges":[["a","b"],["a","c"],["b","d"],["c","d"],["c","e"],["d","f"],["e","g"],["d","g"]]},"Claude Agent Code Conversion & Testing Workflow":{"layers":["INPUT","AGENTS","TOOLING","REPORT"],"nodes":[{"id":"a","label":"SOURCE CODE","layer":0,"col":1},{"id":"b","label":"CONVERT AGENT","layer":1,"col":0},{"id":"c","label":"TEST GEN AGENT","layer":1,"col":2},{"id":"d","label":"PROMPT CACHE","layer":2,"col":0},{"id":"e","label":"MCP TOOLS","layer":2,"col":1},{"id":"f","label":"TEST HARNESS","layer":2,"col":2},{"id":"g","label":"REPORT","layer":3,"col":1}],"edges":[["a","b"],["a","c"],["b","d"],["b","e"],["c","e"],["c","f"],["d","g"],["e","g"],["f","g"]]},"Education Data Transformation Pipeline":{"layers":["SOURCE","PROCESS","MODEL","OUTPUT"],"nodes":[{"id":"a","label":"RAW CONTENT","layer":0,"col":0},{"id":"b","label":"STUDENT PROF","layer":0,"col":2},{"id":"c","label":"DATA TRANSFORM","layer":1,"col":0},{"id":"d","label":"RAG","layer":1,"col":2},{"id":"e","label":"LLM PIPELINE","layer":2,"col":0},{"id":"f","label":"WHO STANDARDS","layer":2,"col":2},{"id":"g","label":"ADAPTED LEARN","layer":3,"col":0},{"id":"h","label":"KT REPORTS","layer":3,"col":1},{"id":"i","label":"FEEDBACK","layer":3,"col":2}],"edges":[["a","c"],["b","d"],["c","d"],["c","e"],["d","e"],["d","f"],["e","g"],["e","h"],["f","h"],["f","i"]]},"In-Store Navigation AI Agent":{"layers":["INPUT","GRAPH","AGENT","SERVING"],"nodes":[{"id":"a","label":"USER QUERY","layer":0,"col":0},{"id":"b","label":"STORE LAYOUT","layer":0,"col":2},{"id":"c","label":"NETWORKX","layer":1,"col":2},{"id":"d","label":"PRODUCT INDEX","layer":1,"col":0},{"id":"e","label":"CLAUDE","layer":2,"col":0},{"id":"f","label":"GRAPH TRAVERSE","layer":2,"col":2},{"id":"g","label":"AISLE ROUTE","layer":3,"col":1}],"edges":[["a","e"],["b","c"],["c","f"],["d","e"],["e","f"],["f","g"],["e","g"]]},"ChatBot Systems":{"layers":["CHANNEL","NLU","LOGIC","MEMORY"],"nodes":[{"id":"a","label":"WEBHOOK","layer":0,"col":0},{"id":"b","label":"DIALOGFLOW CX","layer":1,"col":0},{"id":"c","label":"RASA NLU","layer":1,"col":2},{"id":"d","label":"FASTAPI","layer":2,"col":1},{"id":"e","label":"LANGCHAIN","layer":2,"col":2},{"id":"f","label":"OLLAMA","layer":3,"col":2},{"id":"g","label":"REDIS","layer":3,"col":1},{"id":"h","label":"POSTGRESQL","layer":3,"col":0}],"edges":[["a","b"],["a","c"],["b","d"],["c","d"],["d","e"],["e","f"],["e","g"],["d","h"]]}};
 const ALL = [Object.assign({}, CONFIG.featuredProject, { accent: 'cyan', featured: true }), ...CONFIG.projects];
 const HEX = { cyan:'#4dd9f0', green:'#3dffa0', orange:'#ff9f4a', purple:'#a78bfa', pink:'#f472b6', yellow:'#fbbf24', red:'#f87171' };
 let curIdx = 0;
@@ -1160,11 +1161,11 @@ function drawConn() {
 
 // ── Rotating 3D blueprint: one node per tech, layered like the real data flow ──
 let Blueprint;
+const SP = 0.95;
 function initBlueprint() {
   const cv = document.getElementById('bp');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let c, W = 0, H = 0, dpr = 1, ang = 0.7, tilt = 0.5, color = '#4dd9f0', nodes = [], edges = [], L = 2, title = '', raf = 0, last = 0, drag = null, visible = true;
-  const LAYER = { 2: ['CORE', 'DELIVERY'], 3: ['INPUT', 'CORE', 'OUTPUT'] };
+  let layerNames = [], c, W = 0, H = 0, dpr = 1, ang = 0.7, tilt = 0.5, color = '#4dd9f0', nodes = [], edges = [], L = 2, title = '', raf = 0, last = 0, drag = null, visible = true;
 
   function resize() {
     const r = cv.getBoundingClientRect(); if (!r.width) return;
@@ -1173,22 +1174,21 @@ function initBlueprint() {
   }
   function set(p, hex, idx) {
     color = hex; title = `${String(idx + 1).padStart(2, '0')} · ${p.name}`;
-    const t = p.tech.slice(0, 6); L = t.length <= 3 ? 2 : 3;
-    const per = Math.ceil(t.length / L); nodes = []; edges = [];
-    t.forEach((label, i) => {
-      const l = Math.floor(i / per), k = i % per, cnt = Math.min(per, t.length - l * per);
-      nodes.push({ l, label, x: (k - (cnt - 1) / 2) * 1.15, y: (l - (L - 1) / 2) * 1.15, z: k % 2 ? 0.38 : -0.38 });
+    const sp = BP[p.name]; L = sp.layers.length; layerNames = sp.layers; nodes = []; edges = [];
+    const by = {};
+    sp.nodes.forEach(n => {
+      const cnt = sp.nodes.filter(m => m.layer === n.layer).length, cols = sp.nodes.filter(m => m.layer === n.layer).map(m => m.col).sort(), k = cols.indexOf(n.col);
+      by[n.id] = { l: n.layer, label: n.label, x: (k - (cnt - 1) / 2) * 1.25, y: (n.layer - (L - 1) / 2) * SP, z: k % 2 ? 0.4 : -0.4 };
+      nodes.push(by[n.id]);
     });
-    nodes.forEach(a => {
-      nodes.filter(b => b.l === a.l + 1).sort((m, n) => Math.abs(m.x - a.x) - Math.abs(n.x - a.x)).slice(0, 2).forEach(b => edges.push([a, b]));
-    });
+    sp.edges.forEach(([a, b]) => edges.push([by[a], by[b]]));
     if (reduce) draw(performance.now());
   }
   function P(x, y, z) {
     const ca = Math.cos(ang), sa = Math.sin(ang), ct = Math.cos(tilt), st = Math.sin(tilt);
     const X = x * ca + z * sa, Z = -x * sa + z * ca;
     const Y = y * ct + Z * st, D = Z * ct - y * st;
-    const s = 7 / (7 + D), k = Math.min(W, H) * 0.17;
+    const s = 7 / (7 + D), k = Math.min(W, H) * 0.15;
     return [W / 2 + X * s * k, H * 0.5 - Y * s * k, D];
   }
   function line(a, b, alpha, dash) {
@@ -1201,17 +1201,17 @@ function initBlueprint() {
     c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
     c.lineWidth = 1; c.strokeStyle = color; c.fillStyle = color;
     // floor grid
-    const fy = -(L - 1) / 2 * 1.15 - 0.9;
+    const fy = -(L - 1) / 2 * SP - 0.9;
     for (let i = -4; i <= 4; i++) { line([i * 0.5, fy, -2], [i * 0.5, fy, 2], 0.1); line([-2, fy, i * 0.5], [2, fy, i * 0.5], 0.1); }
     // layer slabs + corner pillars
     const hx = 2, hz = 1.2;
     for (let l = 0; l < L; l++) {
-      const y = (l - (L - 1) / 2) * 1.15, q = [[-hx, y, -hz], [hx, y, -hz], [hx, y, hz], [-hx, y, hz]];
+      const y = (l - (L - 1) / 2) * SP, q = [[-hx, y, -hz], [hx, y, -hz], [hx, y, hz], [-hx, y, hz]];
       c.globalAlpha = 0.05; c.beginPath(); q.forEach((v, i) => { const p = P(...v); i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); }); c.closePath(); c.fill();
       for (let i = 0; i < 4; i++) line(q[i], q[(i + 1) % 4], 0.45);
-      const lp = P(-hx, y, hz); c.globalAlpha = 0.6; c.font = '9px "Share Tech Mono", monospace'; c.fillText(LAYER[L][l], lp[0] - 4, lp[1] + 13);
+      const lp = P(-hx, y, hz); c.globalAlpha = 0.6; c.font = '9px "Share Tech Mono", monospace'; c.textAlign = "right"; c.fillText(layerNames[l], lp[0] - 8, lp[1] + 3); c.textAlign = "left";
     }
-    [[-hx, -hz], [hx, -hz], [hx, hz], [-hx, hz]].forEach(([x, z]) => line([x, fy, z], [x, ((L - 1) / 2) * 1.15, z], 0.18, [3, 4]));
+    [[-hx, -hz], [hx, -hz], [hx, hz], [-hx, hz]].forEach(([x, z]) => line([x, fy, z], [x, ((L - 1) / 2) * SP, z], 0.18, [3, 4]));
     // data links + travelling pulses
     const tt = now / 1000;
     edges.forEach(([a, b], i) => {
@@ -1225,12 +1225,12 @@ function initBlueprint() {
       const s = 0.2, v = [];
       for (let i = 0; i < 8; i++) v.push([n.x + (i & 1 ? s : -s), n.y + (i & 2 ? s : -s), n.z + (i & 4 ? s : -s)]);
       [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(([i, j]) => line(v[i], v[j], 0.95));
-      const p = P(n.x, n.y, n.z), depth = Math.max(0.35, Math.min(1, 0.8 - p[2] * 0.2));
+      const p = P(n.x, n.y, n.z), depth = Math.max(0.7, Math.min(1, 0.9 - p[2] * 0.1));
       c.globalAlpha = 0.5 * depth; c.beginPath(); c.moveTo(p[0] + 6, p[1] - 6); c.lineTo(p[0] + 18, p[1] - 18); c.lineTo(p[0] + 26, p[1] - 18); c.stroke();
       c.globalAlpha = depth; c.font = '10px "Share Tech Mono", monospace'; c.fillText(n.label, p[0] + 29, p[1] - 15);
     });
     // dimension line along the front of the base slab
-    const dy = -(L - 1) / 2 * 1.15, a = [-hx, dy, hz + 0.35], b = [hx, dy, hz + 0.35];
+    const dy = -(L - 1) / 2 * SP, a = [-hx, dy, hz + 0.35], b = [hx, dy, hz + 0.35];
     line(a, b, 0.6); line([-hx, dy, hz + 0.2], [-hx, dy, hz + 0.5], 0.6); line([hx, dy, hz + 0.2], [hx, dy, hz + 0.5], 0.6);
     const m = P(0, dy, hz + 0.35); c.globalAlpha = 0.7; c.font = '9px "Share Tech Mono", monospace'; c.fillText(`${nodes.length} COMPONENTS · ${edges.length} LINKS`, m[0] - 52, m[1] + 14);
     // title block + registration marks
