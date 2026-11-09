@@ -30,3 +30,11 @@ Thumbs.db
 *.pem
 *.key
 dist/
+
+# Local-only working docs: never publish (served as public files / contain PII)
+CLAUDE.md
+CLOUDFLARE.md
+ROSHAN_ABRAHAM.md
+PORTFOLIO_ARCH.md
+docs/
+assets/logos/
