@@ -409,28 +409,31 @@
 
   .skill-bars { display: grid; gap: 10px; }
 
-  .skill-row {
+  .skill-bars { gap: 14px; }
+  .skill-row .compile-real {
     display: grid;
-    grid-template-columns: 130px 1fr 30px;
+    grid-template-columns: minmax(130px, 170px) 1fr 34px;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
   }
-  .skill-name { font-size: 11px; color: var(--text); }
+  .skill-name { font-size: 12px; color: var(--bright); }
   .skill-track {
-    height: 3px;
-    background: var(--border);
+    height: 12px;
+    background: rgba(125,135,166,0.16);
+    border: 1px solid var(--border);
     border-radius: 2px;
     overflow: hidden;
+    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 7px, transparent 7px 9px);
+    mask-image: repeating-linear-gradient(90deg, #000 0 7px, transparent 7px 9px);
   }
   .skill-fill {
     height: 100%;
-    border-radius: 2px;
     transform-origin: left;
   }
-  .skill-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
-  .skill-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
-  .skill-fill.orange { background: linear-gradient(90deg, var(--orange), var(--pink)); }
-  .skill-pct { font-size: 10px; color: var(--muted); text-align: right; }
+  .skill-fill.cyan { background: var(--cyan); }
+  .skill-fill.green { background: var(--green); }
+  .skill-fill.orange { background: var(--orange); }
+  .skill-pct { font-size: 11px; color: var(--bright); text-align: right; }
 
   /* ARTICLES */
   #articles { position: relative; }
@@ -501,83 +504,6 @@
     transition: all 0.2s;
   }
   .article-item:hover .article-arrow { color: var(--cyan); transform: translateX(4px); }
-
-  /* PROJECTS */
-  #projects { background: var(--bg2); }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 1px;
-  }
-
-  .project-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    padding: 32px;
-    position: relative;
-    cursor: none;
-    overflow: hidden;
-    transition: background 0.3s;
-  }
-  .project-card:hover { background: var(--bg3); }
-
-  .project-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent, var(--cyan));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
-  }
-  .project-card:hover::after { transform: scaleX(1); }
-
-  .project-icon {
-    font-size: 28px;
-    margin-bottom: 16px;
-    display: block;
-  }
-
-  .project-name {
-    font-family: var(--font-display);
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--bright);
-    margin-bottom: 8px;
-  }
-
-  .project-desc {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 20px;
-  }
-
-  .project-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-  .tech-pill {
-    font-size: 10px;
-    padding: 2px 8px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--dim);
-    letter-spacing: 0.06em;
-  }
-
-  .project-links { display: flex; gap: 16px; }
-  .plink {
-    font-size: 11px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.06em;
-    transition: color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    cursor: none;
-  }
-  .plink:hover { color: var(--cyan); }
 
   /* CONNECTIONS */
   #connections { position: relative; min-height: 100vh; overflow: hidden; }
@@ -748,7 +674,6 @@
 
 <canvas id="rain-cv"></canvas>
 <canvas id="hex-cv" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
-<canvas id="wave-cv" style="position:fixed;bottom:40px;left:0;width:100%;height:40px;z-index:6;pointer-events:none;opacity:0.18"></canvas>
 <canvas id="illus-cv"></canvas>
 <div id="cur-glow"></div>
 <div id="vign"></div>
@@ -783,7 +708,7 @@
     <div class="hero-tags" id="heroTags"></div>
     <div class="hero-cta">
       <a href="#connections" class="btn btn-primary">get in touch</a>
-      <a href="#projects" class="btn btn-ghost">view projects →</a>
+      <a href="projects.html" class="btn btn-ghost">view projects →</a>
     </div>
   </div>
 
@@ -825,15 +750,9 @@
   <div class="articles-list" id="articlesList"></div>
 </section>
 
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="section-label" data-n="03">projects</div>
-  <div class="projects-grid" id="projectsGrid"></div>
-</section>
-
 <!-- CONNECTIONS -->
 <section id="connections">
-  <div class="section-label" data-n="04">connections</div>
+  <div class="section-label" data-n="03">connections</div>
   <div class="connections-content">
     <svg class="connection-svg" id="connSvg"></svg>
 
@@ -906,19 +825,6 @@ const ZONES = [
       '   │ ✓ vector-db       v8.5.0 │ ',
       '   │ ✓ mlops-infra     v8.0.3 │ ',
       '   └──────────────────────────┘ ',
-    ]
-  },
-  {
-    id: 'projects', sel: '#projects', label: '// projects compiled',
-    color: '#ff9f4a',
-    art: [
-      '  git log --oneline --graph      ',
-      '  * 8f2a1c  verity-protocol      ',
-      '  │ ✓ 94% accuracy  │ prod       ',
-      '  * 3d9b4f  rag-optimizer        ',
-      '  │ ✓ eval harness  │ prod       ',
-      '  * 1c7e2a  llm-cost-guard       ',
-      '    ✓ 3× cheaper    │ prod       ',
     ]
   },
   {
@@ -1050,28 +956,6 @@ const ZONES = [
           i * 56 + 8, (Math.floor(Date.now() / 120) * 12) % hexCv.height);
       });
     }, 120);
-  }
-
-  // ── ASCII WAVEFORM ──
-  const waveCv = document.getElementById('wave-cv');
-  if (waveCv) {
-    const wCtx = waveCv.getContext('2d');
-    waveCv.width = window.innerWidth; waveCv.height = 40;
-    window.addEventListener('resize', () => { waveCv.width = window.innerWidth; });
-    const WCHARS = '▁▂▃▄▅▆▇█▇▆▅▄▃▂▁'; let wavePhase = 0;
-    function drawWave() {
-      wCtx.clearRect(0, 0, waveCv.width, 40);
-      wCtx.font = '10px "Share Tech Mono"'; wCtx.fillStyle = '#4dd9f0';
-      const scrollInfluence = (window.scrollY / (document.body.scrollHeight || 1)) * Math.PI * 4;
-      const cols = Math.floor(waveCv.width / 8);
-      for (let i = 0; i < cols; i++) {
-        const amp = Math.sin(i * 0.18 + wavePhase + scrollInfluence) * 6;
-        const ci = Math.max(0, Math.floor((amp + 8) / 16 * WCHARS.length) % WCHARS.length);
-        wCtx.fillText(WCHARS[ci], i * 8, 28);
-      }
-      wavePhase += 0.04; requestAnimationFrame(drawWave);
-    }
-    drawWave();
   }
 
   // ── CONTEXTUAL ILLUSTRATIONS ──
@@ -1424,51 +1308,6 @@ const CONFIG = {
     },
   ],
 
-  // Projects
-  projects: [
-    {
-      icon: "🤖",
-      name: "Custom LLM Foundry",
-      desc: "End-to-end LLM training pipeline with custom data collection, instruction tuning, and registry management using Docker and W&B.",
-      tech: ["LlaMA2", "vLLM", "W&B", "Docker"],
-      accent: "cyan",
-      links: [
-        { text: "HuggingFace", url: "https://huggingface.co/dweebster" },
-        { text: "All Projects", url: "projects.html" }
-      ]
-    },
-    {
-      icon: "🏥",
-      name: "Medical AI Infrastructure",
-      desc: "Document OCR engine with NER parser for medical documents. FHIR translation and LLM-powered knowledge base for healthcare.",
-      tech: ["Document AI", "FHIR", "NER", "GCP"],
-      accent: "green",
-      links: [
-        { text: "Discuss", url: 'mailto:' + _em + '?subject=Medical AI Inquiry' }
-      ]
-    },
-    {
-      icon: "🔗",
-      name: "Agentic RAG System",
-      desc: "Multi-agent orchestration with specialized routers, chain-of-thought reasoning, and embedded knowledge indexing.",
-      tech: ["LangChain", "Pinecone", "FastAPI"],
-      accent: "purple",
-      links: [
-        { text: "All Projects", url: "projects.html" }
-      ]
-    },
-    {
-      icon: "⚡",
-      name: "MLOps Engine",
-      desc: "Dynamic model deployment pipeline with Terraform, Docker Helm, serverless and edge deployment options.",
-      tech: ["MLflow", "Terraform", "GKE", "SageMaker"],
-      accent: "orange",
-      links: [
-        { text: "All Projects", url: "projects.html" }
-      ]
-    }
-  ],
-
   // Social connections
   connections: [
     {
@@ -1645,25 +1484,6 @@ function render() {
       </div>
       <div class="article-arrow">→</div>
     </a>
-  `).join('');
-
-  // Projects
-  const projectsGrid = document.getElementById('projectsGrid');
-  projectsGrid.innerHTML = CONFIG.projects.map(p => `
-    <div class="project-card compile-card" style="--accent:var(--${p.accent})">
-      <div class="compile-overlay">// building project component...\nconst proj = {\n  name: "${p.name}",\n  stack: [${p.tech ? p.tech.slice(0,3).map(t=>`"${t}"`).join(', ') : ''}]\n}</div>
-      <div class="compile-real">
-        <span class="project-icon">${p.icon}</span>
-        <div class="project-name">${p.name}</div>
-        <div class="project-desc">${p.desc}</div>
-        <div class="project-tech">
-          ${p.tech.map(t => `<span class="tech-pill">${t}</span>`).join('')}
-        </div>
-        <div class="project-links">
-          ${p.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener noreferrer" class="plink">↗ ${l.text}</a>`).join('')}
-        </div>
-      </div>
-    </div>
   `).join('');
 
   // Connections center node
