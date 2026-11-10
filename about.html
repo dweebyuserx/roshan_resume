@@ -547,29 +547,37 @@
 
   /* ─── SKILL TREE ─────────────────────────────────────────── */
   .tree-section { margin-top: 80px; width: 100%; }
-  .tree-container { width: 100%; max-width: 900px; margin: 0 auto; }
-  #skillTreeSvg { width: 100%; height: auto; display: block; }
-  .tree-line { stroke-linecap: round; fill: none; opacity: 0.35; transition: opacity 0.3s, stroke 0.3s; }
-  .tree-line.hl { opacity: 1; }
-  .tree-line.dim { opacity: 0.06; }
-  .leaf-group { transition: opacity 0.3s; }
-  .leaf-group.dim { opacity: 0.1; }
-  .domain-group { cursor: pointer; }
-  .domain-group.dim circle { opacity: 0.12; }
-  .tree-fallback { display: none; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  .tree-branch-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
-  .tree-branch-title { font-size: 12px; font-weight: 600; color: var(--bright); margin-bottom: 10px; }
-  .tree-leaf-list { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tree-leaf-pill { font-size: 9px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--muted); background: var(--bg3); }
+  .tree-wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); gap: 24px; align-items: start; }
+  .tree-stage { aspect-ratio: 1 / 1; width: 100%; border: 1px solid rgba(77,217,240,.35); border-radius: 4px; background: radial-gradient(circle at 50% 45%, rgba(20,45,80,.45), #060d18 75%); overflow: hidden; }
+  #skillTreeCv { width: 100%; height: 100%; display: block; }
+  .tree-panel { --c: var(--cyan); display: flex; flex-direction: column; gap: 14px; }
+  .tree-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tree-tab, .tree-rel { font: 11px var(--font-mono); color: var(--muted); background: var(--bg2); border: 1px solid var(--border); border-radius: 3px; padding: 5px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: color .2s, border-color .2s, background .2s; }
+  .tree-tab i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); }
+  .tree-tab:hover, .tree-rel:hover { color: var(--bright); border-color: var(--c); }
+  .tree-tab.on { color: var(--bright); border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--bg2)); }
+  .tree-rel { color: var(--c); }
+  .tree-detail { border: 1px solid var(--border); border-left: 3px solid var(--c); border-radius: 4px; background: var(--bg2); padding: 18px; }
+  .tree-dh { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .tree-dh h3 { font: 600 18px var(--font-display); color: var(--c); margin: 0; }
+  .tree-ico { color: var(--c); font-size: 16px; }
+  .tree-dh em { margin-left: auto; font: normal 10px var(--font-label); color: var(--muted); letter-spacing: .08em; }
+  .tree-note { font-size: 12px; line-height: 1.7; color: var(--text); margin: 0 0 14px; }
+  .tree-lbl { font: 10px var(--font-label); letter-spacing: .1em; color: var(--muted); margin: 12px 0 6px; }
+  .tree-chips, .tree-ship { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tree-chip { font-size: 11px; padding: 3px 9px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); color: var(--bright); background: var(--bg3); cursor: default; transition: background .2s, border-color .2s; }
+  .tree-chip:hover, .tree-chip:focus-visible { background: color-mix(in srgb, var(--c) 22%, var(--bg3)); border-color: var(--c); outline: none; }
+  .tree-ship { gap: 6px 16px; }
+  .tree-ship a { font-size: 11px; color: var(--c); text-decoration: none; border-bottom: 1px dashed color-mix(in srgb, var(--c) 60%, transparent); }
+  .tree-ship a:hover { border-bottom-style: solid; }
 
   @media (max-width: 900px) {
     .cert-grid { grid-template-columns: 1fr; }
+    .tree-wrap { grid-template-columns: 1fr; }
     .tl-bar-role { display: none; }
     .timeline-section, .cert-section, .tree-section { margin-top: 60px; }
   }
   @media (max-width: 600px) {
-    .tree-container { display: none; }
-    .tree-fallback { display: grid; }
     .skill-row { grid-template-columns: auto 1fr auto; }
     .skill-name { font-size: 10px; }
   }
@@ -697,10 +705,10 @@
   <!-- Skill Tree -->
   <section class="tree-section">
     <div class="section-label" data-n="07">ai discipline skill tree</div>
-    <div class="tree-container">
-      <svg id="skillTreeSvg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="tree-wrap">
+      <div class="tree-stage"><canvas id="skillTreeCv" role="img" aria-label="Interactive 3D map of AI disciplines and skills. Use the buttons beside it to browse."></canvas></div>
+      <div class="tree-panel" id="treePanel"></div>
     </div>
-    <div class="tree-fallback" id="treeFallback"></div>
   </section>
 
   <!-- Hobbies & Interests -->
@@ -1019,13 +1027,13 @@ const CONFIG = {
   ],
 
   skillTree: [
-    { id: "genai",   label: "Generative AI",   color: "--cyan",   icon: "⬡", leaves: ["LangChain","AutoGen","RAG","vLLM","LlaMA","GPT APIs","LangSmith","Agents"] },
-    { id: "tradml",  label: "Traditional ML",  color: "--green",  icon: "◈", leaves: ["PyTorch","TensorFlow","Scikit-learn","ONNX","TFX","XGBoost"] },
-    { id: "cv",      label: "Computer Vision", color: "--orange", icon: "◉", leaves: ["OpenCV","YOLOv5","Stable Diffusion","ControlNet","SAM","Document AI","DeepLab"] },
-    { id: "nlp",     label: "NLP",             color: "--purple", icon: "✦", leaves: ["HuggingFace","Transformers","NER","BERT","Rasa","Sentence-T"] },
-    { id: "mlops",   label: "MLOps",           color: "--yellow", icon: "⬢", leaves: ["MLflow","W&B","Docker","Kubernetes","Airflow","Terraform","Databricks"] },
-    { id: "cloudai", label: "Cloud AI",        color: "--pink",   icon: "◆", leaves: ["Vertex AI","GCP","SageMaker","VisionAI","DialogFlow","RunPod","HF Spaces"] },
-    { id: "medai",   label: "Medical AI",      color: "--red",    icon: "▸", leaves: ["FHIR","Epic/Cerner","ABHA","OCR-NER","FHIRstore","PyHealth"] }
+    { id: "genai", note: "LLM apps, agents and RAG, from prompt routing to serving open models.", shipped: ["Agentic PR Platform", "RAG Systems", "Custom LLM Foundry"], rel: ["nlp", "mlops", "cloudai"],   label: "Generative AI",   color: "--cyan",   icon: "⬡", leaves: ["LangChain","AutoGen","RAG","vLLM","LlaMA","GPT APIs","LangSmith","Agents"] },
+    { id: "tradml", note: "Classical and deep-learning model training, with export and pipeline tooling.", shipped: ["MLOps Engine", "Disease Detection in Cattle"], rel: ["cv", "mlops"],  label: "Traditional ML",  color: "--green",  icon: "◈", leaves: ["PyTorch","TensorFlow","Scikit-learn","ONNX","TFX","XGBoost"] },
+    { id: "cv", note: "Detection, segmentation and generative imaging, from edge cameras to diffusion.", shipped: ["Disease Detection in Cattle", "IoT Garden", "Stable Diffusion Pipeline"], rel: ["tradml", "medai", "genai"],      label: "Computer Vision", color: "--orange", icon: "◉", leaves: ["OpenCV","YOLOv5","Stable Diffusion","ControlNet","SAM","Document AI","DeepLab"] },
+    { id: "nlp", note: "Language understanding: transformers, entity extraction and conversational systems.", shipped: ["ChatBot Systems", "Medical AI Infrastructure"], rel: ["genai", "medai"],     label: "NLP",             color: "--purple", icon: "✦", leaves: ["HuggingFace","Transformers","NER","BERT","Rasa","Sentence-T"] },
+    { id: "mlops", note: "Tracking, containers and orchestration to take models from notebook to production.", shipped: ["MLOps Engine", "Custom LLM Foundry"], rel: ["cloudai", "tradml", "genai"],   label: "MLOps",           color: "--yellow", icon: "⬢", leaves: ["MLflow","W&B","Docker","Kubernetes","Airflow","Terraform","Databricks"] },
+    { id: "cloudai", note: "Managed ML platforms and cloud infrastructure for training and serving.", shipped: ["Agentic PR Platform", "MLOps Engine"], rel: ["mlops", "genai"], label: "Cloud AI",        color: "--pink",   icon: "◆", leaves: ["Vertex AI","GCP","SageMaker","VisionAI","DialogFlow","RunPod","HF Spaces"] },
+    { id: "medai", note: "Healthcare interoperability and clinical document AI.", shipped: ["Medical AI Infrastructure"], rel: ["nlp", "cv"],   label: "Medical AI",      color: "--red",    icon: "▸", leaves: ["FHIR","Epic/Cerner","ABHA","OCR-NER","FHIRstore","PyHealth"] }
   ],
 
   hobbies: [
@@ -1190,101 +1198,131 @@ function toggleCourses(btn) {
 }
 
 // ── Skill Tree ───────────────────────────────────────────────
-function polar(cx, cy, r, angleDeg) {
-  const rad = (angleDeg - 90) * Math.PI / 180;
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
-}
-
 function renderSkillTree() {
-  const svg = document.getElementById('skillTreeSvg');
-  const CX = 450, CY = 450, R1 = 185, R2 = 340;
-  const domains = CONFIG.skillTree;
-  const N = domains.length;
-  const angleStep = 360 / N;
-
-  // Resolve CSS var colors to actual hex values for SVG
-  const colorValues = {
-    '--cyan':   '#4dd9f0', '--green':  '#3dffa0', '--orange': '#ff9f4a',
-    '--purple': '#a78bfa', '--yellow': '#fbbf24', '--pink':   '#f472b6',
-    '--red':    '#f87171'
-  };
-
-  let linesHtml = '', domainsHtml = '', leavesHtml = '';
-
-  domains.forEach((dom, di) => {
-    const domAngle = di * angleStep;
-    const dp = polar(CX, CY, R1, domAngle);
-    const col = colorValues[dom.color] || '#4dd9f0';
-    const domId = `dom-${dom.id}`;
-
-    // Center → domain line
-    linesHtml += `<line class="tree-line" data-dom="${dom.id}" x1="${CX}" y1="${CY}" x2="${dp.x.toFixed(1)}" y2="${dp.y.toFixed(1)}" stroke="${col}" stroke-width="1.5"/>`;
-
-    // Domain node
-    domainsHtml += `
-      <g class="domain-group" id="${domId}" data-dom="${dom.id}"
-         onmouseenter="hlDomain('${dom.id}')" onmouseleave="hlReset()">
-        <circle cx="${dp.x.toFixed(1)}" cy="${dp.y.toFixed(1)}" r="28"
-          fill="${col}22" stroke="${col}" stroke-width="1.5"
-          style="filter:drop-shadow(0 0 6px ${col}55)"/>
-        <text x="${dp.x.toFixed(1)}" y="${(dp.y - 4).toFixed(1)}" text-anchor="middle"
-          font-size="9" font-family="JetBrains Mono,monospace" fill="${col}" font-weight="600">${dom.icon}</text>
-        <text x="${dp.x.toFixed(1)}" y="${(dp.y + 8).toFixed(1)}" text-anchor="middle"
-          font-size="8.5" font-family="JetBrains Mono,monospace" fill="${col}">${dom.label}</text>
-      </g>`;
-
-    // Leaves
-    const leaves = dom.leaves;
-    const leafCount = leaves.length;
-    // Keep each domain's leaf fan within its own angular slice so neighboring
-    // domains' leaf pills never overlap, regardless of how many domains/leaves exist.
-    const maxHalfSpread = angleStep * 0.42;
-    const spread = leafCount > 1 ? Math.min(40, 80 / leafCount, (2 * maxHalfSpread) / (leafCount - 1)) : 0;
-    leaves.forEach((leaf, li) => {
-      const offset = (li - (leafCount - 1) / 2) * spread;
-      const leafAngle = domAngle + offset;
-      const lp = polar(CX, CY, R2, leafAngle);
-
-      const lw = Math.max(56, leaf.length * 6.5);
-      const lh = 20;
-
-      // Domain → leaf line
-      linesHtml += `<line class="tree-line" data-dom="${dom.id}" x1="${dp.x.toFixed(1)}" y1="${dp.y.toFixed(1)}" x2="${lp.x.toFixed(1)}" y2="${lp.y.toFixed(1)}" stroke="${col}" stroke-width="1"/>`;
-
-      leavesHtml += `
-        <g class="leaf-group" data-dom="${dom.id}">
-          <rect x="${(lp.x - lw/2).toFixed(1)}" y="${(lp.y - lh/2).toFixed(1)}"
-            width="${lw}" height="${lh}" rx="10"
-            fill="#0f1117" stroke="${col}" stroke-width="1" opacity="0.85"/>
-          <text x="${lp.x.toFixed(1)}" y="${(lp.y + 4).toFixed(1)}" text-anchor="middle"
-            font-size="8" font-family="JetBrains Mono,monospace" fill="${col}">${leaf}</text>
-        </g>`;
-    });
+  const cv = document.getElementById('skillTreeCv'), panel = document.getElementById('treePanel');
+  if (!cv || !panel) return;
+  const doms = CONFIG.skillTree, N = doms.length, TAU = Math.PI * 2, GA = 2.399963;
+  const HEX = { '--cyan': '#4dd9f0', '--green': '#3dffa0', '--orange': '#ff9f4a', '--purple': '#a78bfa', '--yellow': '#fbbf24', '--pink': '#f472b6', '--red': '#f87171' };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const total = doms.reduce((a, d) => a + d.leaves.length, 0);
+  const nodes = doms.map((d, i) => {
+    const y = 1 - (i + 0.5) / N * 2, r = Math.sqrt(1 - y * y);
+    return { d, col: HEX[d.color] || '#4dd9f0', p: [Math.cos(i * GA) * r * 1.7, y * 1.25, Math.sin(i * GA) * r * 1.7], e: 0, sx: 0, sy: 0, sd: 0,
+      leaves: d.leaves.map((name, j) => { const yy = 1 - (j + 0.5) / d.leaves.length * 2, rr = Math.sqrt(1 - yy * yy); return { name, u: [Math.cos(j * GA) * rr, yy, Math.sin(j * GA) * rr], sx: 0, sy: 0, sd: 0 }; }) };
   });
+  const idx = id => doms.findIndex(d => d.id === id);
+  let c, W = 0, H = 0, dpr = 1, ang = 0.4, tilt = 0.35, sel = 0, hov = -1, hleaf = null, target = null, drag = null, vis = true, idle = true, raf = 0, last = 0, t = 0;
 
-  // Center node
-  const centerHtml = `
-    <g>
-      <circle cx="${CX}" cy="${CY}" r="38" fill="#141720" stroke="#4dd9f0" stroke-width="2"
-        style="filter:drop-shadow(0 0 14px #4dd9f040)"/>
-      <text x="${CX}" y="${CY - 6}" text-anchor="middle"
-        font-size="9" font-family="JetBrains Mono,monospace" fill="#4dd9f0" font-weight="700">AI</text>
-      <text x="${CX}" y="${CY + 7}" text-anchor="middle"
-        font-size="8" font-family="JetBrains Mono,monospace" fill="#5a6380">roshan</text>
-    </g>`;
+  function P(x, y, z) {
+    const ca = Math.cos(ang), sa = Math.sin(ang), ct = Math.cos(tilt), st = Math.sin(tilt);
+    const X = x * ca + z * sa, Z = -x * sa + z * ca, Y = y * ct + Z * st, D = Z * ct - y * st;
+    const s = 9 / (9 + D), k = Math.min(W, H) * 0.15;
+    return [W / 2 + X * s * k, H / 2 - Y * s * k, D, s];
+  }
+  const line = (a, b, al, dash) => { const A = P(...a), B = P(...b); c.globalAlpha = al; c.setLineDash(dash || []); c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.stroke(); };
+  const ring = (y, r, al, dash) => { c.globalAlpha = al; c.setLineDash(dash || []); c.beginPath(); for (let i = 0; i <= 48; i++) { const q = P(Math.cos(i / 48 * TAU) * r, y, Math.sin(i / 48 * TAU) * r); i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]); } c.stroke(); };
+  const text = (s, x, y, al, align = 'center', px = 10) => { c.globalAlpha = al; c.setLineDash([]); c.font = px + 'px "Share Tech Mono", monospace'; c.textAlign = align; c.fillText(s, x, y); c.textAlign = 'left'; };
 
-  svg.innerHTML = linesHtml + centerHtml + domainsHtml + leavesHtml;
+  function paint() {
+    if (!W) return;
+    c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H); c.lineWidth = 1;
+    const ci = '#4dd9f0';
+    c.strokeStyle = ci; c.fillStyle = ci;
+    ring(-1.9, 2.3, 0.18, [2, 5]); ring(0, 1.7, 0.1, [2, 5]); line([0, -1.9, 0], [0, 1.9, 0], 0.1, [2, 5]);
+    // core octahedron
+    const OCT = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]].map(v => { const a = t * 0.8, q = [v[0] * 0.3, v[1] * 0.3, v[2] * 0.3]; return [q[0] * Math.cos(a) + q[2] * Math.sin(a), q[1], -q[0] * Math.sin(a) + q[2] * Math.cos(a)]; });
+    [[0, 2], [0, 3], [0, 4], [0, 5], [1, 2], [1, 3], [1, 4], [1, 5], [2, 4], [4, 3], [3, 5], [5, 2]].forEach(([i, j]) => line(OCT[i], OCT[j], 0.9));
+    const o = P(0, 0, 0); c.fillStyle = ci; text('AI', o[0], o[1] + 20, 0.8, 'center', 9);
+    // update node/leaf screen positions
+    nodes.forEach((n, i) => {
+      n.e += ((i === sel ? 1 : 0) - n.e) * (reduce ? 1 : 0.12);
+      const q = P(...n.p); n.sx = q[0]; n.sy = q[1]; n.sd = q[2]; n.ss = q[3];
+      const rr = 0.34 + n.e * 0.6, sp = t * 0.45 + i;
+      n.leaves.forEach(l => { const a = sp, w = [n.p[0] + (l.u[0] * Math.cos(a) + l.u[2] * Math.sin(a)) * rr, n.p[1] + l.u[1] * rr, n.p[2] + (-l.u[0] * Math.sin(a) + l.u[2] * Math.cos(a)) * rr]; l.w = w; const lq = P(...w); l.sx = lq[0]; l.sy = lq[1]; l.sd = lq[2]; });
+    });
+    const act = nodes[sel];
+    // related links between domains
+    nodes.forEach((n, i) => (n.d.rel || []).forEach(rid => { const j = idx(rid); if (j < 0 || (j < i && (nodes[j].d.rel || []).includes(n.d.id))) return; const on = i === sel || j === sel; c.strokeStyle = on ? (i === sel ? nodes[j].col : n.col) : '#7d87a6'; line(n.p, nodes[j].p, on ? 0.65 : 0.1, on ? [4, 4] : [2, 5]); }));
+    // core spokes
+    nodes.forEach((n, i) => { c.strokeStyle = n.col; const on = i === sel; c.lineDashOffset = on ? -t * 24 : 0; line([0, 0, 0], n.p, on ? 0.85 : hov === i ? 0.5 : 0.2, on ? [5, 4] : []); c.lineDashOffset = 0; });
+    // depth-sorted nodes (far first)
+    [...nodes.keys()].sort((a, b) => nodes[b].sd - nodes[a].sd).forEach(i => {
+      const n = nodes[i], on = i === sel, hv = i === hov, dep = Math.max(0.5, Math.min(1, 1 - n.sd * 0.1));
+      c.strokeStyle = n.col; c.fillStyle = n.col;
+      // leaves
+      n.leaves.forEach(l => {
+        const hl = hleaf === l.name && on;
+        c.globalAlpha = (0.12 + 0.4 * n.e) * dep; c.setLineDash([]); c.beginPath(); c.moveTo(n.sx, n.sy); c.lineTo(l.sx, l.sy); c.stroke();
+        c.globalAlpha = (0.45 + 0.5 * n.e) * dep; c.beginPath(); c.arc(l.sx, l.sy, hl ? 4.2 : 1.8 + n.e * 1.2, 0, TAU); c.fill();
+        if (hl) { c.globalAlpha = 0.9; c.beginPath(); c.arc(l.sx, l.sy, 8, 0, TAU); c.stroke(); }
+        if ((on && l.sd < n.sd + 0.05 && n.e > 0.6) || hl) { c.fillStyle = '#e8eeff'; text(l.name, l.sx + (l.sx >= n.sx ? 7 : -7), l.sy + 3, hl ? 1 : n.e * 0.9, l.sx >= n.sx ? 'left' : 'right', 9); c.fillStyle = n.col; }
+      });
+      // node body
+      const r = (7 + n.e * 4 + (hv ? 2 : 0)) * n.ss;
+      c.save(); c.shadowColor = n.col; c.shadowBlur = on ? 16 : hv ? 10 : 4; c.globalAlpha = 1; c.setLineDash([]);
+      c.fillStyle = '#0a0b0d'; c.beginPath(); c.arc(n.sx, n.sy, r, 0, TAU); c.fill(); c.lineWidth = on ? 2 : 1.3; c.stroke(); c.restore(); c.lineWidth = 1;
+      c.globalAlpha = on ? 1 : 0.55 + 0.45 * dep; c.beginPath(); c.arc(n.sx, n.sy, r * 0.38, 0, TAU); c.fill();
+      c.fillStyle = on || hv ? '#e8eeff' : '#c8cfe8'; text(n.d.label, n.sx, n.sy + r + 13, on || hv ? 1 : 0.55 + 0.45 * dep, 'center', 10);
+    });
+    // pulses core → selected domain
+    if (!reduce) { c.fillStyle = act.col; for (let k = 0; k < 3; k++) { const u = (t * 0.5 + k / 3) % 1, w = [act.p[0] * u, act.p[1] * u, act.p[2] * u], q = P(...w); c.globalAlpha = 1 - u * 0.5; c.beginPath(); c.arc(q[0], q[1], 2.4, 0, TAU); c.fill(); } }
+    // frame + title block
+    c.strokeStyle = ci; c.fillStyle = ci; c.globalAlpha = 0.28; c.setLineDash([]); c.strokeRect(8.5, 8.5, W - 17, H - 17);
+    text('FIG.07 · AI DISCIPLINE MAP · DRAG TO ROTATE · CLICK A DOMAIN', 16, 24, 0.8, 'left', 9);
+    text(N + ' DOMAINS · ' + total + ' SKILLS', W - 16, H - 16, 0.7, 'right', 9);
+    c.globalAlpha = 1;
+  }
+  function loop(now) {
+    raf = 0; if (!vis) return;
+    const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now; t += dt;
+    if (target !== null) { const d = ((target - ang + Math.PI) % TAU + TAU) % TAU - Math.PI; ang += d * 0.08; tilt += (0.3 - tilt) * 0.06; if (Math.abs(d) < 0.003) target = null; }
+    else if (idle && !drag && hov < 0) ang += dt * 0.12;
+    paint(); raf = requestAnimationFrame(loop);
+  }
+  const kick = () => { if (reduce) paint(); else if (!raf && vis) { last = performance.now(); raf = requestAnimationFrame(loop); } };
 
-  // Fallback for mobile
-  const fallback = document.getElementById('treeFallback');
-  fallback.innerHTML = CONFIG.skillTree.map(dom => {
-    const col = colorValues[dom.color] || '#4dd9f0';
-    return `
-      <div class="tree-branch-card" style="border-left:3px solid ${col}">
-        <div class="tree-branch-title" style="color:${col}">${dom.icon} ${dom.label}</div>
-        <div class="tree-leaf-list">${dom.leaves.map(l => `<span class="tree-leaf-pill" style="border-color:${col}44;color:${col}">${l}</span>`).join('')}</div>
+  function renderPanel() {
+    const n = nodes[sel], d = n.d, col = n.col;
+    const rel = (d.rel || []).map(idx).filter(i => i >= 0);
+    panel.style.setProperty('--c', col);
+    panel.innerHTML = `
+      <div class="tree-tabs" role="group" aria-label="Skill domains">${nodes.map((m, i) => `<button type="button" class="tree-tab${i === sel ? ' on' : ''}" data-i="${i}" aria-pressed="${i === sel}" style="--c:${m.col}"><i></i>${m.d.label}</button>`).join('')}</div>
+      <div class="tree-detail">
+        <div class="tree-dh"><span class="tree-ico">${d.icon}</span><h3>${d.label}</h3><em>${d.leaves.length} skills</em></div>
+        <p class="tree-note">${d.note || ''}</p>
+        <div class="tree-lbl">// stack</div>
+        <div class="tree-chips">${d.leaves.map(l => `<span class="tree-chip" data-leaf="${l}" tabindex="0">${l}</span>`).join('')}</div>
+        ${d.shipped ? `<div class="tree-lbl">// shipped in</div><div class="tree-ship">${d.shipped.map(s => `<a href="projects.html">${s}</a>`).join('')}</div>` : ''}
+        ${rel.length ? `<div class="tree-lbl">// connects to</div><div class="tree-chips">${rel.map(i => `<button type="button" class="tree-rel" data-i="${i}" style="--c:${nodes[i].col}">${nodes[i].d.label} →</button>`).join('')}</div>` : ''}
       </div>`;
-  }).join('');
+  }
+  function select(i, spin = true) {
+    sel = i; renderPanel(); hleaf = null;
+    if (spin) { const p = nodes[i].p; target = Math.atan2(p[2], p[0]) + Math.PI / 2; if (reduce) { ang = target; target = null; } }
+    kick();
+  }
+  panel.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) { idle = false; select(+b.dataset.i); } });
+  const leafHov = (e, on) => { const ch = e.target.closest('[data-leaf]'); if (ch) { hleaf = on ? ch.dataset.leaf : null; kick(); } };
+  panel.addEventListener('mouseover', e => leafHov(e, true)); panel.addEventListener('mouseout', e => leafHov(e, false));
+  panel.addEventListener('focusin', e => leafHov(e, true)); panel.addEventListener('focusout', e => leafHov(e, false));
+
+  function pick(e) { const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; let b = -1, bd = 26; nodes.forEach((n, i) => { const d = Math.hypot(n.sx - x, n.sy - y); if (d < bd) { bd = d; b = i; } }); return b; }
+  cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); drag = { x: e.clientX, y: e.clientY, moved: false }; idle = false; target = null; });
+  cv.addEventListener('pointermove', e => {
+    if (drag) { const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true; if (drag.moved) { ang += dx * 0.008; tilt = Math.max(0.05, Math.min(0.85, tilt + dy * 0.004)); drag.x = e.clientX; drag.y = e.clientY; } }
+    else { const h = pick(e); if (h !== hov) { hov = h; cv.style.cursor = h >= 0 ? 'pointer' : 'grab'; } }
+    kick();
+  });
+  const up = e => { if (drag && !drag.moved) { const h = pick(e); if (h >= 0) select(h); } drag = null; kick(); };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', () => { drag = null; });
+  cv.addEventListener('pointerleave', () => { hov = -1; kick(); });
+  cv.style.cursor = 'grab'; cv.style.touchAction = 'pan-y';
+
+  function resize() { const r = cv.getBoundingClientRect(); if (!r.width) return; dpr = Math.min(devicePixelRatio || 1, 2); W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; c = cv.getContext('2d'); paint(); }
+  new ResizeObserver(resize).observe(cv);
+  new IntersectionObserver(es => { vis = es[0].isIntersecting; if (vis) kick(); }, { threshold: 0 }).observe(cv);
+  document.addEventListener('visibilitychange', () => { vis = !document.hidden; if (vis) kick(); });
+  c = cv.getContext('2d'); renderPanel(); resize(); kick();
 }
 
 // ── Hobbies ──────────────────────────────────────────────────
@@ -1329,35 +1367,6 @@ function typeStream(el, speed) {
   })();
 }
 
-function hlDomain(id) {
-  if (typeof anime === 'undefined') {
-    document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('dim', l.dataset.dom !== id));
-    document.querySelectorAll('.tree-line').forEach(l => l.classList.toggle('hl', l.dataset.dom === id));
-    document.querySelectorAll('.leaf-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
-    document.querySelectorAll('.domain-group').forEach(g => g.classList.toggle('dim', g.dataset.dom !== id));
-    return;
-  }
-  document.querySelectorAll('.tree-line[data-dom]').forEach(line => {
-    anime({ targets: line, opacity: line.dataset.dom === id ? 1 : 0.04, duration: 250, ease: 'outQuad' });
-  });
-  document.querySelectorAll('.leaf-group[data-dom]').forEach(g => {
-    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.08, duration: 250, ease: 'outQuad' });
-  });
-  document.querySelectorAll('.domain-group[data-dom]').forEach(g => {
-    anime({ targets: g, opacity: g.dataset.dom === id ? 1 : 0.12, duration: 250, ease: 'outQuad' });
-  });
-}
-function hlReset() {
-  if (typeof anime === 'undefined') {
-    document.querySelectorAll('.tree-line, .leaf-group, .domain-group').forEach(el => el.classList.remove('dim','hl'));
-    return;
-  }
-  anime({ targets: '.tree-line', opacity: 0.35, duration: 300, ease: 'outQuad' });
-  anime({ targets: '.leaf-group', opacity: 1, duration: 300, ease: 'outQuad' });
-  anime({ targets: '.domain-group', opacity: 1, duration: 300, ease: 'outQuad' });
-}
-
-
 const revealObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (!e.isIntersecting) return;
@@ -1367,12 +1376,6 @@ const revealObs = new IntersectionObserver(entries => {
         segs.forEach(s => { s.style.opacity = 0; s.style.transform = 'scaleX(0)'; s.style.transformOrigin = 'left'; });
         if (segs.length) anime({ targets: segs, opacity: [0,1], scaleX: [0,1], duration: 220, ease: 'outQuart', delay: anime.stagger(8, {start: gi*80}) });
       });
-      const domainGroups = e.target.querySelectorAll('.domain-group');
-      const treeLines = e.target.querySelectorAll('.tree-line');
-      if (treeLines.length) {
-        anime({ targets: treeLines, opacity: [0, 0.35], duration: 600, delay: anime.stagger(25), ease: 'outCubic' });
-        anime({ targets: domainGroups, opacity: [0, 1], scale: [0.7, 1], duration: 500, delay: anime.stagger(55, { start: 180 }), ease: 'outBack' });
-      }
     }
     revealObs.unobserve(e.target);
   });
