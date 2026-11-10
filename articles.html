@@ -68,9 +68,6 @@
   #rain-cv { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; opacity: 1; pointer-events: none; }
   #illus-cv { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #illus-cv.show { opacity: 1; }
-  #dot-field { position: fixed; inset: 0; z-index: 2; pointer-events: none;
-    background-image: radial-gradient(circle, var(--dim) 1px, transparent 1px);
-    background-size: 28px 28px; }
   #cur-glow { position: fixed; z-index: 3; pointer-events: none; border-radius: 50%;
     width: 0; height: 0;
     background: radial-gradient(circle, rgba(77,217,240,0.06) 0%, transparent 65%);
@@ -106,7 +103,7 @@
   }
   .compile-card.visible::after { transform: scaleX(1); }
   @media (max-width: 768px) {
-    #rain-cv, #illus-cv, #dot-field, #cur-glow, #vign, #illus-label { display: none; }
+    #rain-cv, #illus-cv, #cur-glow, #vign, #illus-label { display: none; }
     .cursor, .cursor-ring { display: none; }
     body { cursor: auto; }
   }
@@ -490,7 +487,6 @@
 
 <canvas id="rain-cv"></canvas>
 <canvas id="illus-cv"></canvas>
-<div id="dot-field"></div>
 <div id="cur-glow"></div>
 <div id="vign"></div>
 <div id="illus-label"></div>
