@@ -613,7 +613,7 @@
   .conn-flow { animation: connflow 1.2s linear infinite; }
   @keyframes connflow { to { stroke-dashoffset: -20; } }
   .feat-body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr); gap: 28px; align-items: stretch; }
-  .bp-wrap { position: relative; min-height: 320px; border: 1px solid color-mix(in srgb, var(--accent, #4dd9f0) 35%, transparent); border-radius: 4px; background: radial-gradient(circle at 50% 45%, rgba(20,45,80,.45), #060d18 75%); overflow: hidden; }
+  .bp-wrap { position: sticky; top: 80px; align-self: start; aspect-ratio: 1 / 1.02; width: 100%; border: 1px solid color-mix(in srgb, var(--accent, #4dd9f0) 35%, transparent); border-radius: 4px; background: radial-gradient(circle at 50% 45%, rgba(20,45,80,.45), #060d18 75%); overflow: hidden; }
   .bp-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
   .feat-meters { display: grid; gap: 7px; margin: 14px 0 16px; }
   .meter { display: grid; grid-template-columns: 84px 1fr auto; gap: 10px; align-items: center; font-size: 10px; }
@@ -622,7 +622,7 @@
   .meter-track i { display: block; height: 100%; width: 0; border-radius: 3px; transition: width .7s cubic-bezier(.22,1,.36,1) var(--d, 0ms); }
   .go .meter-track i { width: var(--w); }
   .meter-t { font-size: 9px; letter-spacing: .05em; min-width: 64px; text-align: right; }
-  @media (max-width: 900px) { .feat-body { grid-template-columns: 1fr; } .bp-wrap { min-height: 280px; } }
+  @media (max-width: 900px) { .feat-body { grid-template-columns: 1fr; }  }
   @media (prefers-reduced-motion: reduce) { .conn-flow { animation: none; } .meter-track i { transition: none; } }
 
   /* ── COMMAND PALETTE ── */
@@ -972,7 +972,6 @@ const CONFIG = {
   lastUpdated: "Feb 2025"
 };
 
-const BP = {"Agentic PR Platform":{"layers":["INPUT","ROUTING","AGENTS","SERVING"],"nodes":[{"id":"a","label":"PR Brief","layer":0,"col":0},{"id":"b","label":"Firebase","layer":0,"col":1},{"id":"c","label":"ADK router","layer":1,"col":0},{"id":"d","label":"CoT prompts","layer":1,"col":1},{"id":"e","label":"Gemma/Claude","layer":2,"col":0},{"id":"f","label":"MCP tools","layer":2,"col":1},{"id":"g","label":"FastAPI","layer":3,"col":0},{"id":"h","label":"GCP","layer":3,"col":1}],"edges":[["a","c"],["b","c"],["c","d"],["d","e"],["c","f"],["e","g"],["f","g"],["g","h"]]},"Medical AI Infrastructure":{"layers":["INGEST","EXTRACT","TRANSLATE","SERVING"],"nodes":[{"id":"a","label":"Med Documents","layer":0,"col":0},{"id":"b","label":"Doc AI OCR","layer":1,"col":0},{"id":"c","label":"NER","layer":1,"col":1},{"id":"d","label":"FHIR","layer":2,"col":0},{"id":"e","label":"LLM KB","layer":2,"col":1},{"id":"f","label":"ABHA","layer":3,"col":0},{"id":"g","label":"EPIC","layer":3,"col":1},{"id":"h","label":"Cerner","layer":3,"col":2}],"edges":[["a","b"],["b","c"],["c","d"],["c","e"],["d","f"],["e","f"],["d","g"],["d","h"]]},"Custom LLM Foundry":{"layers":["DATA","TRAIN","EVAL","SERVING"],"nodes":[{"id":"a","label":"Data Scrape","layer":0,"col":0},{"id":"b","label":"Injection Gen","layer":0,"col":1},{"id":"c","label":"Instr Tuning","layer":1,"col":0},{"id":"d","label":"unsloth LoRA","layer":1,"col":1},{"id":"e","label":"HF Eval","layer":2,"col":0},{"id":"f","label":"W&B","layer":2,"col":1},{"id":"g","label":"Registry","layer":2,"col":2},{"id":"h","label":"vLLM","layer":3,"col":0},{"id":"i","label":"Docker/RunPod","layer":3,"col":1}],"edges":[["a","b"],["a","c"],["b","c"],["c","d"],["d","e"],["d","f"],["e","g"],["f","g"],["g","h"],["g","i"]]},"RAG Systems":{"layers":["SOURCES","INDEX","RETRIEVE","SERVE"],"nodes":[{"id":"a","label":"GOVT DOCS","layer":0,"col":0},{"id":"b","label":"CHUNKING","layer":1,"col":0},{"id":"c","label":"WEAVIATE","layer":1,"col":1},{"id":"d","label":"MILVUS","layer":1,"col":2},{"id":"e","label":"HYBRID+RERANK","layer":2,"col":0},{"id":"f","label":"ADK ROUTER","layer":2,"col":1},{"id":"g","label":"REDIS CACHE","layer":2,"col":2},{"id":"h","label":"RAGAS EVAL","layer":3,"col":0},{"id":"i","label":"VERTEX AI","layer":3,"col":1}],"edges":[["a","b"],["b","c"],["b","d"],["c","e"],["d","f"],["d","g"],["e","h"],["f","i"],["g","i"],["f","h"]]},"MLOps Engine":{"layers":["DATA","TRAIN","REGISTRY","SERVE"],"nodes":[{"id":"a","label":"BIGQUERY","layer":0,"col":0},{"id":"b","label":"GCP SCHEDULER","layer":1,"col":0},{"id":"c","label":"TFX TRAINER","layer":1,"col":1},{"id":"d","label":"EVALUATOR","layer":1,"col":2},{"id":"e","label":"MODEL REGISTRY","layer":2,"col":0},{"id":"f","label":"AUTO PROMOTE","layer":2,"col":1},{"id":"g","label":"INFERENCE API","layer":3,"col":0}],"edges":[["a","c"],["b","c"],["c","d"],["d","e"],["d","f"],["e","g"],["f","g"]]},"Disease Detection in Cattle":{"layers":["INGEST","MODEL","ACTION","ALERT"],"nodes":[{"id":"a","label":"CCTV","layer":0,"col":0},{"id":"b","label":"SCHEDULER","layer":0,"col":1},{"id":"c","label":"TFX SERVING","layer":1,"col":0},{"id":"d","label":"MODEL REGISTRY","layer":1,"col":1},{"id":"e","label":"SEASONAL CLF","layer":1,"col":2},{"id":"f","label":"EAR TAG OCR","layer":2,"col":0},{"id":"g","label":"SERVERLESS","layer":2,"col":1},{"id":"h","label":"ZAPIER","layer":3,"col":0},{"id":"i","label":"RANCHER","layer":3,"col":1}],"edges":[["a","c"],["b","c"],["d","e"],["c","e"],["e","f"],["e","g"],["f","h"],["g","h"],["h","i"]]},"IoT Garden":{"layers":["SENSE","EDGE","LINK","APP"],"nodes":[{"id":"a","label":"PI CAMERA","layer":0,"col":0},{"id":"b","label":"SENSORS","layer":0,"col":2},{"id":"c","label":"YOLOv5","layer":1,"col":0},{"id":"d","label":"PYTHON CTRL","layer":1,"col":2},{"id":"e","label":"LIFE SUPPORT","layer":2,"col":0},{"id":"f","label":"WIFI STREAM","layer":2,"col":2},{"id":"g","label":"PHONE APP","layer":3,"col":1}],"edges":[["a","c"],["b","d"],["c","d"],["d","e"],["d","f"],["f","g"]]},"Stable Diffusion Pipeline":{"layers":["DATA","TRAIN","CONTROL","SERVE"],"nodes":[{"id":"a","label":"DATASET CURATE","layer":0,"col":1},{"id":"b","label":"DREAMBOOTH","layer":1,"col":0},{"id":"c","label":"LoRA ADAPTERS","layer":1,"col":2},{"id":"d","label":"DIFFUSERS","layer":2,"col":0},{"id":"e","label":"CONTROLNET","layer":2,"col":2},{"id":"f","label":"HF SPACES","layer":3,"col":0},{"id":"g","label":"QR / TXT2IMG","layer":3,"col":2}],"edges":[["a","b"],["a","c"],["b","d"],["c","d"],["c","e"],["d","f"],["e","g"],["d","g"]]},"Claude Agent Code Conversion & Testing Workflow":{"layers":["INPUT","AGENTS","TOOLING","REPORT"],"nodes":[{"id":"a","label":"SOURCE CODE","layer":0,"col":1},{"id":"b","label":"CONVERT AGENT","layer":1,"col":0},{"id":"c","label":"TEST GEN AGENT","layer":1,"col":2},{"id":"d","label":"PROMPT CACHE","layer":2,"col":0},{"id":"e","label":"MCP TOOLS","layer":2,"col":1},{"id":"f","label":"TEST HARNESS","layer":2,"col":2},{"id":"g","label":"REPORT","layer":3,"col":1}],"edges":[["a","b"],["a","c"],["b","d"],["b","e"],["c","e"],["c","f"],["d","g"],["e","g"],["f","g"]]},"Education Data Transformation Pipeline":{"layers":["SOURCE","PROCESS","MODEL","OUTPUT"],"nodes":[{"id":"a","label":"RAW CONTENT","layer":0,"col":0},{"id":"b","label":"STUDENT PROF","layer":0,"col":2},{"id":"c","label":"DATA TRANSFORM","layer":1,"col":0},{"id":"d","label":"RAG","layer":1,"col":2},{"id":"e","label":"LLM PIPELINE","layer":2,"col":0},{"id":"f","label":"WHO STANDARDS","layer":2,"col":2},{"id":"g","label":"ADAPTED LEARN","layer":3,"col":0},{"id":"h","label":"KT REPORTS","layer":3,"col":1},{"id":"i","label":"FEEDBACK","layer":3,"col":2}],"edges":[["a","c"],["b","d"],["c","d"],["c","e"],["d","e"],["d","f"],["e","g"],["e","h"],["f","h"],["f","i"]]},"In-Store Navigation AI Agent":{"layers":["INPUT","GRAPH","AGENT","SERVING"],"nodes":[{"id":"a","label":"USER QUERY","layer":0,"col":0},{"id":"b","label":"STORE LAYOUT","layer":0,"col":2},{"id":"c","label":"NETWORKX","layer":1,"col":2},{"id":"d","label":"PRODUCT INDEX","layer":1,"col":0},{"id":"e","label":"CLAUDE","layer":2,"col":0},{"id":"f","label":"GRAPH TRAVERSE","layer":2,"col":2},{"id":"g","label":"AISLE ROUTE","layer":3,"col":1}],"edges":[["a","e"],["b","c"],["c","f"],["d","e"],["e","f"],["f","g"],["e","g"]]},"ChatBot Systems":{"layers":["CHANNEL","NLU","LOGIC","MEMORY"],"nodes":[{"id":"a","label":"WEBHOOK","layer":0,"col":0},{"id":"b","label":"DIALOGFLOW CX","layer":1,"col":0},{"id":"c","label":"RASA NLU","layer":1,"col":2},{"id":"d","label":"FASTAPI","layer":2,"col":1},{"id":"e","label":"LANGCHAIN","layer":2,"col":2},{"id":"f","label":"OLLAMA","layer":3,"col":2},{"id":"g","label":"REDIS","layer":3,"col":1},{"id":"h","label":"POSTGRESQL","layer":3,"col":0}],"edges":[["a","b"],["a","c"],["b","d"],["c","d"],["d","e"],["e","f"],["e","g"],["d","h"]]}};
 const ALL = [Object.assign({}, CONFIG.featuredProject, { accent: 'cyan', featured: true }), ...CONFIG.projects];
 const HEX = { cyan:'#4dd9f0', green:'#3dffa0', orange:'#ff9f4a', purple:'#a78bfa', pink:'#f472b6', yellow:'#fbbf24', red:'#f87171' };
 let curIdx = 0;
@@ -1159,99 +1158,278 @@ function drawConn() {
     <circle cx="${tx}" cy="${t.top - w.top}" r="3" fill="${col}"/><circle cx="${px}" cy="${py}" r="3" fill="${col}"/>`;
 }
 
-// ── Rotating 3D blueprint: one node per tech, layered like the real data flow ──
+// ── Rotating 3D blueprints: one hand-built scene per project ──
 let Blueprint;
-const SP = 0.95;
 function initBlueprint() {
   const cv = document.getElementById('bp');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let layerNames = [], c, W = 0, H = 0, dpr = 1, ang = 0.7, tilt = 0.5, color = '#4dd9f0', nodes = [], edges = [], L = 2, title = '', raf = 0, last = 0, drag = null, visible = true;
+  const TAU = Math.PI * 2, S = s => s * s * (3 - 2 * s), cl = (v, a, b) => Math.max(a, Math.min(b, v));
+  let c, W = 0, H = 0, dpr = 1, ang = 0.7, tilt = 0.42, color = '#4dd9f0', title = '', cap = '', draw3 = null, raf = 0, last = 0, drag = null, visible = true;
 
+  function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function resize() {
     const r = cv.getBoundingClientRect(); if (!r.width) return;
     dpr = Math.min(window.devicePixelRatio || 1, 2); W = r.width; H = r.height;
-    cv.width = W * dpr; cv.height = H * dpr; draw(performance.now());
-  }
-  function set(p, hex, idx) {
-    color = hex; title = `${String(idx + 1).padStart(2, '0')} · ${p.name}`;
-    const sp = BP[p.name]; L = sp.layers.length; layerNames = sp.layers; nodes = []; edges = [];
-    const by = {};
-    sp.nodes.forEach(n => {
-      const cnt = sp.nodes.filter(m => m.layer === n.layer).length, cols = sp.nodes.filter(m => m.layer === n.layer).map(m => m.col).sort(), k = cols.indexOf(n.col);
-      by[n.id] = { l: n.layer, label: n.label, x: (k - (cnt - 1) / 2) * 1.25, y: (n.layer - (L - 1) / 2) * SP, z: k % 2 ? 0.4 : -0.4 };
-      nodes.push(by[n.id]);
-    });
-    sp.edges.forEach(([a, b]) => edges.push([by[a], by[b]]));
-    if (reduce) draw(performance.now());
+    cv.width = W * dpr; cv.height = H * dpr; paint(performance.now());
   }
   function P(x, y, z) {
     const ca = Math.cos(ang), sa = Math.sin(ang), ct = Math.cos(tilt), st = Math.sin(tilt);
-    const X = x * ca + z * sa, Z = -x * sa + z * ca;
-    const Y = y * ct + Z * st, D = Z * ct - y * st;
-    const s = 7 / (7 + D), k = Math.min(W, H) * 0.15;
+    const X = x * ca + z * sa, Z = -x * sa + z * ca, Y = y * ct + Z * st, D = Z * ct - y * st;
+    const s = 7 / (7 + D), k = Math.min(W * 0.95, H) * 0.175;
     return [W / 2 + X * s * k, H * 0.5 - Y * s * k, D];
   }
-  function line(a, b, alpha, dash) {
-    const A = P(...a), B = P(...b);
-    c.globalAlpha = alpha; c.setLineDash(dash || []); c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.stroke();
+  const EDGES = [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]];
+  const g = {
+    S, TAU,
+    lerp: (a, b, u) => a.map((v, i) => v + (b[i] - v) * u),
+    ry: (p, a) => [p[0] * Math.cos(a) + p[2] * Math.sin(a), p[1], -p[0] * Math.sin(a) + p[2] * Math.cos(a)],
+    L(a, b, al = 0.55, dash) { const A = P(...a), B = P(...b); c.globalAlpha = al; c.setLineDash(dash || []); c.beginPath(); c.moveTo(A[0], A[1]); c.lineTo(B[0], B[1]); c.stroke(); },
+    dot(p, r = 2, al = 1) { const A = P(...p); c.globalAlpha = al; c.setLineDash([]); c.beginPath(); c.arc(A[0], A[1], r, 0, TAU); c.fill(); },
+    T(p, s, dx = 8, dy = -8, al = 0.95, align = 'left') {
+      const A = P(...p), d = cl(0.9 - A[2] * 0.1, 0.7, 1);
+      c.setLineDash([]); c.globalAlpha = al * d; c.font = '10px "Share Tech Mono", monospace'; c.textAlign = align; c.fillText(s, A[0] + dx, A[1] + dy); c.textAlign = 'left';
+    },
+    path(pts, al = 0.6, dash, close, fill) {
+      const q = pts.map(p => P(...p)); c.setLineDash(dash || []); c.beginPath(); q.forEach((a, i) => i ? c.lineTo(a[0], a[1]) : c.moveTo(a[0], a[1])); if (close) c.closePath();
+      if (fill) { c.globalAlpha = fill; c.fill(); } c.globalAlpha = al; c.stroke();
+    },
+    box(x, y, z, sx, sy, sz, al = 0.9) {
+      const v = []; for (let i = 0; i < 8; i++) v.push([x + (i & 1 ? sx : -sx), y + (i & 2 ? sy : -sy), z + (i & 4 ? sz : -sz)]);
+      EDGES.forEach(([i, j]) => g.L(v[i], v[j], al));
+    },
+    ring(x, y, z, r, ax = 'y', al = 0.6, n = 40, dash) {
+      const pts = []; for (let i = 0; i <= n; i++) { const a = i / n * TAU, u = Math.cos(a) * r, v = Math.sin(a) * r; pts.push(ax === 'y' ? [x + u, y, z + v] : ax === 'x' ? [x, y + u, z + v] : [x + u, y + v, z]); }
+      g.path(pts, al, dash);
+    },
+    wire(vs, es, al = 0.9) { es.forEach(([i, j]) => g.L(vs[i], vs[j], al)); },
+    pulse(a, b, u, r = 2.2) { g.dot(g.lerp(a, b, u), r) }
+  };
+  const minD = vs => { let m = 9; for (let i = 0; i < vs.length; i++) for (let j = i + 1; j < vs.length; j++) m = Math.min(m, Math.hypot(...vs[i].map((v, k) => v - vs[j][k]))); return m; };
+  const polyEdges = vs => { const e = [], m = minD(vs); for (let i = 0; i < vs.length; i++) for (let j = i + 1; j < vs.length; j++) if (Math.abs(Math.hypot(...vs[i].map((v, k) => v - vs[j][k])) - m) < 1e-6) e.push([i, j]); return e; };
+  const PHI = (1 + Math.sqrt(5)) / 2;
+  const OCT = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]], OCT_E = polyEdges(OCT);
+  const ICO = []; [[0, 1, PHI], [1, PHI, 0], [PHI, 0, 1]].forEach(v => [[1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(([a, b]) => { const w = v.slice(), idx = v.map((x, i) => x !== 0 ? i : -1).filter(i => i >= 0); w[idx[0]] *= a; w[idx[1]] *= b; ICO.push(w); }));
+  const ICO_E = polyEdges(ICO);
+  const sheet = (x, hw, hh, al, y0 = 0, z0 = 0) => g.path([[x, y0 + hh, z0 - hw], [x, y0 + hh, z0 + hw], [x, y0 - hh, z0 + hw], [x, y0 - hh, z0 - hw]], al, 0, true, 0.05);
+
+  const SCENES = {
+    // 1 — orchestrator core with orbiting specialist agents
+    'Agentic PR Platform': ['ORCHESTRATION CORE', () => (t) => {
+      g.wire(OCT.map(v => g.ry(v.map(x => x * 0.55), t * 0.8)), OCT_E, 1);
+      g.ring(0, 0, 0, 1.55, 'y', 0.22); g.ring(0, 0.95, 0, 1.0, 'y', 0.22); g.ring(0, -0.3, 0, 1.2, 'x', 0.12, 40, [3, 5]);
+      const names = ['MCP', 'FIREBASE', 'CLAUDE', 'FASTAPI'];
+      for (let i = 0; i < 9; i++) {
+        const outer = i < 5, n = outer ? 5 : 4, k = outer ? i : i - 5, a = (outer ? 1 : -1.4) * t * 0.35 + k / n * TAU, r = outer ? 1.55 : 1.0, y = outer ? 0 : 0.95;
+        const p = [Math.cos(a) * r, y + 0.1 * Math.sin(t * 2 + i), Math.sin(a) * r];
+        g.L([0, 0, 0], p, 0.28, [3, 4]); g.box(...p, 0.12, 0.12, 0.12, 0.95);
+        g.pulse([0, 0, 0], p, (t * 0.5 + i * 0.13) % 1);
+        if (i < 4) g.T(p, names[i], 10, -8);
+      }
+      g.box(0, -1.5, 0, 2.0, 0.03, 1.4, 0.45); g.L([0, -0.55, 0], [0, -1.5, 0], 0.3, [3, 4]);
+      g.T([1.6, -1.5, 1.2], 'GCP', 4, 12); g.T([0, 0.75, 0], 'PROMPT ROUTER', 0, -6, 1, 'center');
+    }],
+    // 2 — document pipeline: sheets pass through gates, then fork to EHR ports
+    'Medical AI Infrastructure': ['DOCUMENT → FHIR PIPELINE', () => (t) => {
+      g.L([-2.3, -1.15, 0], [2.5, -1.15, 0], 0.25, [2, 4]);
+      for (let i = 0; i < 3; i++) sheet(-2.1 + i * 0.12, 0.65, 0.85, 0.7);
+      g.T([-2.0, -1.15, 0], 'SCAN', 0, 14, 0.9, 'center');
+      g.ring(-0.9, 0, 0, 0.85, 'x', 0.8); g.ring(-1.05, 0, 0, 0.85, 'x', 0.4);
+      const sy = Math.sin(t * 2) * 0.7, w = Math.sqrt(Math.max(0, 0.7225 - sy * sy)); g.L([-0.9, sy, -w], [-0.9, sy, w], 1);
+      g.T([-0.9, -1.15, 0], 'OCR', 0, 14, 0.9, 'center');
+      sheet(0.25, 0.65, 0.85, 0.7);
+      [0.5, 0.05, -0.4].forEach((y, i) => { g.L([0.25, y, -0.5], [0.25, y, 0.35 - i * 0.15], 0.6); g.box(0.25, y, -0.5 + (i + 1) * 0.28, 0.01, 0.1, 0.12, 1); });
+      g.T([0.25, -1.15, 0], 'NER', 0, 14, 0.9, 'center');
+      g.ring(1.25, 0, 0, 0.6, 'x', 0.9, 6); g.ring(1.6, 0, 0, 0.6, 'x', 0.9, 6);
+      for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; g.L([1.25, Math.cos(a) * 0.6, Math.sin(a) * 0.6], [1.6, Math.cos(a) * 0.6, Math.sin(a) * 0.6], 0.6); }
+      g.T([1.42, -1.15, 0], 'FHIR', 0, 14, 0.9, 'center');
+      [[0.8, 'EPIC'], [-0.8, 'CERNER']].forEach(([z, n]) => { g.L([1.6, 0, 0], [2.3, 0, z], 0.5, [3, 4]); g.box(2.3, 0, z, 0.15, 0.15, 0.15, 1); g.T([2.3, 0.15, z], n, 6, -6); });
+      const u = (t * 0.2) % 1, xs = -2.1 + u * 3.7; g.box(xs, 0, 0, 0.05, 0.28, 0.2, 1);
+    }],
+    // 3 — foundry: dataset funnel → transformer tower w/ LoRA adapters → registry
+    'Custom LLM Foundry': ['FINE-TUNE FOUNDRY', (rnd) => { const dr = Array.from({ length: 16 }, () => ({ a: rnd() * TAU, r: rnd(), p: rnd() })); return (t) => {
+      g.ring(0, 1.7, 0, 1.0, 'y', 0.7); g.ring(0, 1.05, 0, 0.28, 'y', 0.7);
+      for (let i = 0; i < 8; i++) { const a = i / 8 * TAU; g.L([Math.cos(a), 1.7, Math.sin(a)], [Math.cos(a) * 0.28, 1.05, Math.sin(a) * 0.28], 0.35); }
+      dr.forEach(d => { const u = (t * 0.3 + d.p) % 1, y = 2.0 - u * 3.2, rad = y > 1.7 ? d.r * 0.9 : y > 1.05 ? 0.28 + (d.r * 0.72) * (y - 1.05) / 0.65 : 0.08; g.dot([Math.cos(d.a + t) * rad, y, Math.sin(d.a + t) * rad], 1.7, 0.85); });
+      for (let i = 0; i < 5; i++) { const y = 0.65 - i * 0.42; g.box(0, y, 0, 0.8, 0.1, 0.8, 0.85); if (i % 2 === 1) { g.box(1.15, y, 0, 0.2, 0.07, 0.3, 1); g.L([0.8, y, 0], [0.95, y, 0], 0.7); g.pulse([0.8, y, 0], [1.15, y, 0], (t * 0.7 + i * 0.2) % 1, 1.8); } }
+      g.T([1.15, 0.65 - 0.42, 0], 'LoRA', 18, 3); g.T([-0.8, 0.65, 0], 'TRANSFORMER ×N', -8, 3, 0.9, 'right');
+      g.T([0.9, 1.7, 0], 'DATASET GEN', 10, -4);
+      const er = 1.5 + 0.08 * Math.sin(t * 2); g.ring(0, -0.4, 0, er, 'y', 0.4, 48, [4, 4]); g.T([er, -0.4, 0], 'W&B EVAL', 8, 4);
+      g.box(0, -1.6, 0, 1.1, 0.18, 0.7, 0.6); g.T([0, -1.6, 0.7], 'HF REGISTRY', 0, 16, 0.9, 'center');
+      g.L([1.1, -1.6, 0], [2.1, -1.6, 0], 0.7); g.L([1.9, -1.5, 0], [2.1, -1.6, 0], 0.7); g.L([1.9, -1.7, 0], [2.1, -1.6, 0], 0.7); g.T([2.1, -1.6, 0], 'vLLM', 4, 4);
+    }; }],
+    // 4 — embedding space: clusters, kNN query, search sphere, rerank
+    'RAG Systems': ['VECTOR SPACE · TOP-K', (rnd) => {
+      const C = [[-1.2, 0.6, 0.5, 'PINECONE'], [1.1, 0.7, -0.5, 'MILVUS'], [-0.9, -0.7, -0.7, 'WEAVIATE'], [1.2, -0.6, 0.7, 'REDIS CACHE']], pts = [];
+      C.forEach(cc => { for (let i = 0; i < 12; i++) pts.push([cc[0] + (rnd() - 0.5) * 0.9, cc[1] + (rnd() - 0.5) * 0.7, cc[2] + (rnd() - 0.5) * 0.9]); });
+      return (t) => {
+        const q = [Math.cos(t * 0.45) * 0.95, Math.sin(t * 0.7) * 0.6, Math.sin(t * 0.45) * 0.95];
+        const d = pts.map((p, i) => [Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]), i]).sort((a, b) => a[0] - b[0]), top = d.slice(0, 5).map(x => x[1]);
+        pts.forEach((p, i) => g.dot(p, top.includes(i) ? 3 : 1.6, top.includes(i) ? 1 : 0.55));
+        C.forEach(cc => g.T([cc[0], cc[1] + 0.55, cc[2]], cc[3], 0, 0, 0.8, 'center'));
+        const rad = d[4][0]; g.ring(...q, rad, 'x', 0.3); g.ring(...q, rad, 'y', 0.3); g.ring(...q, rad, 'z', 0.3);
+        const llm = [0, 1.7, 0]; g.box(...llm, 0.2, 0.12, 0.2, 1); g.ring(0, 1.45, 0, 0.9, 'y', 0.25);
+        top.forEach((i, n) => { g.L(q, pts[i], 0.85); g.pulse(q, pts[i], (t * 0.8 + n * 0.2) % 1, 1.6); if (n < 3) g.L(pts[i], llm, 0.25, [2, 4]); });
+        g.box(...q, 0.07, 0.07, 0.07, 1); g.T(q, 'QUERY', 8, -8); g.T(llm, 'RERANK → LLM', 12, -2); g.T([0, -1.5, 0], 'TOP-K = 5', 0, 0, 0.8, 'center');
+      };
+    }],
+    // 5 — closed retrain loop on a racetrack with a promotion lift
+    'MLOps Engine': ['RETRAIN LOOP', () => (t) => {
+      const E = (a, y = 0) => [Math.cos(a) * 1.8, y, Math.sin(a) * 1.0];
+      g.path(Array.from({ length: 65 }, (_, i) => E(i / 64 * TAU, 0.06)), 0.7); g.path(Array.from({ length: 65 }, (_, i) => E(i / 64 * TAU, -0.06)), 0.7);
+      for (let i = 0; i < 32; i++) g.L(E(i / 32 * TAU, 0.06), E(i / 32 * TAU, -0.06), 0.25);
+      [['BIGQUERY', 0], ['TRAIN', 1], ['EVAL', 2], ['COMPARE', 3]].forEach(([n, i]) => { const p = E(i * TAU / 4); g.box(...p, 0.22, 0.2, 0.22, 1); g.T(p, n, 0, 24, 0.95, 'center'); });
+      for (let i = 0; i < 3; i++) { const a = t * 0.5 + i * TAU / 3; g.box(...E(a, 0.22), 0.09, 0.09, 0.09, 1); }
+      const cmp = E(3 * TAU / 4), reg = [0, 1.45, -1.0]; g.L([cmp[0], 0.2, cmp[2]], reg, 0.45, [3, 4]); g.box(...reg, 0.9, 0.06, 0.4, 0.9);
+      g.pulse([cmp[0], 0.2, cmp[2]], reg, (t * 0.5) % 1, 3); g.T([0.9, 1.45, -1.0], 'MODEL REGISTRY', 6, -2);
+      g.ring(0, 0, 0, 0.45, 'z', 0.7, 24); const h = t * 1.2; g.L([0, 0, 0], [Math.cos(h) * 0.4, Math.sin(h) * 0.4, 0], 1); g.T([0, -0.55, 0], 'GCP SCHEDULER', 0, 10, 0.9, 'center');
+    }],
+    // 6 — CCTV frustum scanning a field; flagged animal gets a box, ear-tag OCR and alert beacon
+    'Disease Detection in Cattle': ['FIELD MONITOR', () => (t) => {
+      const fy = -1.15;
+      for (let i = 0; i <= 8; i++) { const x = -1.4 + i * 0.45; g.L([x, fy, -1.4], [x, fy, 1.4], 0.12); } for (let i = 0; i <= 6; i++) { const z = -1.4 + i * 0.467; g.L([-1.4, fy, z], [2.2, fy, z], 0.12); }
+      const cam = [-2.0, 0.55, -1.2]; g.L([cam[0], fy, cam[2]], cam, 0.8); g.box(...cam, 0.16, 0.1, 0.1, 1); g.T(cam, 'CCTV', 10, -4);
+      [[-1.4, -1.4], [-1.4, 1.4], [2.2, -1.4], [2.2, 1.4]].forEach(([x, z]) => g.L(cam, [x, fy, z], 0.28, [3, 4]));
+      const sx = -1.4 + (t * 0.4 % 1) * 3.6; g.L([sx, fy, -1.4], [sx, fy, 1.4], 0.9);
+      [[-0.5, 0], [0.3, 1], [0.9, 0]].forEach(([z, flag], i) => {
+        const x = ((t * 0.15 + i * 1.3) % 3.6) - 1.4, sw = Math.sin(t * 5 + i) * 0.05, y = -0.85;
+        g.box(x, y, z, 0.3, 0.14, 0.13, 0.85); g.box(x + 0.4, y + 0.08, z, 0.1, 0.09, 0.09, 0.85);
+        [[-0.2, -1], [0.2, -1], [-0.2, 1], [0.2, 1]].forEach(([dx, dz]) => g.L([x + dx, y - 0.14, z + dz * 0.09], [x + dx + sw * dz, fy, z + dz * 0.09], 0.8));
+        if (flag) { const pulse = 0.12 + 0.04 * Math.sin(t * 6); g.box(x + 0.1, y + 0.02, z, 0.6 + pulse, 0.3 + pulse, 0.25 + pulse, 1); g.box(x + 0.5, y + 0.2, z, 0.03, 0.04, 0.04, 1); g.T([x + 0.1, y + 0.4, z], 'DISEASE FLAG', 0, -2, 1, 'center'); g.T([x + 0.5, y + 0.2, z], 'EAR-TAG OCR', 8, 18); }
+      });
+      const b = [2.2, fy, 1.2]; g.L(b, [b[0], -0.2, b[2]], 0.9);
+      for (let j = 0; j < 3; j++) { const u = (t * 0.6 + j / 3) % 1; g.ring(b[0], -0.2, b[2], 0.1 + u * 0.8, 'y', 0.7 * (1 - u), 28); }
+      g.T([b[0], -0.15, b[2]], 'ALERT → RANCHER', 8, -8);
+    }],
+    // 7 — Pi board + sensors + living plant under YOLO brackets, WiFi to phone
+    'IoT Garden': ['EDGE GARDEN NODE', (rnd) => {
+      const segs = []; (function grow(p, d, len, depth) { const q = [p[0] + d[0] * len, p[1] + d[1] * len, p[2] + d[2] * len]; segs.push([p, q, depth]); if (depth < 4) for (let i = 0; i < 2; i++) { const nd = [d[0] + (rnd() - 0.5) * 1.2, d[1] * 0.8 + 0.25, d[2] + (rnd() - 0.5) * 1.2], m = Math.hypot(...nd); grow(q, nd.map(v => v / m), len * 0.68, depth + 1); } })([0.5, -1.1, 0], [0, 1, 0], 0.55, 0);
+      return (t) => {
+        const sw = p => [p[0] + Math.sin(t * 1.3 + p[1] * 2) * 0.06 * (p[1] + 1.2), p[1], p[2]];
+        segs.forEach(([a, b, d]) => { g.L(sw(a), sw(b), 0.95 - d * 0.1); if (d === 4) g.dot(sw(b), 2.2, 0.95); });
+        const pb = [-1.5, -1.05, 0]; g.box(...pb, 0.65, 0.04, 0.42, 0.9); g.box(pb[0], pb[1] + 0.08, pb[2], 0.15, 0.04, 0.15, 1);
+        for (let i = 0; i < 8; i++) g.L([pb[0] - 0.55 + i * 0.15, pb[1], 0.42], [pb[0] - 0.55 + i * 0.15, pb[1], 0.52], 0.6);
+        g.T([pb[0], pb[1], 0.5], 'RASPBERRY PI', 0, 16, 0.95, 'center');
+        [[0.25, -0.3], [0.75, 0.3]].forEach(([x, z]) => { g.L([-0.85, -1.05, 0], [x, -1.15, z], 0.35, [3, 4]); g.L([x, -1.15, z], [x, -0.85, z], 0.9); g.dot([x, -0.85, z], 2, 1); });
+        g.T([0.75, -0.85, 0.3], 'SENSORS', 6, 0);
+        const k = 0.75 + 0.05 * Math.sin(t * 4), x0 = 0.5 - k, x1 = 0.5 + k, y0 = -1.15, y1 = 0.8, e = 0.22;
+        [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].forEach(([x, y], i) => { const sx = i % 2 ? -1 : 1, sy = i < 2 ? 1 : -1; g.L([x, y, 0], [x + sx * e, y, 0], 1); g.L([x, y, 0], [x, y + sy * e, 0], 1); });
+        g.T([x0, y1, 0], 'YOLOv5 · <200ms', 4, -8);
+        for (let j = 0; j < 3; j++) { const u = (t * 0.45 + j / 3) % 1; g.ring(-1.0 + u * 2.7, -0.7, 0, 0.12 + u * 0.35, 'x', 0.8 * (1 - u), 20); }
+        g.box(1.9, 0.0, 0, 0.04, 0.4, 0.22, 1); g.T([1.9, 0.4, 0], 'MOBILE APP', 0, -8, 0.95, 'center');
+      };
+    }],
+    // 8 — diffusion: noise cloud denoises into a torus, with prompt / LoRA / ControlNet around it
+    'Stable Diffusion Pipeline': ['DENOISING CLOUD', (rnd) => {
+      const pts = Array.from({ length: 160 }, () => { const a = rnd() * TAU, b = rnd() * TAU; return { s: [(rnd() - 0.5) * 2.8, (rnd() - 0.5) * 2.2, (rnd() - 0.5) * 2.8], e: [(0.9 + 0.38 * Math.cos(b)) * Math.cos(a), 0.38 * Math.sin(b), (0.9 + 0.38 * Math.cos(b)) * Math.sin(a)], j: rnd() * TAU }; });
+      return (t) => {
+        const ph = (t % 9) / 9, u = ph < 0.6 ? S(ph / 0.6) : ph < 0.8 ? 1 : 1 - S((ph - 0.8) / 0.2);
+        pts.forEach(p => { const q = g.lerp(p.s, p.e, u), w = (1 - u) * 0.12; g.dot([q[0] + Math.sin(t * 3 + p.j) * w, q[1] + Math.cos(t * 2.4 + p.j) * w, q[2]], 1.5 + u * 0.8, 0.5 + u * 0.5); });
+        g.T([-1.8, 1.4, 0], `STEP ${String(Math.round((1 - u) * 50)).padStart(2, '0')}/50`, 0, 0);
+        g.box(-2.1, 0.7, 0, 0.12, 0.14, 0.4, 1); g.T([-2.1, 0.9, 0], 'TEXT PROMPT', 0, -4); g.L([-1.95, 0.7, 0], [-1.1, 0.3, 0], 0.3, [3, 4]);
+        g.path([[-1.5, -1.3, -1.5], [1.5, -1.3, -1.5], [1.5, -1.3, 1.5], [-1.5, -1.3, 1.5]], 0.5, 0, true, 0.06); g.ring(0, -1.3, 0, 0.9, 'y', 0.5, 40, [3, 3]); g.ring(0, -1.3, 0, 0.5, 'y', 0.35, 40, [3, 3]); g.T([1.5, -1.3, 1.5], 'CONTROLNET', 4, 12);
+        [[2.0, 0.6], [2.0, 0.1]].forEach(([x, y]) => { g.box(x, y, 0, 0.18, 0.08, 0.18, 1); g.L([x - 0.18, y, 0], [1.2, 0.2, 0], 0.3, [3, 4]); }); g.T([2.0, 0.75, 0], 'LoRA · DREAMBOOTH', -4, -2, 0.95, 'right');
+      };
+    }],
+    // 9 — two code windows with agents converting line-by-line between them
+    'Claude Agent Code Conversion & Testing Workflow': ['CONVERSION BRIDGE', (rnd) => {
+      const bars = Array.from({ length: 9 }, () => ({ w: 0.4 + rnd() * 0.9, i: Math.floor(rnd() * 3) * 0.14 }));
+      return (t) => {
+        const win = x => { sheet(x, 0.95, 1.0, 0.8); g.L([x, 0.78, -0.95], [x, 0.78, 0.95], 0.5); [-0.8, -0.7, -0.6].forEach(z => g.dot([x, 0.89, z], 1.5, 1)); };
+        win(-1.9); win(1.9);
+        const cur = Math.floor(t * 1.1) % 10, ph = (t * 1.1) % 1;
+        bars.forEach((b, i) => { const y = 0.55 - i * 0.17; g.L([-1.9, y, -0.8 + b.i], [-1.9, y, -0.8 + b.i + b.w], i === cur ? 1 : 0.45); if (i < cur) g.L([1.9, y, -0.8 + b.i * 1.5], [1.9, y, -0.8 + b.i * 1.5 + b.w * 0.85], 0.9); });
+        const A = [[-0.6, 0.5, 0], [0, 0, 0], [0.6, -0.5, 0]], names = ['CONVERT', 'TEST-GEN', 'REPORT'];
+        A.forEach((p, i) => { g.box(...p, 0.14, 0.14, 0.14, 1); g.T(p, names[i], 12, 4); });
+        const yy = 0.55 - Math.min(cur, 8) * 0.17, rowL = [-1.9, yy, 0], rowR = [1.9, yy, 0], route = [rowL, ...A, rowR];
+        g.path(route, 0.3, [3, 4]); const seg = ph * 4, k = Math.min(3, Math.floor(seg)); g.pulse(route[k], route[k + 1], seg - k, 2.8);
+        [1.1, 1.25, 1.4].forEach(y => g.ring(0, y, 0, 0.3, 'y', 0.8, 24)); g.L([-0.3, 1.1, 0], [-0.3, 1.4, 0], 0.8); g.L([0.3, 1.1, 0], [0.3, 1.4, 0], 0.8); g.T([0, 1.7, 0], 'PROMPT CACHE', 0, -2, 0.95, 'center');
+        A.forEach(p => g.L([0, 1.1, 0], p, 0.25, [2, 4]));
+        for (let i = 0; i < 4; i++) { const ok = (t * 0.8) % 5 > i + 0.5; g.box(1.2 + i * 0.35, -1.35, 0, 0.1, 0.1, 0.1, ok ? 1 : 0.3); if (ok) g.T([1.2 + i * 0.35, -1.35, 0], '✓', -4, -10); }
+        g.T([1.55, -1.35, 0], 'DYNAMIC TESTS', 0, 22, 0.9, 'center');
+      };
+    }],
+    // 10 — student-profile double helix fed by content, checked against a WHO gauge, emitting reports
+    'Education Data Transformation Pipeline': ['PROFILE HELIX', (rnd) => {
+      const src = Array.from({ length: 8 }, () => ({ z: (rnd() - 0.5) * 1.4, y: -1.2 + (rnd() - 0.5) * 0.6, p: rnd() }));
+      return (t) => {
+        let pr1 = null, pr2 = null;
+        for (let i = 0; i < 32; i++) {
+          const y = -1.3 + i * 0.09, a = i * 0.4 + t * 0.9, p1 = [Math.cos(a) * 0.5, y, Math.sin(a) * 0.5], p2 = [-Math.cos(a) * 0.5, y, -Math.sin(a) * 0.5];
+          g.dot(p1, 2, 1); g.dot(p2, 2, 0.8); if (pr1) { g.L(pr1, p1, 0.8); g.L(pr2, p2, 0.6); } if (i % 2 === 0) g.L(p1, p2, 0.25); pr1 = p1; pr2 = p2;
+        }
+        src.forEach(s => { const u = (t * 0.3 + s.p) % 1; g.dot(g.lerp([-2.2, s.y, s.z], [0, -1.3, 0], S(u)), 1.8, 0.85); });
+        g.T([-2.2, -1.5, 0], 'RAW CONTENT', 0, 14, 0.9, 'center'); g.T([0.55, 0.1, 0.45], 'STUDENT PROFILE', 4, 0);
+        const gc = [1.9, -0.2, 0]; g.ring(...gc, 0.75, 'z', 0.7, 40);
+        for (let i = 0; i <= 12; i++) { const a = Math.PI * (i / 12); g.L([gc[0] + Math.cos(a) * 0.75, gc[1] + Math.sin(a) * 0.75, 0], [gc[0] + Math.cos(a) * 0.62, gc[1] + Math.sin(a) * 0.62, 0], 0.7); }
+        const na = Math.PI * (0.5 + 0.4 * Math.sin(t * 1.1)); g.L(gc, [gc[0] + Math.cos(na) * 0.6, gc[1] + Math.sin(na) * 0.6, 0], 1); g.dot(gc, 2.5, 1); g.T([gc[0], gc[1] - 0.95, 0], 'WHO BENCHMARK', 0, 4, 0.9, 'center');
+        for (let i = 0; i < 3; i++) g.path([[-0.5, 1.45 + i * 0.1, -0.35], [0.5, 1.45 + i * 0.1, -0.35], [0.5, 1.45 + i * 0.1, 0.35], [-0.5, 1.45 + i * 0.1, 0.35]], 0.8, 0, true, 0.06);
+        g.T([0, 1.8, 0], 'KT REPORT', 0, -6, 0.95, 'center'); g.pulse([0, -1.3, 0], [0, 1.4, 0], (t * 0.35) % 1, 2.6);
+      };
+    }],
+    // 11 — extruded store floorplan with graph overlay and a routed agent
+    'In-Store Navigation AI Agent': ['STORE GRAPH', () => (t) => {
+      const fy = -1.1; g.path([[-2.2, fy, -1.4], [2.2, fy, -1.4], [2.2, fy, 1.4], [-2.2, fy, 1.4]], 0.7, 0, true, 0.05);
+      for (const x of [-1.25, 0, 1.25]) for (const z of [-0.5, 0.5]) g.box(x, fy + 0.18, z, 0.45, 0.18, 0.13, 0.75);
+      const X = [-1.9, -0.6, 0.6, 1.9], Z = [-1.05, 0, 1.05];
+      Z.forEach(z => X.forEach((x, i) => { if (i < 3) g.L([x, fy, z], [X[i + 1], fy, z], 0.18); })); X.forEach(x => Z.forEach((z, i) => { if (i < 2) g.L([x, fy, z], [x, fy, Z[i + 1]], 0.18); }));
+      X.forEach(x => Z.forEach(z => g.dot([x, fy, z], 2, 0.6)));
+      const path = [[-1.9, 1.05], [-0.6, 1.05], [-0.6, 0], [0.6, 0], [0.6, -1.05], [1.9, -1.05]].map(([x, z]) => [x, fy, z]);
+      const lens = path.slice(1).map((p, i) => Math.hypot(p[0] - path[i][0], p[2] - path[i][2])), tot = lens.reduce((a, b) => a + b), u = ((t * 0.12) % 1) * tot;
+      let acc = 0, pos = path[0], k = 0; for (; k < lens.length; k++) { if (u <= acc + lens[k]) { pos = g.lerp(path[k], path[k + 1], (u - acc) / lens[k]); break; } acc += lens[k]; }
+      k = Math.min(k, lens.length - 1);
+      g.path(path.slice(0, k + 1).concat([pos]), 1); g.path([pos, ...path.slice(k + 1)], 0.4, [4, 4]);
+      const dest = path[path.length - 1]; g.L(dest, [dest[0], -0.2, dest[2]], 0.9); g.box(dest[0], -0.1, dest[2], 0.07, 0.07, 0.07, 1); g.T([dest[0], -0.1, dest[2]], 'PRODUCT', 8, -6);
+      g.box(pos[0], pos[1] + 0.12, pos[2], 0.07, 0.12, 0.07, 1); g.ring(pos[0], pos[1], pos[2], 0.12 + ((t * 0.8) % 1) * 0.3, 'y', 0.8, 20);
+      const by = pos[1] + 0.7; g.path([[pos[0] - 0.4, by, pos[2]], [pos[0] + 0.4, by, pos[2]], [pos[0] + 0.4, by + 0.3, pos[2]], [pos[0] - 0.4, by + 0.3, pos[2]]], 0.8, 0, true, 0.08); g.L([pos[0] - 0.1, by, pos[2]], pos, 0.4, [2, 2]); g.T([pos[0], by + 0.1, pos[2]], 'LEFT · AISLE 2', 0, 0, 0.95, 'center');
+      g.T(path[0], 'ENTRANCE', 0, 16, 0.95, 'center'); g.T([0, fy, -1.4], 'NETWORKX GRAPH', 0, -10, 0.85, 'center');
+    }],
+    // 12 — three generations as ascending steps: cube → octahedron → icosahedron with memory ring
+    'ChatBot Systems': ['BOT GENERATIONS', () => (t) => {
+      const bots = [[-1.7, 'v1 · RASA', 0.28], [0, 'v2 · DIALOGFLOW CX', 0.42], [1.7, 'v3 · LLM + RAG', 0.58]];
+      bots.forEach(([x, n, r], i) => {
+        const base = -1.3 + i * 0.25; g.box(x, (base - 1.55) / 2, 0, 0.55, (base + 1.55) / 2, 0.55, 0.55);
+        const y = base + 0.4 + r, c0 = [x, y, 0], spin = t * (0.6 + i * 0.2), mv = (v, s) => g.ry(v.map(q => q * s), spin).map((q, k) => q + c0[k]);
+        if (i === 0) g.wire([...Array(8)].map((_, j) => mv([j & 1 ? 1 : -1, j & 2 ? 1 : -1, j & 4 ? 1 : -1], r)), EDGES, 1);
+        if (i === 1) g.wire(OCT.map(v => mv(v, r * 1.2)), OCT_E, 1);
+        if (i === 2) { g.wire(ICO.map(v => mv(v, r / 1.5)), ICO_E, 1); g.ring(x, y, 0, 0.85, 'x', 0.5, 36, [3, 3]); g.ring(x, y, 0, 0.85, 'z', 0.3, 36, [3, 3]); g.dot([x, y + Math.cos(t * 2) * 0.85, Math.sin(t * 2) * 0.85], 2.4, 1); g.T([x, y + 0.9, 0], 'REDIS MEMORY', 0, -4, 0.9, 'center'); g.box(x, -1.55, 0.9, 0.3, 0.1, 0.2, 0.9); g.T([x, -1.55, 0.9], 'OLLAMA', 0, 16, 0.9, 'center'); }
+        g.T([x, base - 0.1, 0.55], n, 0, 14, 0.95, 'center');
+        const by = y + 0.95 + (i === 2 ? 0.2 : 0) + 0.04 * Math.sin(t * 2 + i); g.path([[x - 0.3, by, 0], [x + 0.3, by, 0], [x + 0.3, by + 0.22, 0], [x - 0.3, by + 0.22, 0]], 0.8, 0, true, 0.08); g.L([x - 0.1, by, 0], [x - 0.18, by - 0.1, 0], 0.8);
+        for (let d = 0; d < 3; d++) g.dot([x - 0.14 + d * 0.14, by + 0.11, 0], 1.6, Math.sin(t * 4 - d) > 0 ? 1 : 0.3);
+        if (i < 2) g.L([x + 0.5, y + 0.25, 0], [bots[i + 1][0] - 0.6, y + 0.4, 0], 0.5, [3, 4]);
+      });
+      const k = Math.floor(t * 0.5) % 3, u = (t * 0.5) % 1, ub = [-2.6, -1.4, 1.0], tgt = [bots[k][0], -0.9 + k * 0.25, 0.6];
+      g.dot(ub, 3, 1); g.T(ub, 'USER', 8, 4); g.pulse(ub, tgt, S(u), 2.6);
+    }]
+  };
+
+  function set(p, hex, idx) {
+    color = hex; title = `${String(idx + 1).padStart(2, '0')} · ${p.name}`;
+    const sc = SCENES[p.name]; cap = sc[0]; draw3 = sc[1](rng(idx * 977 + 13));
+    if (reduce) paint(performance.now());
   }
-  function draw(now) {
-    if (!W) return;
+  function paint(now) {
+    if (!W || !draw3) return;
     c = c || cv.getContext('2d');
     c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
-    c.lineWidth = 1; c.strokeStyle = color; c.fillStyle = color;
-    // floor grid
-    const fy = -(L - 1) / 2 * SP - 0.9;
-    for (let i = -4; i <= 4; i++) { line([i * 0.5, fy, -2], [i * 0.5, fy, 2], 0.1); line([-2, fy, i * 0.5], [2, fy, i * 0.5], 0.1); }
-    // layer slabs + corner pillars
-    const hx = 2, hz = 1.2;
-    for (let l = 0; l < L; l++) {
-      const y = (l - (L - 1) / 2) * SP, q = [[-hx, y, -hz], [hx, y, -hz], [hx, y, hz], [-hx, y, hz]];
-      c.globalAlpha = 0.05; c.beginPath(); q.forEach((v, i) => { const p = P(...v); i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); }); c.closePath(); c.fill();
-      for (let i = 0; i < 4; i++) line(q[i], q[(i + 1) % 4], 0.45);
-      const lp = P(-hx, y, hz); c.globalAlpha = 0.6; c.font = '9px "Share Tech Mono", monospace'; c.textAlign = "right"; c.fillText(layerNames[l], lp[0] - 8, lp[1] + 3); c.textAlign = "left";
-    }
-    [[-hx, -hz], [hx, -hz], [hx, hz], [-hx, hz]].forEach(([x, z]) => line([x, fy, z], [x, ((L - 1) / 2) * SP, z], 0.18, [3, 4]));
-    // data links + travelling pulses
-    const tt = now / 1000;
-    edges.forEach(([a, b], i) => {
-      line([a.x, a.y, a.z], [b.x, b.y, b.z], 0.5, [5, 4]);
-      const u = (tt * 0.45 + i * 0.27) % 1, p = P(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u, a.z + (b.z - a.z) * u);
-      c.globalAlpha = 0.95; c.setLineDash([]); c.beginPath(); c.arc(p[0], p[1], 2.2, 0, 7); c.fill();
-    });
-    // nodes: wire cubes + callout labels
-    c.setLineDash([]);
-    nodes.forEach(n => {
-      const s = 0.2, v = [];
-      for (let i = 0; i < 8; i++) v.push([n.x + (i & 1 ? s : -s), n.y + (i & 2 ? s : -s), n.z + (i & 4 ? s : -s)]);
-      [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(([i, j]) => line(v[i], v[j], 0.95));
-      const p = P(n.x, n.y, n.z), depth = Math.max(0.7, Math.min(1, 0.9 - p[2] * 0.1));
-      c.globalAlpha = 0.5 * depth; c.beginPath(); c.moveTo(p[0] + 6, p[1] - 6); c.lineTo(p[0] + 18, p[1] - 18); c.lineTo(p[0] + 26, p[1] - 18); c.stroke();
-      c.globalAlpha = depth; c.font = '10px "Share Tech Mono", monospace'; c.fillText(n.label, p[0] + 29, p[1] - 15);
-    });
-    // dimension line along the front of the base slab
-    const dy = -(L - 1) / 2 * SP, a = [-hx, dy, hz + 0.35], b = [hx, dy, hz + 0.35];
-    line(a, b, 0.6); line([-hx, dy, hz + 0.2], [-hx, dy, hz + 0.5], 0.6); line([hx, dy, hz + 0.2], [hx, dy, hz + 0.5], 0.6);
-    const m = P(0, dy, hz + 0.35); c.globalAlpha = 0.7; c.font = '9px "Share Tech Mono", monospace'; c.fillText(`${nodes.length} COMPONENTS · ${edges.length} LINKS`, m[0] - 52, m[1] + 14);
-    // title block + registration marks
-    c.globalAlpha = 0.55; c.strokeRect(8.5, 8.5, W - 17, H - 17);
-    c.globalAlpha = 0.85; c.font = '9px "Share Tech Mono", monospace'; c.fillText('BLUEPRINT · REV A · DRAG TO ROTATE', 16, 24);
-    c.globalAlpha = 0.6; c.fillText(title.toUpperCase().slice(0, 46), 16, H - 16);
-    c.globalAlpha = 1;
+    c.lineWidth = 1; c.strokeStyle = color; c.fillStyle = color; c.lineJoin = 'round';
+    for (let i = -4; i <= 4; i++) { g.L([i * 0.6, -1.65, -2.4], [i * 0.6, -1.65, 2.4], 0.06); g.L([-2.4, -1.65, i * 0.6], [2.4, -1.65, i * 0.6], 0.06); }
+    draw3(now / 1000);
+    c.setLineDash([]); c.globalAlpha = 0.55; c.strokeRect(8.5, 8.5, W - 17, H - 17);
+    c.globalAlpha = 0.9; c.font = '9px "Share Tech Mono", monospace'; c.fillText(`FIG.${title.slice(0, 2)} · ${cap} · DRAG TO ROTATE`, 16, 24);
+    c.globalAlpha = 0.7; c.fillText(title.slice(5).toUpperCase().slice(0, 46) + ' · REV A', 16, H - 16); c.globalAlpha = 1;
   }
   function frame(now) {
-    raf = 0;
-    if (!visible || document.hidden) return;
+    raf = 0; if (!visible || document.hidden) return;
     const dt = Math.min(now - (last || now), 50); last = now;
-    if (!drag) ang += dt * 0.00035 * 2.2;
-    draw(now); raf = requestAnimationFrame(frame);
+    if (!drag) ang += dt * 0.00045;
+    paint(now); raf = requestAnimationFrame(frame);
   }
   function kick() { if (!reduce && !raf && visible && !document.hidden) { last = 0; raf = requestAnimationFrame(frame); } }
   cv.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
   cv.addEventListener('pointermove', e => {
     if (!drag) return;
-    ang += (e.clientX - drag.x) * 0.012; tilt = Math.max(0.1, Math.min(1.1, tilt + (e.clientY - drag.y) * 0.006));
-    drag = { x: e.clientX, y: e.clientY }; if (reduce) draw(performance.now());
+    ang += (e.clientX - drag.x) * 0.012; tilt = cl(tilt + (e.clientY - drag.y) * 0.006, 0.1, 1.1);
+    drag = { x: e.clientX, y: e.clientY }; if (reduce) paint(performance.now());
   });
   const end = () => { drag = null; cv.style.cursor = ''; };
   cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
